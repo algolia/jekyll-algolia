@@ -1,0 +1,16 @@
+.DS_Store
+.hg
+.hgignore
+.sass-cache
+.svn
+.*.sw[a-z]
+Thumbs.db
+bower_components
+node_modules
+nohup.out
+npm-debug.log
+tmp
+*~
+*.crcdownload
+*.orig
+__pycache__

@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'nokogiri'
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'awesome_print'
+  s.add_runtime_dependency 'algoliasearch'
   s.homepage    = 'https://github.com/algolia/algoliasearch-jekyll'
   s.license     = 'MIT'
 end

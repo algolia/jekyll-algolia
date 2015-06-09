@@ -1,3 +1,4 @@
+require 'algoliasearch'
 require 'nokogiri'
 require 'json'
 
@@ -7,11 +8,14 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def init_with_program(_prog)
     end
 
-    def process(args = [], options = {})
-      index_name = args[0]
-      puts "Pushing to #{index_name} with options #{options}"
+    def process(args = [], options = {}, config = {})
+      @args = args
+      @options = options
+      @config = config
 
-      @config = configuration_from_options(options)
+      index_name = args[0]
+
+      @config['algolia']['index_name'] = index_name if index_name
       site = Jekyll::Site.new(@config)
 
       # Instead of writing generated website to disk, we will push it to the
@@ -34,8 +38,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       @config['markdown_ext'].split(',').include?(ext)
     end
 
-    def push(items)
-      api_key = AlgoliaSearchJekyll.api_key
+    def check_credentials(api_key, application_id, index_name)
       unless api_key
         Jekyll.logger.error 'Algolia Error: No API key defined'
         Jekyll.logger.warn '  You have two ways to configure your API key:'
@@ -43,7 +46,60 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         Jekyll.logger.warn '    - A file named ./_algolia_api_key'
         exit 1
       end
-      p items
+
+      unless application_id
+        Jekyll.logger.error 'Algolia Error: No application ID defined'
+        Jekyll.logger.warn '  Please set your application id in the '\
+                           '_config.yml file, like so:'
+        puts ''
+        # The spaces are needed otherwise the text is centered
+        Jekyll.logger.warn '  algolia:         '
+        Jekyll.logger.warn '    application_id: \'{your_application_id}\''
+        puts ''
+        Jekyll.logger.warn '  Your application ID can be found in your algolia'\
+                           ' dashboard'
+        Jekyll.logger.warn '    https://www.algolia.com/licensing'
+        exit 1
+      end
+
+      unless index_name
+        Jekyll.logger.error 'Algolia Error: No index name defined'
+        Jekyll.logger.warn '  Please set your index name in the _config.yml'\
+                           ' file, like so:'
+        puts ''
+        # The spaces are needed otherwise the text is centered
+        Jekyll.logger.warn '  algolia:         '
+        Jekyll.logger.warn '    index_name: \'{your_index_name}\''
+        puts ''
+        Jekyll.logger.warn '  You can edit your indices in your dashboard'
+        Jekyll.logger.warn '    https://www.algolia.com/explorer'
+        exit 1
+      end
+      true
+    end
+
+    def push(items)
+      api_key = AlgoliaSearchJekyll.api_key
+      application_id = @config['algolia']['application_id']
+      index_name = @config['algolia']['index_name']
+      check_credentials(api_key, application_id, index_name)
+
+      Algolia.init(application_id: application_id, api_key: api_key)
+      index = Algolia::Index.new(index_name)
+      index.delete_index
+
+      items.each_slice(1000) do |batch|
+        Jekyll.logger.info "Indexing #{batch.size} items"
+        begin
+          index.add_objects(batch)
+        rescue StandardError => error
+          Jekyll.logger.error 'Algolia Error: HTTP Error'
+          Jekyll.logger.warn error.message
+          exit 1
+        end
+      end
+
+      Jekyll.logger.info "Indexing of #{items.size} items done."
     end
 
     def get_items_from_file(file)

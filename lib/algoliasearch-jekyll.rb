@@ -19,7 +19,7 @@ class AlgoliaSearchJekyll < Jekyll::Command
 
           subcommand.action do |args, options|
             @config = configuration_from_options(options)
-            AlgoliaSearchJekyllPush.process(args, options)
+            AlgoliaSearchJekyllPush.process(args, options, @config)
           end
         end
       end
@@ -32,9 +32,7 @@ class AlgoliaSearchJekyll < Jekyll::Command
       if File.exist?(key_file) && File.size(key_file) > 0
         return File.open(key_file).read.strip
       end
-
-      
-
+      nil
     end
   end
 end

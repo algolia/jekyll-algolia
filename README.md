@@ -37,8 +37,8 @@ under the `algolia` section, like this:
 
 ```yaml
 algolia:
-  application_id: 'the_name_of_your_application'
-  index_name:     'the_name_of_your_index'
+  application_id: 'your_application_id'
+  index_name:     'your_index_name'
 ```
 
 You api key will be read either from the `ALGOLIA_API_KEY` environment variable,

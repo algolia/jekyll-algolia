@@ -78,6 +78,20 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       true
     end
 
+    def configure_index(index)
+      index.set_settings(
+        attributeForDistinct: 'parent_id',
+        attributesForFaceting: %w(tags type),
+        attributesToHighlight: %w(title content),
+        attributesToIndex: %w(title h1 h2 h3 h4 h5 h6 content tags),
+        attributesToRetrieve: %w(title posted_at content url),
+        customRanking: ['desc(posted_at)'],
+        distinct: true,
+        highlightPreTag: '<span class="algolia__result-highlight">',
+        highlightPostTag: '</span>'
+      )
+    end
+
     def push(items)
       api_key = AlgoliaSearchJekyll.api_key
       application_id = @config['algolia']['application_id']
@@ -86,7 +100,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       Algolia.init(application_id: application_id, api_key: api_key)
       index = Algolia::Index.new(index_name)
-      index.delete_index
+      configure_index(index)
+      index.clear_index
 
       items.each_slice(1000) do |batch|
         Jekyll.logger.info "Indexing #{batch.size} items"
@@ -113,12 +128,13 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       html = file.content.gsub("\n", ' ')
 
       if is_post
+        tags = file.tags.map { |tag| tag.gsub(',', '') }
         base_data = {
           type: 'post',
           parent_id: file.id,
           url: file.url,
           title: file.title,
-          tags: file.tags,
+          tags: tags,
           slug: file.slug,
           posted_at: file.date.to_time.to_i
         }
@@ -127,6 +143,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           type: 'page',
           parent_id: file.basename,
           url: file.url,
+          title: file['title'],
           slug: file.basename
         }
       end

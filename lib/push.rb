@@ -128,7 +128,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       html = file.content.gsub("\n", ' ')
 
       if is_post
-        tags = file.tags.map { |tag| tag.gsub(',', '') }
+        tags = get_tags_from_post(file)
         base_data = {
           type: 'post',
           parent_id: file.id,
@@ -149,6 +149,14 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       end
 
       get_paragraphs_from_html(html, base_data)
+    end
+
+    # Get a list of tags from a post. Handle both classic string tags or
+    # extended object tags
+    def get_tags_from_post(post)
+      tags = post.tags
+      return [] if tags.is_a?(Array) || tags.nil?
+      tags.map! { |tag| tag.to_s.gsub(',', '') }
     end
 
     def get_previous_hx(node, memo = { level: 7 })

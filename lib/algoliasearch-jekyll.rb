@@ -17,12 +17,27 @@ class AlgoliaSearchJekyll < Jekyll::Command
           subcommand.syntax 'push [INDEX_NAME] [options]'
           subcommand.description 'Push your content to your index'
 
+          add_build_options(subcommand)
+
           subcommand.action do |args, options|
             @config = configuration_from_options(options)
             AlgoliaSearchJekyllPush.process(args, options, @config)
           end
         end
       end
+    end
+
+    # Allow a subset of the default `jekyll build` options
+    def add_build_options(command)
+      command.option 'config', '--config CONFIG_FILE[,CONFIG_FILE2,...]',
+                     Array, 'Custom configuration file'
+      command.option 'future', '--future', 'Publishes posts with a future date'
+      command.option 'limit_posts', '--limit_posts MAX_POSTS', Integer,
+                     'Limits the number of posts to parse and publish'
+      command.option 'show_drafts', '-D', '--drafts',
+                     'Render posts in the _drafts folder'
+      command.option 'unpublished', '--unpublished',
+                     'Render posts that were marked as unpublished'
     end
 
     def api_key

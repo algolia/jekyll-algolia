@@ -148,28 +148,47 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         }
       end
 
-      base_data.merge!(get_hx_from_html(html))
+      get_paragraphs_from_html(html, base_data)
+    end
 
-      get_paragraphs_from_html(html).map.with_index do |item, index|
+    def get_previous_hx(node, memo = { level: 7 })
+      previous = node.previous_sibling
+      # Stop if no previous element
+      unless previous
+        memo.delete(:level)
+        return memo
+      end
+
+      # Skip non-html elements
+      return get_previous_hx(previous, memo) unless previous.element?
+
+      # Skip non-title elements
+      tag_name = previous.name
+      possible_title_elements = %w(h1 h2 h3 h4 h5 h6)
+      unless possible_title_elements.include?(tag_name)
+        return get_previous_hx(previous, memo)
+      end
+
+      # Skip if item already as title of a higher level
+      title_level = tag_name.gsub('h', '').to_i
+      return get_previous_hx(previous, memo) if title_level >= memo[:level]
+      memo[:level] = title_level
+
+      # Add to the memo and continue
+      memo[tag_name] = [] unless memo.key?(tag_name)
+      memo[tag_name] << previous.text
+      get_previous_hx(previous, memo)
+    end
+
+    def get_paragraphs_from_html(html, base_data)
+      doc = Nokogiri::HTML(html)
+      doc.css('p').map.with_index do |p, index|
         new_item = base_data.clone
+        new_item.merge!(get_previous_hx(p))
         new_item[:objectID] = "#{new_item[:parent_id]}_#{index}"
-        new_item[:content] = item
+        new_item[:content] = p.to_s
         new_item
       end
-    end
-
-    def get_paragraphs_from_html(html)
-      doc = Nokogiri::HTML(html)
-      doc.css('p').map(&:to_s)
-    end
-
-    def get_hx_from_html(html)
-      doc = Nokogiri::HTML(html)
-      data = {}
-      %w(h1 h2 h3 h4 h5 h6).each do |hx|
-        data[hx.to_sym] = doc.css(hx).map(&:text)
-      end
-      data
     end
   end
 end

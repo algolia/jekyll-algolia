@@ -84,7 +84,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         attributesForFaceting: %w(tags type),
         attributesToHighlight: %w(title content),
         attributesToIndex: %w(title h1 h2 h3 h4 h5 h6 content tags),
-        attributesToRetrieve: %w(title posted_at content url),
+        attributesToRetrieve: %w(title posted_at content url css_selector),
         customRanking: ['desc(posted_at)', 'desc(title_weight)'],
         distinct: true,
         highlightPreTag: '<span class="algolia__result-highlight">',
@@ -195,12 +195,18 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       weight
     end
 
+    # Will get a unique css selector for the node
+    def get_css_selector(node)
+      node.css_path.gsub('html > body > ', '')
+    end
+
     def get_paragraphs_from_html(html, base_data)
       doc = Nokogiri::HTML(html)
       doc.css('p').map.with_index do |p, index|
         new_item = base_data.clone
         new_item.merge!(get_previous_hx(p))
         new_item[:objectID] = "#{new_item[:parent_id]}_#{index}"
+        new_item[:css_selector] = get_css_selector(p)
         new_item[:content] = p.to_s
         new_item[:title_weight] = get_title_weight(p.text, new_item)
         new_item

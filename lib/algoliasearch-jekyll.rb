@@ -14,7 +14,7 @@ class AlgoliaSearchJekyll < Jekyll::Command
         command.description 'Keep your content in sync with your Algolia index'
 
         command.command(:push) do |subcommand|
-          subcommand.syntax 'push [INDEX_NAME] [options]'
+          subcommand.syntax 'push [options]'
           subcommand.description 'Push your content to your index'
 
           add_build_options(subcommand)
@@ -31,13 +31,13 @@ class AlgoliaSearchJekyll < Jekyll::Command
     def add_build_options(command)
       command.option 'config', '--config CONFIG_FILE[,CONFIG_FILE2,...]',
                      Array, 'Custom configuration file'
-      command.option 'future', '--future', 'Publishes posts with a future date'
+      command.option 'future', '--future', 'Index posts with a future date'
       command.option 'limit_posts', '--limit_posts MAX_POSTS', Integer,
-                     'Limits the number of posts to parse and publish'
+                     'Limits the number of posts to parse and index'
       command.option 'show_drafts', '-D', '--drafts',
-                     'Render posts in the _drafts folder'
+                     'Index posts in the _drafts folder'
       command.option 'unpublished', '--unpublished',
-                     'Render posts that were marked as unpublished'
+                     'Index posts that were marked as unpublished'
     end
 
     def api_key

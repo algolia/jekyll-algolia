@@ -1,15 +1,7 @@
 # Algolia Jekyll Plugin
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
-Algolia index.
-
-## Usage
-
-```shell
-$ jekyll algolia push
-```
-
-This will push the content of your jekyll website to your Algolia index.
+Algolia index by simply running `jekyll algolia push`.
 
 ## Installation
 
@@ -57,18 +49,28 @@ or the `./_algolia_api_key` file.
 Note that if you decide to use the `./_algolia_api_key` approach, we strongly
 encourage you to not track this file in your versionning system.
 
+## Usage
+
+```shell
+$ jekyll algolia push
+```
+
+This will push the content of your jekyll website to your Algolia index.
+
+You can specify any option you would normally pass to `jekyll build`, like
+`--config`, `--source`, `--destination`, etc.
+
+## Searching
+
+This plugin will only index your data in your Algolia index. Adding search
+capabilities is quite easy. You can follow [our tutorials][1]  or use our forked
+version of the [Hyde theme][2].
 
 ## GitHub Pages
 
 Unfortunatly, GitHub does not allow custom plugins to be run on GitHub Pages.
-This means that you will have to manually run `jekyll algolia push` before
+This mean that you will have to manually run `jekyll algolia push` before
 pushing your content to GitHub.
-
-## Search
-
-Now that your index is populated with your data, you can start searching in it.
-You can query it yourself using our [Javascript client][1], or you can use
-our updated [Hyde theme][2].
 
 
 [1]: https://www.algolia.com/doc/javascript

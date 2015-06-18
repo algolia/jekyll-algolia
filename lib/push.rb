@@ -43,7 +43,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         Jekyll.logger.error 'Algolia Error: No API key defined'
         Jekyll.logger.warn '  You have two ways to configure your API key:'
         Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
-        Jekyll.logger.warn '    - A file named ./_algolia_api_key'
+        Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
+                           'source folder'
         exit 1
       end
 
@@ -114,7 +115,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         end
       end
 
-      Jekyll.logger.info "Indexing of #{items.size} items done."
+      Jekyll.logger.info "Indexing of #{items.size} items " \
+                         "in #{index_name} done."
     end
 
     def get_items_from_file(file)

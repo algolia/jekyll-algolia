@@ -1,4 +1,5 @@
 Gemfile.lock
+algoliasearch-jekyll-*.gem
 .DS_Store
 .hg
 .hgignore

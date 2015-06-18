@@ -10,10 +10,10 @@ Gem::Specification.new do |s|
     'lib/algoliasearch-jekyll.rb',
     'lib/push.rb'
   ]
-  s.add_runtime_dependency 'nokogiri'
-  s.add_runtime_dependency 'json'
-  s.add_runtime_dependency 'awesome_print'
-  s.add_runtime_dependency 'algoliasearch'
+  s.add_runtime_dependency('nokogiri', ['~> 1.6'])
+  s.add_runtime_dependency('json', ['~> 1.8'])
+  s.add_runtime_dependency('awesome_print', ['~> 1.6'])
+  s.add_runtime_dependency('algoliasearch', ['~> 1.4'])
   s.homepage    = 'https://github.com/algolia/algoliasearch-jekyll'
   s.license     = 'MIT'
 end

@@ -85,7 +85,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         attributesToHighlight: %w(title content),
         attributesToIndex: %w(title h1 h2 h3 h4 h5 h6 content tags),
         attributesToRetrieve: %w(title posted_at content url),
-        customRanking: ['desc(posted_at)'],
+        customRanking: ['desc(posted_at)', 'desc(title_weight)'],
         distinct: true,
         highlightPreTag: '<span class="algolia__result-highlight">',
         highlightPostTag: '</span>'
@@ -175,9 +175,24 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       memo[:level] = title_level
 
       # Add to the memo and continue
-      memo[tag_name] = [] unless memo.key?(tag_name)
-      memo[tag_name] << previous.text
+      memo[tag_name.to_sym] = previous.text
       get_previous_hx(previous, memo)
+    end
+
+    # Get a custom value representing the number of word occurence from the
+    # titles into the content
+    def get_title_weight(content, item)
+      # Get list of words
+      words = %i(title h1 h2 h3 h4 h5 h6)
+              .select { |title| item.key?(title) }
+              .map { |title| item[title].split(/\W+/) }
+              .flatten
+              .compact
+              .uniq
+      # Count how many words are in the text
+      weight = 0
+      words.each { |word| weight += 1 if content.include?(word) }
+      weight
     end
 
     def get_paragraphs_from_html(html, base_data)
@@ -187,6 +202,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         new_item.merge!(get_previous_hx(p))
         new_item[:objectID] = "#{new_item[:parent_id]}_#{index}"
         new_item[:content] = p.to_s
+        new_item[:title_weight] = get_title_weight(p.text, new_item)
         new_item
       end
     end

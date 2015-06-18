@@ -63,8 +63,8 @@ You can specify any option you would normally pass to `jekyll build`, like
 ## Searching
 
 This plugin will only index your data in your Algolia index. Adding search
-capabilities is quite easy. You can follow [our tutorials][1]  or use our forked
-version of the [Hyde theme][2].
+capabilities is quite easy. You can follow [our tutorials][1] or use our forked
+version of the popular [Hyde theme][2].
 
 ## GitHub Pages
 
@@ -74,4 +74,4 @@ pushing your content to GitHub.
 
 
 [1]: https://www.algolia.com/doc/javascript
-[2]: https://github.com/algolia/algoliasearch-jekyll-hyde
+[2]: https://github.com/algolia/hyde

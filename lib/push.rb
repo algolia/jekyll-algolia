@@ -33,9 +33,13 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       site.process
     end
 
-    def markdown?(filename)
-      ext = File.extname(filename).delete('.')
-      @config['markdown_ext'].split(',').include?(ext)
+    def parseable?(file)
+      ext = file.ext.delete('.')
+      # Allow markdown and html pages
+      return true if @config['markdown_ext'].split(',').include?(ext)
+      return false unless ext == 'html'
+      return false unless file['title']
+      true
     end
 
     def check_credentials(api_key, application_id, index_name)
@@ -125,7 +129,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       # We only index posts, and markdown pages
       return nil unless is_page || is_post
-      return nil if is_page && !markdown?(file.path)
+      return nil if is_page && !parseable?(file)
 
       html = file.content.gsub("\n", ' ')
 

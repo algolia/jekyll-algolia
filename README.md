@@ -43,11 +43,15 @@ algolia:
   index_name:     'your_index_name'
 ```
 
-You api key will be read either from the `ALGOLIA_API_KEY` environment variable,
-or the `./_algolia_api_key` file.
+You api key will be read from the `ALGOLIA_API_KEY` environment variable. You
+can define it on the same line as your command, allowing you to type
+`ALGOLIA_API_KEY='your_admin_api_key' jekyll algolia push`.
 
-Note that if you decide to use the `./_algolia_api_key` approach, we strongly
-encourage you to not track this file in your versionning system.
+### ⚠ Other, unsecure, method ⚠
+
+You can also store your api key in a file named `_algolia_api_key`, in your
+source directory. If you do this we __very, very, very strongly__ encourage you
+to make sure the file is not tracked in your versioning system.
 
 ## Usage
 

@@ -84,17 +84,23 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     end
 
     def configure_index(index)
-      index.set_settings(
+      default_settings = {
         attributeForDistinct: 'parent_id',
         attributesForFaceting: %w(tags type),
-        attributesToHighlight: %w(title content),
         attributesToIndex: %w(title h1 h2 h3 h4 h5 h6 content tags),
         attributesToRetrieve: %w(title posted_at content url css_selector),
         customRanking: ['desc(posted_at)', 'desc(title_weight)'],
         distinct: true,
         highlightPreTag: '<span class="algolia__result-highlight">',
         highlightPostTag: '</span>'
-      )
+      }
+      custom_settings = {}
+      @config['algolia']['settings'].each do |key, value|
+        custom_settings[key.to_sym] = value
+      end
+      settings = default_settings.merge(custom_settings)
+
+      index.set_settings(settings)
     end
 
     def push(items)

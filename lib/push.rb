@@ -42,6 +42,10 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       true
     end
 
+    def excluded_file?(file)
+      @config['algolia']['excluded_files'].include?(file.name)
+    end
+
     def check_credentials(api_key, application_id, index_name)
       unless api_key
         Jekyll.logger.error 'Algolia Error: No API key defined'
@@ -87,8 +91,19 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       default_settings = {
         attributeForDistinct: 'parent_id',
         attributesForFaceting: %w(tags type),
-        attributesToIndex: %w(title h1 h2 h3 h4 h5 h6 content tags),
-        attributesToRetrieve: %w(title posted_at content url css_selector),
+        attributesToIndex: %w(
+          title h1 h2 h3 h4 h5 h6
+          unordered(text)
+          unordered(tags)
+        ),
+        attributesToRetrieve: %w(
+          title h1 h2 h3 h4 h5 h6
+          posted_at
+          content
+          text
+          url
+          css_selector
+        ),
         customRanking: ['desc(posted_at)', 'desc(title_weight)'],
         distinct: true,
         highlightPreTag: '<span class="algolia__result-highlight">',
@@ -103,32 +118,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       index.set_settings(settings)
     end
 
-    def push(items)
-      api_key = AlgoliaSearchJekyll.api_key
-      application_id = @config['algolia']['application_id']
-      index_name = @config['algolia']['index_name']
-      check_credentials(api_key, application_id, index_name)
-
-      Algolia.init(application_id: application_id, api_key: api_key)
-      index = Algolia::Index.new(index_name)
-      configure_index(index)
-      index.clear_index
-
-      items.each_slice(1000) do |batch|
-        Jekyll.logger.info "Indexing #{batch.size} items"
-        begin
-          index.add_objects(batch)
-        rescue StandardError => error
-          Jekyll.logger.error 'Algolia Error: HTTP Error'
-          Jekyll.logger.warn error.message
-          exit 1
-        end
-      end
-
-      Jekyll.logger.info "Indexing of #{items.size} items " \
-                         "in #{index_name} done."
-    end
-
     def get_items_from_file(file)
       is_page = file.is_a?(Jekyll::Page)
       is_post = file.is_a?(Jekyll::Post)
@@ -136,6 +125,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       # We only index posts, and markdown pages
       return nil unless is_page || is_post
       return nil if is_page && !parseable?(file)
+      return nil if excluded_file?(file)
 
       html = file.content.gsub("\n", ' ')
 
@@ -171,6 +161,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       tags.map! { |tag| tag.to_s.gsub(',', '') }
     end
 
+    # Get the list of headings (h1, h2, etc) above the specified node
     def get_previous_hx(node, memo = { level: 7 })
       previous = node.previous_sibling
       # Stop if no previous element
@@ -195,7 +186,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       memo[:level] = title_level
 
       # Add to the memo and continue
-      memo[tag_name.to_sym] = previous.text
+      memo[tag_name.to_sym] = previous.content
       get_previous_hx(previous, memo)
     end
 
@@ -220,17 +211,47 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       node.css_path.gsub('html > body > ', '')
     end
 
+    # Get a list of items representing the different paragraphs
     def get_paragraphs_from_html(html, base_data)
       doc = Nokogiri::HTML(html)
-      doc.css('p').map.with_index do |p, index|
+      paragraphs = doc.css('p').map.with_index do |p, index|
+        next unless p.text.size > 0
         new_item = base_data.clone
         new_item.merge!(get_previous_hx(p))
         new_item[:objectID] = "#{new_item[:parent_id]}_#{index}"
         new_item[:css_selector] = get_css_selector(p)
-        new_item[:content] = p.to_s
+        new_item[:raw_html] = p.to_s
+        new_item[:text] = p.content
         new_item[:title_weight] = get_title_weight(p.text, new_item)
         new_item
       end
+      paragraphs.compact
+    end
+
+    def push(items)
+      api_key = AlgoliaSearchJekyll.api_key
+      application_id = @config['algolia']['application_id']
+      index_name = @config['algolia']['index_name']
+      check_credentials(api_key, application_id, index_name)
+
+      Algolia.init(application_id: application_id, api_key: api_key)
+      index = Algolia::Index.new(index_name)
+      configure_index(index)
+      index.clear_index
+
+      items.each_slice(1000) do |batch|
+        Jekyll.logger.info "Indexing #{batch.size} items"
+        begin
+          index.add_objects(batch)
+        rescue StandardError => error
+          Jekyll.logger.error 'Algolia Error: HTTP Error'
+          Jekyll.logger.warn error.message
+          exit 1
+        end
+      end
+
+      Jekyll.logger.info "Indexing of #{items.size} items " \
+                         "in #{index_name} done."
     end
   end
 end

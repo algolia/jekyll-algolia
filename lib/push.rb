@@ -164,15 +164,18 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
     # Get the list of headings (h1, h2, etc) above the specified node
     def get_previous_hx(node, memo = { level: 7 })
-      previous = node.previous_sibling
-      # Stop if no previous element
+      previous = node.previous_element
+      # No previous element, we go up to the parent
       unless previous
-        memo.delete(:level)
-        return memo
+        parent = node.parent
+        # No parent, we stop
+        if parent.name == 'body'
+          memo.delete(:level)
+          return memo
+        end
+        # We start from the previous sibling of the parent
+        return get_previous_hx(parent, memo)
       end
-
-      # Skip non-html elements
-      return get_previous_hx(previous, memo) unless previous.element?
 
       # Skip non-title elements
       tag_name = previous.name
@@ -215,7 +218,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     # Get a list of items representing the different paragraphs
     def get_paragraphs_from_html(html, base_data)
       doc = Nokogiri::HTML(html)
-      paragraphs = doc.css('p').map.with_index do |p, index|
+      paragraphs = []
+      doc.css('p').each_with_index do |p, index|
         next unless p.text.size > 0
         new_item = base_data.clone
         new_item.merge!(get_previous_hx(p))
@@ -224,9 +228,9 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         new_item[:raw_html] = p.to_s
         new_item[:text] = p.content
         new_item[:title_weight] = get_title_weight(p.text, new_item)
-        new_item
+        paragraphs << new_item
       end
-      paragraphs.compact
+      paragraphs
     end
 
     def push(items)

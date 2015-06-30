@@ -89,6 +89,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
     def configure_index(index)
       default_settings = {
+        typoTolerance: true,
         attributeForDistinct: 'parent_id',
         attributesForFaceting: %w(tags type),
         attributesToIndex: %w(

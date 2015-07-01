@@ -90,7 +90,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def configure_index(index)
       default_settings = {
         typoTolerance: true,
-        attributeForDistinct: 'parent_id',
+        attributeForDistinct: 'url',
         attributesForFaceting: %w(tags type),
         attributesToIndex: %w(
           title h1 h2 h3 h4 h5 h6
@@ -134,7 +134,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         tags = get_tags_from_post(file)
         base_data = {
           type: 'post',
-          parent_id: file.id,
           url: file.url,
           title: file.title,
           tags: tags,
@@ -144,7 +143,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       else
         base_data = {
           type: 'page',
-          parent_id: file.basename,
           url: file.url,
           title: file['title'],
           slug: file.basename
@@ -215,6 +213,12 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       node.css_path.gsub('html > body > ', '')
     end
 
+    # Will get the unique heading hierarchy to this item
+    def get_heading_hierarchy(item)
+      headings = %w(title h1 h2 h3 h4 h5 h6)
+      headings.map { |heading| item[heading.to_sym] }.compact.join(' > ')
+    end
+
     # Get a list of items representing the different paragraphs
     def get_paragraphs_from_html(html, base_data)
       doc = Nokogiri::HTML(html)
@@ -223,10 +227,11 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         next unless p.text.size > 0
         new_item = base_data.clone
         new_item.merge!(get_previous_hx(p))
-        new_item[:objectID] = "#{new_item[:parent_id]}_#{index}"
-        new_item[:css_selector] = get_css_selector(p)
+        new_item[:objectID] = "#{new_item[:slug]}_#{index}"
         new_item[:raw_html] = p.to_s
-        new_item[:text] = p.content
+        new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
+        new_item[:hierarchy] = get_heading_hierarchy(new_item)
+        new_item[:css_selector] = get_css_selector(p)
         new_item[:title_weight] = get_title_weight(p.text, new_item)
         paragraphs << new_item
       end

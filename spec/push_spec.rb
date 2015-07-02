@@ -29,7 +29,7 @@ describe(AlgoliaSearchJekyllPush) do
       expect(push.config).to eq(config)
     end
 
-    fit 'sets indexname from the commandline' do
+    it 'sets indexname from the commandline' do
       # Given
       args = ['newindex']
       

@@ -37,4 +37,17 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
+  describe 'tags' do
+    it 'returns nil if no tag found' do
+      expect(about_page.tags).to eq nil
+    end
+    it 'extract tags from front matter' do
+      # Given
+      actual = test_post.tags
+
+      # Then
+      expect(actual).to include('tag', 'another tag')
+    end
+  end
+
 end

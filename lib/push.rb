@@ -146,39 +146,12 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
 
     def get_items_from_file(file)
-
-
       html = file.content.gsub("\n", ' ')
-
-      if is_post
-        tags = get_tags_from_post(file)
-        base_data = {
-          type: 'post',
-          url: file.url,
-          title: file.title,
-          tags: tags,
-          slug: file.slug,
-          posted_at: file.date.to_time.to_i
-        }
-      else
-        base_data = {
-          type: 'page',
-          url: file.url,
-          title: file['title'],
-          slug: file.basename
-        }
-      end
+      tags = get_tags_from_post(file)
 
       get_paragraphs_from_html(html, base_data)
     end
 
-    # Get a list of tags from a post. Handle both classic string tags or
-    # extended object tags
-    def get_tags_from_post(post)
-      tags = post.tags
-      return [] if tags.is_a?(Array) || tags.nil?
-      tags.map! { |tag| tag.to_s.gsub(',', '') }
-    end
 
     # Get the list of headings (h1, h2, etc) above the specified node
     def get_previous_hx(node, memo = { level: 7 })

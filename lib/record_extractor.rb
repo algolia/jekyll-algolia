@@ -15,10 +15,15 @@ class AlgoliaSearchRecordExtractor
     false
   end
 
+  # Extract a list of tags
   def tags
-    "hhh"
+    return nil unless @file.respond_to? :tags
+    # Some plugins will extend the tags from simple strings to full featured
+    # objects. We'll simply call .to_s to always have a string
+    @file.tags.map(&:to_s)
   end
 
+  # Extract metadata from a post
   def metadata_post
     {
       type: 'post',
@@ -30,6 +35,7 @@ class AlgoliaSearchRecordExtractor
     }
   end
 
+  # Extract metadata from a page
   def metadata_page
     {
       type: 'page',

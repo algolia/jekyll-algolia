@@ -9,11 +9,19 @@ describe(AlgoliaSearchJekyllPush) do
   end
   let(:config) do
     {
+      'markdown_ext' => 'md,mkd',
       'algolia' => {
         'application_id' => 'APPID',
         'index_name' => 'INDEXNAME'
       }
     }
+  end
+  let(:static_file) do
+    Jekyll::StaticFile.new('site', 'base', 'dir', 'static.pdf')
+  end
+
+  def mock_page(name)
+    MockPage.new(name)
   end
 
   describe 'init_options' do
@@ -32,24 +40,43 @@ describe(AlgoliaSearchJekyllPush) do
     it 'sets indexname from the commandline' do
       # Given
       args = ['newindex']
-      
+
       # When
       push.init_options(args, options, config)
 
       # Then
       expect(push.config['algolia']['index_name']).to eq 'newindex'
     end
-    # it 'takes the index name as argument' do
-    #   a = AlgoliaSearchJekyllPush
-    #   a.init_options(['test'])
-    #   ap a.config
-    # end
   end
-  # it '' do
-  #   ap a.methods
-  #   # a.excluded_file?("iuiu")
-  #   expect(true).to be true
-  # end
+
+  describe 'excluded_file?' do
+    before(:each) do
+      push.init_options(nil, options, config)
+    end
+
+    it 'exclude StaticFiles' do
+      expect(push.indexable?(static_file)).to eq false
+    end
+
+    it 'keeps markdown files' do
+      expect(push.indexable?(mock_page('page.md'))).to eq true
+    end
+
+    it 'keeps html files' do
+      expect(push.indexable?(mock_page('page.html'))).to eq true
+    end
+
+    it 'exclude file specified in config' do
+      # Given
+      config['algolia']['excluded_files'] = [
+        'excluded.html'
+      ]
+      push.init_options(nil, options, config)
+
+      # Then
+      expect(push.indexable?(mock_page('excluded.html'))).to eq false
+    end
+  end
 end
 
 # describe(Jekyll::JekyllSitemap) do

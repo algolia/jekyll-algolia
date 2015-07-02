@@ -1,6 +1,7 @@
 require 'algoliasearch'
 require 'nokogiri'
 require 'json'
+require_relative './record_extractor.rb'
 
 # `jekyll algolia push` command
 class AlgoliaSearchJekyllPush < Jekyll::Command
@@ -19,125 +20,133 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       @options = options
       @config = config
 
+      # Allow for passing index name on the command line
       index_name = args[0]
       @config['algolia']['index_name'] = index_name if index_name
       self
     end
 
-    def process(args = [], options = {}, config = {})
-      init_options(args, options, config)
+    # Check if the specified file should be indexed (we exclude static files,
+    # robots.txt and custom defined exclusions).
+    def indexable?(file)
+      return false if file.is_a?(Jekyll::StaticFile)
 
+      # Keep only markdown and html files
+      allowed_extensions = %w(html)
+      if @config['markdown_ext']
+        allowed_extensions += @config['markdown_ext'].split(',')
+      end
+      current_extension = File.extname(file.name)[1..-1]
+      return false unless allowed_extensions.include?(current_extension)
+
+      # Exclude files manually excluded from config
+      # excluded_files = @config['algolia']['excluded_files']
+      # unless excluded_files.nil?
+      #   return false if excluded_files.include?(file.name)
+      # end
+
+      true
+    end
+
+    def process
       site = Jekyll::Site.new(@config)
 
-      # Instead of writing generated website to disk, we will push it to the
-      # index
+      # We overwrite the site.write command so instead of writing files to disks
+      # we'll parse them and push them to Algolia
       def site.write
         items = []
         each_site_file do |file|
-          new_items = AlgoliaSearchJekyllPush.get_items_from_file(file)
+          next unless AlgoliaSearchJekyllPush.indexable?(file)
+
+          new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?
           items += new_items
         end
-        AlgoliaSearchJekyllPush.push(items)
+        # AlgoliaSearchJekyllPush.push(items)
       end
 
+      # This will call the build command by default, which will in turn call our
+      # custom .write method
       site.process
     end
 
-    def parseable?(file)
-      ext = file.ext.delete('.')
-      # Allow markdown and html pages
-      return true if @config['markdown_ext'].split(',').include?(ext)
-      return false unless ext == 'html'
-      return false unless file['title']
-      true
-    end
+    # def check_credentials(api_key, application_id, index_name)
+    #   unless api_key
+    #     Jekyll.logger.error 'Algolia Error: No API key defined'
+    #     Jekyll.logger.warn '  You have two ways to configure your API key:'
+    #     Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
+    #     Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
+    #                        'source folder'
+    #     exit 1
+    #   end
 
-    def excluded_file?(file)
-      @config['algolia']['excluded_files'].include?(file.name)
-    end
+    #   unless application_id
+    #     Jekyll.logger.error 'Algolia Error: No application ID defined'
+    #     Jekyll.logger.warn '  Please set your application id in the '\
+    #                        '_config.yml file, like so:'
+    #     puts ''
+    #     # The spaces are needed otherwise the text is centered
+    #     Jekyll.logger.warn '  algolia:         '
+    #     Jekyll.logger.warn '    application_id: \'{your_application_id}\''
+    #     puts ''
+    #     Jekyll.logger.warn '  Your application ID can be found in your algolia'\
+    #                        ' dashboard'
+    #     Jekyll.logger.warn '    https://www.algolia.com/licensing'
+    #     exit 1
+    #   end
 
-    def check_credentials(api_key, application_id, index_name)
-      unless api_key
-        Jekyll.logger.error 'Algolia Error: No API key defined'
-        Jekyll.logger.warn '  You have two ways to configure your API key:'
-        Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
-        Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
-                           'source folder'
-        exit 1
-      end
+    #   unless index_name
+    #     Jekyll.logger.error 'Algolia Error: No index name defined'
+    #     Jekyll.logger.warn '  Please set your index name in the _config.yml'\
+    #                        ' file, like so:'
+    #     puts ''
+    #     # The spaces are needed otherwise the text is centered
+    #     Jekyll.logger.warn '  algolia:         '
+    #     Jekyll.logger.warn '    index_name: \'{your_index_name}\''
+    #     puts ''
+    #     Jekyll.logger.warn '  You can edit your indices in your dashboard'
+    #     Jekyll.logger.warn '    https://www.algolia.com/explorer'
+    #     exit 1
+    #   end
+    #   true
+    # end
 
-      unless application_id
-        Jekyll.logger.error 'Algolia Error: No application ID defined'
-        Jekyll.logger.warn '  Please set your application id in the '\
-                           '_config.yml file, like so:'
-        puts ''
-        # The spaces are needed otherwise the text is centered
-        Jekyll.logger.warn '  algolia:         '
-        Jekyll.logger.warn '    application_id: \'{your_application_id}\''
-        puts ''
-        Jekyll.logger.warn '  Your application ID can be found in your algolia'\
-                           ' dashboard'
-        Jekyll.logger.warn '    https://www.algolia.com/licensing'
-        exit 1
-      end
+    # def configure_index(index)
+    #   default_settings = {
+    #     typoTolerance: true,
+    #     attributeForDistinct: 'url',
+    #     attributesForFaceting: %w(tags type),
+    #     attributesToIndex: %w(
+    #       title h1 h2 h3 h4 h5 h6
+    #       unordered(text)
+    #       unordered(tags)
+    #     ),
+    #     attributesToRetrieve: %w(
+    #       title h1 h2 h3 h4 h5 h6
+    #       posted_at
+    #       content
+    #       text
+    #       url
+    #       css_selector
+    #     ),
+    #     customRanking: ['desc(posted_at)', 'desc(title_weight)'],
+    #     distinct: true,
+    #     highlightPreTag: '<span class="algolia__result-highlight">',
+    #     highlightPostTag: '</span>'
+    #   }
+    #   custom_settings = {}
+    #   @config['algolia']['settings'].each do |key, value|
+    #     custom_settings[key.to_sym] = value
+    #   end
+    #   settings = default_settings.merge(custom_settings)
 
-      unless index_name
-        Jekyll.logger.error 'Algolia Error: No index name defined'
-        Jekyll.logger.warn '  Please set your index name in the _config.yml'\
-                           ' file, like so:'
-        puts ''
-        # The spaces are needed otherwise the text is centered
-        Jekyll.logger.warn '  algolia:         '
-        Jekyll.logger.warn '    index_name: \'{your_index_name}\''
-        puts ''
-        Jekyll.logger.warn '  You can edit your indices in your dashboard'
-        Jekyll.logger.warn '    https://www.algolia.com/explorer'
-        exit 1
-      end
-      true
-    end
+    #   index.set_settings(settings)
+    # end
 
-    def configure_index(index)
-      default_settings = {
-        typoTolerance: true,
-        attributeForDistinct: 'url',
-        attributesForFaceting: %w(tags type),
-        attributesToIndex: %w(
-          title h1 h2 h3 h4 h5 h6
-          unordered(text)
-          unordered(tags)
-        ),
-        attributesToRetrieve: %w(
-          title h1 h2 h3 h4 h5 h6
-          posted_at
-          content
-          text
-          url
-          css_selector
-        ),
-        customRanking: ['desc(posted_at)', 'desc(title_weight)'],
-        distinct: true,
-        highlightPreTag: '<span class="algolia__result-highlight">',
-        highlightPostTag: '</span>'
-      }
-      custom_settings = {}
-      @config['algolia']['settings'].each do |key, value|
-        custom_settings[key.to_sym] = value
-      end
-      settings = default_settings.merge(custom_settings)
 
-      index.set_settings(settings)
-    end
 
     def get_items_from_file(file)
-      is_page = file.is_a?(Jekyll::Page)
-      is_post = file.is_a?(Jekyll::Post)
 
-      # We only index posts, and markdown pages
-      return nil unless is_page || is_post
-      return nil if is_page && !parseable?(file)
-      return nil if excluded_file?(file)
 
       html = file.content.gsub("\n", ' ')
 

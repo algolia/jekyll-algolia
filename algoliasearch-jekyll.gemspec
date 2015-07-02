@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
     'lib/push.rb'
   ]
   s.add_development_dependency('jekyll', ['~> 2.5'])
-  s.add_development_dependency('rake')
   s.add_development_dependency('rspec', ['~> 3.0'])
   s.add_development_dependency('guard-rspec', ['~> 4.6'])
 

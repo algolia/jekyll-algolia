@@ -40,10 +40,10 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       return false unless allowed_extensions.include?(current_extension)
 
       # Exclude files manually excluded from config
-      # excluded_files = @config['algolia']['excluded_files']
-      # unless excluded_files.nil?
-      #   return false if excluded_files.include?(file.name)
-      # end
+      excluded_files = @config['algolia']['excluded_files']
+      unless excluded_files.nil?
+        return false if excluded_files.include?(file.name)
+      end
 
       true
     end
@@ -146,9 +146,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
 
     def get_items_from_file(file)
-      html = file.content.gsub("\n", ' ')
-      tags = get_tags_from_post(file)
-
       get_paragraphs_from_html(html, base_data)
     end
 
@@ -219,11 +216,11 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       doc.css('p').each_with_index do |p, index|
         next unless p.text.size > 0
         new_item = base_data.clone
-        new_item.merge!(get_previous_hx(p))
+        # new_item.merge!(get_previous_hx(p))
         new_item[:objectID] = "#{new_item[:slug]}_#{index}"
-        new_item[:raw_html] = p.to_s
-        new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
-        new_item[:hierarchy] = get_heading_hierarchy(new_item)
+        # new_item[:raw_html] = p.to_s
+        # new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
+        # new_item[:hierarchy] = get_heading_hierarchy(new_item)
         new_item[:css_selector] = get_css_selector(p)
         new_item[:title_weight] = get_title_weight(p.text, new_item)
         paragraphs << new_item

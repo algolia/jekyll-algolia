@@ -2,6 +2,9 @@ require 'jekyll'
 require 'awesome_print'
 require './lib/push.rb'
 
+# Prevent Jekyll from displaying the "Configuration file:..." on every test
+Jekyll.logger.log_level = :error
+
 RSpec.configure do |config|
   config.filter_run(focus: true)
   config.run_all_when_everything_filtered = true

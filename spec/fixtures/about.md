@@ -14,14 +14,18 @@ Text 2
 
 Text 3
 
+- item 1
+- item 2
+- item 3
+
 ### Another Heading 3
 
-Another text 3
+<p class="test">Another text 4</p>
 
 ## Another Heading 2
 
-Another text 2
+Another `<text>` 5
 
 ### Last Heading 3
 
-Last text
+Last text 6 

@@ -53,6 +53,18 @@ You can also store your admin api key in a file named `_algolia_api_key`, in
 your source directory. If you do this we __very, very, very strongly__ encourage
 you to make sure the file is not tracked in your versioning system.
 
+### Options
+
+The plugin uses sensible defaults, but you may want to override some of its
+configuration. Here are the various options you can add to your `_config.yml`
+file, under the `algolia` section:
+
+- `excluded_files`. If you want to exclude some files from indexing, you can add
+  their name here (eg. `excluded_files: ['index.html', '/2015-01-01-post.md'`).
+- `css_selector`. By default, the plugin will only index the paragraphs (`<p>`).
+  Change it to any css selector to index more content (eg. `css_selector:
+  'p,ul,pre'`).
+
 ## Usage
 
 ```shell

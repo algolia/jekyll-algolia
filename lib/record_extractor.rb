@@ -45,6 +45,87 @@ class AlgoliaSearchRecordExtractor
     }
   end
 
+  # Get the list of all HTML nodes to index
+  def html_nodes
+    document = Nokogiri::HTML(@file.content)
+    selector = 'p'
+    if @file.site.config['algolia']['css_selector']
+      selector = @file.site.config['algolia']['css_selector']
+    end
+    document.css(selector)
+  end
+
+  # Get all the parent headings of the specified node
+  # This will actually create a hash with all the h1, h2, etc to find the
+  # specified node
+  def node_hierarchy(node, memo = { level: 7 })
+    previous = node.previous_element
+
+    # No previous element, we go up to the parent
+    unless previous
+      parent = node.parent
+      # No more parent, ending recursion
+      if parent.name == 'body'
+        memo.delete(:level)
+        return memo
+      end
+      # We start from the previous sibling of the parent
+      return node_hierarchy(parent, memo)
+    end
+
+    # Skip non-title elements
+    tag_name = previous.name
+    unless %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
+      return node_hierarchy(previous, memo)
+    end
+
+    # Skip if item already as title of a higher level
+    title_level = tag_name.gsub('h', '').to_i
+    return node_hierarchy(previous, memo) if title_level >= memo[:level]
+    memo[:level] = title_level
+
+    # Add to the memo and continue
+    memo[tag_name.to_sym] = previous.content
+    node_hierarchy(previous, memo)
+  end
+
+  # Return the raw HTML of the element to index
+  def node_raw_html(node)
+    node.to_s
+  end
+
+  # Return the text of the element, sanitized to be displayed
+  def node_text(node)
+    node.content.gsub('<', '&lt;').gsub('>', '&gt;')
+  end
+
+  # Returns a unique string of hierarchy from title to h6, used for distinct
+  def unique_hierarchy(data)
+    headings = %w(title h1 h2 h3 h4 h5 h6)
+    headings.map { |heading| data[heading.to_sym] }.compact.join(' > ')
+  end
+
+
+
+    # # Get a list of items representing the different paragraphs
+    # def get_paragraphs_from_html(html, base_data)
+    #   doc = Nokogiri::HTML(html)
+    #   paragraphs = []
+    #   doc.css('p').each_with_index do |p, index|
+    #     next unless p.text.size > 0
+    #     new_item = base_data.clone
+    #     new_item.merge!(get_previous_hx(p))
+    #     new_item[:objectID] = "#{new_item[:slug]}_#{index}"
+    #     new_item[:raw_html] = p.to_s
+    #     new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
+    #     new_item[:hierarchy] = get_heading_hierarchy(new_item)
+    #     new_item[:css_selector] = get_css_selector(p)
+    #     new_item[:title_weight] = get_title_weight(p.text, new_item)
+    #     paragraphs << new_item
+    #   end
+    #   paragraphs
+    # end
+
   def extract
     ap metadata
   end

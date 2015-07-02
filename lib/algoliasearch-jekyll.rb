@@ -21,7 +21,7 @@ class AlgoliaSearchJekyll < Jekyll::Command
 
           subcommand.action do |args, options|
             @config = configuration_from_options(options)
-            AlgoliaSearchJekyllPush.process(args, options, @config)
+            AlgoliaSearchJekyllPush.init_options(args, options, @config).process
           end
         end
       end

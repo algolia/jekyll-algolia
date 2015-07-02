@@ -5,17 +5,28 @@ require 'json'
 # `jekyll algolia push` command
 class AlgoliaSearchJekyllPush < Jekyll::Command
   class << self
+    attr_accessor :options, :config
+
     def init_with_program(_prog)
     end
 
-    def process(args = [], options = {}, config = {})
+    # Init the command with options passed on the command line
+    # `jekyll algolia push ARG1 ARG2 --OPTION_NAME1 OPTION_VALUE1`
+    # config comes from _config.yml
+    def init_options(args = [], options = {}, config = {})
+      args = [] unless args
       @args = args
       @options = options
       @config = config
 
       index_name = args[0]
-
       @config['algolia']['index_name'] = index_name if index_name
+      self
+    end
+
+    def process(args = [], options = {}, config = {})
+      init_options(args, options, config)
+
       site = Jekyll::Site.new(@config)
 
       # Instead of writing generated website to disk, we will push it to the

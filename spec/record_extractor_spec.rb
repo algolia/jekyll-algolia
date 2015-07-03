@@ -206,47 +206,43 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  # describe 'node_css_selector' do
-  #   it 'uses the #id to make the selector more precise if one is found' do
-  #     # Given
-  #     nodes = test_page.html_nodes
-  #     p = nodes[3]
+  describe 'node_css_selector' do
+    it 'uses the #id to make the selector more precise if one is found' do
+      # Given
+      nodes = test_page.html_nodes
+      p = nodes[3]
 
-  #     # When
-  #     actual = test_page.node_css_selector(p)
+      # When
+      actual = test_page.node_css_selector(p)
 
-  #     # Then
-  #     expect(actual[:css_selector]).to eq '#text4'
-  #   end
+      # Then
+      expect(actual).to eq '#text4'
+    end
 
-  #   it 'uses p:nth-of-type' do
-  #     # Given
-  #     nodes = test_page.html_nodes
-  #     p = nodes[2]
+    it 'uses p:nth-of-type' do
+      # Given
+      nodes = test_page.html_nodes
+      p = nodes[2]
 
-  #     # When
-  #     actual = test_page.node_css_selector(p)
+      # When
+      actual = test_page.node_css_selector(p)
 
-  #     # Then
-  #     expect(actual[:css_selector]).to eq 'p:nth-of-type(3)'
-  #   end
+      # Then
+      expect(actual).to eq 'p:nth-of-type(3)'
+    end
 
-  #   it 'handles custom <div> markup' do
-  #     # Given
-  #     nodes = test_page.html_nodes
-  #     p = nodes[5]
+    it 'handles custom <div> markup' do
+      # Given
+      nodes = test_page.html_nodes
+      p = nodes[5]
 
-  #     # When
-  #     actual = test_page.node_css_selector(p)
+      # When
+      actual = test_page.node_css_selector(p)
 
-  #     # Then
-  #     expect(actual[:css_selector]).to eq 'div:nth-of-type(2) > p'
-  #   end
-
-  #   # it 'also set selector for the closest heading' do
-
-  #   # end
-  # end
+      # Then
+      expect(actual).to eq 'div:nth-of-type(2) > p'
+    end
+  end
 
   describe 'weight' do
     it 'gets the number of words in text also in the title' do

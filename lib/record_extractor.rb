@@ -155,7 +155,8 @@ class AlgoliaSearchRecordExtractor
   # Returns a hash of two CSS selectors. One for the node itself, and one its
   # closest heading parent
   def node_css_selector(node)
-    
+    return nil if node.nil?
+
     # Use the CSS id if one is set
     return "##{node['id']}" if node['id']
 
@@ -188,10 +189,12 @@ class AlgoliaSearchRecordExtractor
       item = metadata.clone
       item[:objectID] = "#{item[:slug]}_#{index}"
       item.merge!(node_hierarchy(node))
+      item[:tag_name] = node.name
       item[:raw_html] = node_raw_html(node)
       item[:text] = node_text(node)
       item[:unique_hierarchy] = unique_hierarchy(item)
       item[:css_selector] = node_css_selector(node)
+      item[:css_selector_parent] = node_css_selector(node_heading_parent(node))
       item[:weight] = weight(item)
 
       item = custom_hook_each(item)

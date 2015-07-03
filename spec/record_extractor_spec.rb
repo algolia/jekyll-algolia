@@ -14,6 +14,9 @@ describe(AlgoliaSearchRecordExtractor) do
   let(:test_hierarchy) do
     extractor.new(site.file_by_name('hierarchy.md'))
   end
+  let(:test_weight) do
+    extractor.new(site.file_by_name('weight.md'))
+  end
 
   describe 'metadata' do
     it 'gets metadata from page' do
@@ -67,7 +70,7 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  describe 'hierarchy' do
+  describe 'node_hierarchy' do
     it 'returns the unique parent of a simple element' do
       # Note: First <p> should only have a h1 as hierarchy
       # Given
@@ -173,7 +176,111 @@ describe(AlgoliaSearchRecordExtractor) do
       # Then
       expect(actual).to eq 'title > h2 > h4 > h6'
     end
+  end
 
+  describe 'node_css_selector' do
+    it 'uses p:nth-of-type' do
+      # Given
+      nodes = test_page.html_nodes
+      p = nodes[2]
+
+      # When
+      actual = test_page.node_css_selector(p)
+
+      # Then
+      expect(actual).to eq 'p:nth-of-type(3)'
+    end
+
+    it 'handles custom <div> markup' do
+      # Given
+      nodes = test_page.html_nodes
+      p = nodes[5]
+
+      # When
+      actual = test_page.node_css_selector(p)
+
+      # Then
+      expect(actual).to eq 'div:nth-of-type(2) > p'
+    end
+  end
+
+  fdescribe 'weight' do
+    it 'gets the number of words in text also in the title' do
+      # Given
+      data = {
+        title: 'foo bar',
+        text: 'Lorem ipsum dolor foo bar, consectetur adipiscing elit'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 2
+    end
+
+    it 'gets the number of words in text also in the headings' do
+      # Given
+      data = {
+        title: 'foo',
+        h1: 'bar',
+        h2: 'baz',
+        text: 'Lorem baz dolor foo bar, consectetur adipiscing elit'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 3
+    end
+
+    it 'count each word only once' do
+      # Given
+      data = {
+        title: 'foo',
+        h1: 'foo foo foo',
+        h2: 'bar bar foo bar',
+        text: 'foo bar bar bar bar baz foo bar baz'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 2
+    end
+
+    it 'is case-insensitive' do
+      # Given
+      data = {
+        title: 'FOO',
+        h1: 'bar Bar BAR',
+        text: 'foo BAR'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 2
+
+    end
+
+    it 'should only use words, no partial matches' do
+      # Given
+      data = {
+        title: 'foo bar',
+        text: 'xxxfooxxx bar'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 1
+
+    end
   end
 
   # Add a string representation of the hierarchy

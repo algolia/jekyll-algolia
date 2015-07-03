@@ -28,4 +28,6 @@ Another `<text>` 5
 
 ### Last Heading 3
 
-Last text 6 
+<div>Just a div</div>
+
+<div><p>Last text 6 </p></div>

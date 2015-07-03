@@ -12,7 +12,7 @@ class AlgoliaSearchRecordExtractor
   def metadata
     return metadata_page if @file.is_a?(Jekyll::Page)
     return metadata_post if @file.is_a?(Jekyll::Post)
-    false
+    {}
   end
 
   # Extract a list of tags
@@ -56,9 +56,9 @@ class AlgoliaSearchRecordExtractor
   end
 
   # Get all the parent headings of the specified node
-  # This will actually create a hash with all the h1, h2, etc to find the
-  # specified node
   def node_hierarchy(node, memo = { level: 7 })
+    # This will actually create a hash with all the h1, h2, etc to find the
+    # specified node
     previous = node.previous_element
 
     # No previous element, we go up to the parent
@@ -105,28 +105,46 @@ class AlgoliaSearchRecordExtractor
     headings.map { |heading| data[heading.to_sym] }.compact.join(' > ')
   end
 
+  # Returns a unique css selector to scroll to this result
+  # TODO: Find a better way to handle selection.
+  # TODO: Maybe looping through parents to find the closest anchor
+  def node_css_selector(node)
+    node.css_path.gsub('html > body > ', '')
+  end
 
-
-    # # Get a list of items representing the different paragraphs
-    # def get_paragraphs_from_html(html, base_data)
-    #   doc = Nokogiri::HTML(html)
-    #   paragraphs = []
-    #   doc.css('p').each_with_index do |p, index|
-    #     next unless p.text.size > 0
-    #     new_item = base_data.clone
-    #     new_item.merge!(get_previous_hx(p))
-    #     new_item[:objectID] = "#{new_item[:slug]}_#{index}"
-    #     new_item[:raw_html] = p.to_s
-    #     new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
-    #     new_item[:hierarchy] = get_heading_hierarchy(new_item)
-    #     new_item[:css_selector] = get_css_selector(p)
-    #     new_item[:title_weight] = get_title_weight(p.text, new_item)
-    #     paragraphs << new_item
-    #   end
-    #   paragraphs
-    # end
+  # Returns a custom numeric value representing how relevant to its hierarchy
+  # this record is. This value can be used in the custom ranking to display more
+  # relevant records first.
+  def weight(data)
+    # Get list of unique words in headings
+    title_words = %i(title h1 h2 h3 h4 h5 h6)
+                  .select { |title| data.key?(title) }
+                  .map { |title| data[title].split(/\W+/) }
+                  .flatten
+                  .compact
+                  .map(&:downcase)
+                  .uniq
+    # Intersect words in headings with words in test
+    text_words = data[:text].downcase.split(/\W+/)
+    (title_words & text_words).size
+  end
 
   def extract
-    ap metadata
+    items = []
+    html_nodes.each_with_index do |node, index|
+      next unless node.text.size > 0
+
+      item = metadata.clone
+      item[:objectID] = "#{item[:slug]}_#{index}"
+      item.merge!(node_hierarchy(node))
+      item[:raw_html] = node_raw_html(node)
+      item[:text] = node_text(node)
+      item[:unique_hierarchy] = unique_hierarchy(item)
+      item[:css_selector] = node_css_selector(node)
+      item[:weight] = weight(item)
+
+      items << item
+    end
+    items
   end
 end

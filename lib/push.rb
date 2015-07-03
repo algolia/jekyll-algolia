@@ -48,11 +48,11 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       true
     end
 
+    # Run the default `jekyll build` command but overwrite the actual "write
+    # files on disk" part to instead push data to Algolia
     def process
       site = Jekyll::Site.new(@config)
 
-      # We overwrite the site.write command so instead of writing files to disks
-      # we'll parse them and push them to Algolia
       def site.write
         items = []
         each_site_file do |file|
@@ -62,7 +62,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           next if new_items.nil?
           items += new_items
         end
-        # AlgoliaSearchJekyllPush.push(items)
+        AlgoliaSearchJekyllPush.push(items)
       end
 
       # This will call the build command by default, which will in turn call our
@@ -70,188 +70,124 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       site.process
     end
 
-    # def check_credentials(api_key, application_id, index_name)
-    #   unless api_key
-    #     Jekyll.logger.error 'Algolia Error: No API key defined'
-    #     Jekyll.logger.warn '  You have two ways to configure your API key:'
-    #     Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
-    #     Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
-    #                        'source folder'
-    #     exit 1
-    #   end
+    # Read the API key either from ENV or from an _algolia_api_key file in
+    # source folder
+    def api_key
+      # First read in ENV
+      return ENV['ALGOLIA_API_KEY'] if ENV['ALGOLIA_API_KEY']
 
-    #   unless application_id
-    #     Jekyll.logger.error 'Algolia Error: No application ID defined'
-    #     Jekyll.logger.warn '  Please set your application id in the '\
-    #                        '_config.yml file, like so:'
-    #     puts ''
-    #     # The spaces are needed otherwise the text is centered
-    #     Jekyll.logger.warn '  algolia:         '
-    #     Jekyll.logger.warn '    application_id: \'{your_application_id}\''
-    #     puts ''
-    #     Jekyll.logger.warn '  Your application ID can be found in your algolia'\
-    #                        ' dashboard'
-    #     Jekyll.logger.warn '    https://www.algolia.com/licensing'
-    #     exit 1
-    #   end
-
-    #   unless index_name
-    #     Jekyll.logger.error 'Algolia Error: No index name defined'
-    #     Jekyll.logger.warn '  Please set your index name in the _config.yml'\
-    #                        ' file, like so:'
-    #     puts ''
-    #     # The spaces are needed otherwise the text is centered
-    #     Jekyll.logger.warn '  algolia:         '
-    #     Jekyll.logger.warn '    index_name: \'{your_index_name}\''
-    #     puts ''
-    #     Jekyll.logger.warn '  You can edit your indices in your dashboard'
-    #     Jekyll.logger.warn '    https://www.algolia.com/explorer'
-    #     exit 1
-    #   end
-    #   true
-    # end
-
-    # def configure_index(index)
-    #   default_settings = {
-    #     typoTolerance: true,
-    #     attributeForDistinct: 'url',
-    #     attributesForFaceting: %w(tags type),
-    #     attributesToIndex: %w(
-    #       title h1 h2 h3 h4 h5 h6
-    #       unordered(text)
-    #       unordered(tags)
-    #     ),
-    #     attributesToRetrieve: %w(
-    #       title h1 h2 h3 h4 h5 h6
-    #       posted_at
-    #       content
-    #       text
-    #       url
-    #       css_selector
-    #     ),
-    #     customRanking: ['desc(posted_at)', 'desc(title_weight)'],
-    #     distinct: true,
-    #     highlightPreTag: '<span class="algolia__result-highlight">',
-    #     highlightPostTag: '</span>'
-    #   }
-    #   custom_settings = {}
-    #   @config['algolia']['settings'].each do |key, value|
-    #     custom_settings[key.to_sym] = value
-    #   end
-    #   settings = default_settings.merge(custom_settings)
-
-    #   index.set_settings(settings)
-    # end
-
-
-
-    def get_items_from_file(file)
-      get_paragraphs_from_html(html, base_data)
+      # Otherwise from file in source directory
+      key_file = File.join(@config['source'], '_algolia_api_key')
+      if File.exist?(key_file) && File.size(key_file) > 0
+        return File.open(key_file).read.strip
+      end
+      nil
     end
 
+    # Check that all credentials are present, and stop with a helpfull message
+    # if not
+    def check_credentials
+      unless api_key
+        Jekyll.logger.error 'Algolia Error: No API key defined'
+        Jekyll.logger.warn '  You have two ways to configure your API key:'
+        Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
+        Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
+                           'source folder'
+        exit 1
+      end
 
-    # Get the list of headings (h1, h2, etc) above the specified node
-    def get_previous_hx(node, memo = { level: 7 })
-      previous = node.previous_element
-      # No previous element, we go up to the parent
-      unless previous
-        parent = node.parent
-        # No parent, we stop
-        if parent.name == 'body'
-          memo.delete(:level)
-          return memo
+      unless @config['algolia']['application_id']
+        Jekyll.logger.error 'Algolia Error: No application ID defined'
+        Jekyll.logger.warn '  Please set your application id in the '\
+                           '_config.yml file, like so:'
+        Jekyll.logger.warn ''
+        # The spaces are needed otherwise the text is centered
+        Jekyll.logger.warn '  algolia:         '
+        Jekyll.logger.warn '    application_id: \'{your_application_id}\''
+        Jekyll.logger.warn ''
+        Jekyll.logger.warn '  Your application ID can be found in your algolia'\
+                           ' dashboard'
+        Jekyll.logger.warn '    https://www.algolia.com/licensing'
+        exit 1
+      end
+
+      unless @config['algolia']['index_name']
+        Jekyll.logger.error 'Algolia Error: No index name defined'
+        Jekyll.logger.warn '  Please set your index name in the _config.yml'\
+                           ' file, like so:'
+        Jekyll.logger.warn ''
+        # The spaces are needed otherwise the text is centered
+        Jekyll.logger.warn '  algolia:         '
+        Jekyll.logger.warn '    index_name: \'{your_index_name}\''
+        Jekyll.logger.warn ''
+        Jekyll.logger.warn '  You can edit your indices in your dashboard'
+        Jekyll.logger.warn '    https://www.algolia.com/explorer'
+        exit 1
+      end
+      true
+    end
+
+    # Get index settings
+    def configure_index(index)
+      settings = {
+        typoTolerance: true,
+        distinct: true,
+        attributeForDistinct: 'title',
+        attributesForFaceting: %w(tags type title),
+        attributesToIndex: %w(
+          title h1 h2 h3 h4 h5 h6
+          unordered(text)
+          unordered(tags)
+        ),
+        attributesToRetrieve: %w(
+          title h1 h2 h3 h4 h5 h6
+          url
+          raw_html
+          text
+          posted_at
+          css_selector
+        ),
+        customRanking: ['desc(posted_at)', 'desc(title_weight)'],
+        highlightPreTag: '<span class="algolia__result-highlight">',
+        highlightPostTag: '</span>'
+      }
+
+      # Merge default settings with user custom ones
+      if @config['algolia'].key?('settings')
+        custom_settings = {}
+        @config['algolia']['settings'].each do |key, value|
+          custom_settings[key.to_sym] = value
         end
-        # We start from the previous sibling of the parent
-        return get_previous_hx(parent, memo)
+        settings.merge!(custom_settings)
       end
 
-      # Skip non-title elements
-      tag_name = previous.name
-      possible_title_elements = %w(h1 h2 h3 h4 h5 h6)
-      unless possible_title_elements.include?(tag_name)
-        return get_previous_hx(previous, memo)
-      end
-
-      # Skip if item already as title of a higher level
-      title_level = tag_name.gsub('h', '').to_i
-      return get_previous_hx(previous, memo) if title_level >= memo[:level]
-      memo[:level] = title_level
-
-      # Add to the memo and continue
-      memo[tag_name.to_sym] = previous.content
-      get_previous_hx(previous, memo)
-    end
-
-    # Get a custom value representing the number of word occurence from the
-    # titles into the content
-    def get_title_weight(content, item)
-      # Get list of words
-      words = %i(title h1 h2 h3 h4 h5 h6)
-              .select { |title| item.key?(title) }
-              .map { |title| item[title].split(/\W+/) }
-              .flatten
-              .compact
-              .uniq
-      # Count how many words are in the text
-      weight = 0
-      words.each { |word| weight += 1 if content.include?(word) }
-      weight
-    end
-
-    # Will get a unique css selector for the node
-    def get_css_selector(node)
-      node.css_path.gsub('html > body > ', '')
-    end
-
-    # Will get the unique heading hierarchy to this item
-    def get_heading_hierarchy(item)
-      headings = %w(title h1 h2 h3 h4 h5 h6)
-      headings.map { |heading| item[heading.to_sym] }.compact.join(' > ')
-    end
-
-    # Get a list of items representing the different paragraphs
-    def get_paragraphs_from_html(html, base_data)
-      doc = Nokogiri::HTML(html)
-      paragraphs = []
-      doc.css('p').each_with_index do |p, index|
-        next unless p.text.size > 0
-        new_item = base_data.clone
-        # new_item.merge!(get_previous_hx(p))
-        new_item[:objectID] = "#{new_item[:slug]}_#{index}"
-        # new_item[:raw_html] = p.to_s
-        # new_item[:text] = p.content.gsub('<', '&lt;').gsub('>', '&gt;')
-        # new_item[:hierarchy] = get_heading_hierarchy(new_item)
-        new_item[:css_selector] = get_css_selector(p)
-        new_item[:title_weight] = get_title_weight(p.text, new_item)
-        paragraphs << new_item
-      end
-      paragraphs
+      index.set_settings(settings)
     end
 
     def push(items)
-      api_key = AlgoliaSearchJekyll.api_key
-      application_id = @config['algolia']['application_id']
-      index_name = @config['algolia']['index_name']
-      check_credentials(api_key, application_id, index_name)
+      check_credentials
 
-      Algolia.init(application_id: application_id, api_key: api_key)
-      index = Algolia::Index.new(index_name)
+      Algolia.init(
+        application_id: @config['algolia']['application_id'],
+        api_key: api_key
+      )
+      index = Algolia::Index.new(@config['algolia']['index_name'])
       configure_index(index)
-      index.clear_index
+      # index.clear_index
 
-      items.each_slice(1000) do |batch|
-        Jekyll.logger.info "Indexing #{batch.size} items"
-        begin
-          index.add_objects(batch)
-        rescue StandardError => error
-          Jekyll.logger.error 'Algolia Error: HTTP Error'
-          Jekyll.logger.warn error.message
-          exit 1
-        end
-      end
+      # items.each_slice(1000) do |batch|
+      #   Jekyll.logger.info "Indexing #{batch.size} items"
+      #   begin
+      #     index.add_objects(batch)
+      #   rescue StandardError => error
+      #     Jekyll.logger.error 'Algolia Error: HTTP Error'
+      #     Jekyll.logger.warn error.message
+      #     exit 1
+      #   end
+      # end
 
-      Jekyll.logger.info "Indexing of #{items.size} items " \
-                         "in #{index_name} done."
+      # Jekyll.logger.info "Indexing of #{items.size} items " \
+      #                    "in #{index_name} done."
     end
   end
 end

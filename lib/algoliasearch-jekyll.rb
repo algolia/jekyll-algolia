@@ -40,14 +40,5 @@ class AlgoliaSearchJekyll < Jekyll::Command
                      'Index posts that were marked as unpublished'
     end
 
-    def api_key
-      return ENV['ALGOLIA_API_KEY'] if ENV['ALGOLIA_API_KEY']
-      key_file = File.join(@config['source'], '_algolia_api_key')
-
-      if File.exist?(key_file) && File.size(key_file) > 0
-        return File.open(key_file).read.strip
-      end
-      nil
-    end
   end
 end

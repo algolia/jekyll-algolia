@@ -103,7 +103,7 @@ The `AlgoliaSearchRecordExtractor` contains two methods (`custom_hook_each` and
 `custom_hook_all`) that are here so you can overwrite them to add your custom
 logic. They currently simply return the argument they take as input.
 
-```
+```ruby
 class AlgoliaSearchRecordExtractor
   # Hook to modify a record after extracting
   def custom_hook_each(item)

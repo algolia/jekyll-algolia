@@ -175,7 +175,7 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
-  fdescribe 'configure_index' do
+  describe 'configure_index' do
     it 'sets some sane defaults' do
       # Given
       push.init_options(nil, options, config)

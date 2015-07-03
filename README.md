@@ -3,6 +3,17 @@
 Jekyll plugin to automatically index your Jekyll posts and pages into an
 Algolia index by simply running `jekyll algolia push`.
 
+## Usage
+
+```shell
+$ jekyll algolia push
+```
+
+This will push the content of your jekyll website to your Algolia index.
+
+You can specify any option you would normally pass to `jekyll build`, like
+`--config`, `--source`, `--destination`, etc.
+
 ## Installation
 
 First, add the `algoliasearch-jekyll` gem to your `Gemfile`, in the
@@ -116,17 +127,6 @@ class AlgoliaSearchRecordExtractor
   end
 end
 ```
-
-## Usage
-
-```shell
-$ jekyll algolia push
-```
-
-This will push the content of your jekyll website to your Algolia index.
-
-You can specify any option you would normally pass to `jekyll build`, like
-`--config`, `--source`, `--destination`, etc.
 
 ## Searching
 

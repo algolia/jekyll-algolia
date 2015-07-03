@@ -204,7 +204,7 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  fdescribe 'weight' do
+  describe 'weight' do
     it 'gets the number of words in text also in the title' do
       # Given
       data = {

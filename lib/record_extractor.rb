@@ -6,6 +6,10 @@ require 'json'
 class AlgoliaSearchRecordExtractor
   def initialize(file)
     @file = file
+    default_config = {
+      'record_css_selector' => 'p'
+    }
+    @config = default_config.merge(file.site.config['algolia'])
   end
 
   # Hook to modify a record after extracting
@@ -58,45 +62,78 @@ class AlgoliaSearchRecordExtractor
   # Get the list of all HTML nodes to index
   def html_nodes
     document = Nokogiri::HTML(@file.content)
-    selector = 'p'
-    if @file.site.config['algolia']['css_selector']
-      selector = @file.site.config['algolia']['css_selector']
-    end
-    document.css(selector)
+    document.css(@config['record_css_selector'])
   end
 
-  # Get all the parent headings of the specified node
-  def node_hierarchy(node, memo = { level: 7 })
-    # This will actually create a hash with all the h1, h2, etc to find the
-    # specified node
+  # Get the closest heading parent
+  def node_heading_parent(node)
     previous = node.previous_element
 
     # No previous element, we go up to the parent
     unless previous
       parent = node.parent
-      # No more parent, ending recursion
-      if parent.name == 'body'
-        memo.delete(:level)
-        return memo
-      end
-      # We start from the previous sibling of the parent
-      return node_hierarchy(parent, memo)
+      # No more parent, then no heading found
+      return nil if parent.name == 'body'
+      return node_heading_parent(parent)
     end
 
-    # Skip non-title elements
-    tag_name = previous.name
-    unless %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
-      return node_hierarchy(previous, memo)
+    # This is a heading, we return it
+    return previous if %w(h1 h2 h3 h4 h5 h6).include?(previous.name)
+
+    node_heading_parent(previous)
+  end
+
+  # Get all the parent headings of the specified node
+  def node_hierarchy(node, memo = { level: 7 })
+    previous = node_heading_parent(node)
+
+    # No previous heading, we can stop the recursion
+    unless previous
+      memo.delete(:level)
+      return memo
     end
+
+    tag_name = previous.name
+    level = tag_name.gsub('h', '').to_i
+    content = previous.content
 
     # Skip if item already as title of a higher level
-    title_level = tag_name.gsub('h', '').to_i
-    return node_hierarchy(previous, memo) if title_level >= memo[:level]
-    memo[:level] = title_level
+    return node_hierarchy(previous, memo) if level >= memo[:level]
+    memo[:level] = level
 
     # Add to the memo and continue
-    memo[tag_name.to_sym] = previous.content
+    memo[tag_name.to_sym] = content
     node_hierarchy(previous, memo)
+
+
+    # # This will actually create a hash with all the h1, h2, etc to find the
+    # # specified node
+    # previous = node.previous_element
+
+    # # No previous element, we go up to the parent
+    # unless previous
+    #   parent = node.parent
+    #   # No more parent, ending recursion
+    #   if parent.name == 'body'
+    #   end
+    #   # We start from the previous sibling of the parent
+    #   return node_hierarchy(parent, memo)
+    # end
+
+    # # Skip non-title elements
+    # tag_name = previous.name
+    # unless %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
+    #   return node_hierarchy(previous, memo)
+    # end
+
+    # # Skip if item already as title of a higher level
+    # title_level = tag_name.gsub('h', '').to_i
+    # return node_hierarchy(previous, memo) if title_level >= memo[:level]
+    # memo[:level] = title_level
+
+    # # Add to the memo and continue
+    # memo[tag_name.to_sym] = previous.content
+    # node_hierarchy(previous, memo)
   end
 
   # Return the raw HTML of the element to index
@@ -115,10 +152,14 @@ class AlgoliaSearchRecordExtractor
     headings.map { |heading| data[heading.to_sym] }.compact.join(' > ')
   end
 
-  # Returns a unique css selector to scroll to this result
-  # TODO: Find a better way to handle selection.
-  # TODO: Maybe looping through parents to find the closest anchor
+  # Returns a hash of two CSS selectors. One for the node itself, and one its
+  # closest heading parent
   def node_css_selector(node)
+    
+    # Use the CSS id if one is set
+    return "##{node['id']}" if node['id']
+
+    # Default Nokogiri selector
     node.css_path.gsub('html > body > ', '')
   end
 

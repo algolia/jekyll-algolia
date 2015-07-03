@@ -63,10 +63,38 @@ describe(AlgoliaSearchRecordExtractor) do
 
     it 'allow _config.yml to override the selector' do
       # Given
-      site = get_site(algolia: { 'css_selector' => 'p,ul' })
+      site = get_site(algolia: { 'record_css_selector' => 'p,ul' })
       test_page = extractor.new(site.file_by_name('about.md'))
 
       expect(test_page.html_nodes.size).to eq 7
+    end
+  end
+
+  describe 'node_heading_parent' do
+    it 'returns the direct headin right above' do
+      # Given
+      nodes = test_hierarchy.html_nodes
+      p = nodes[0]
+
+      # When
+      actual = test_hierarchy.node_heading_parent(p)
+
+      # Then
+      expect(actual.name).to eq 'h1'
+      expect(actual.text).to eq 'H1'
+    end
+
+    it 'returns the closest heading even if in a sub tag' do
+      # Given
+      nodes = test_hierarchy.html_nodes
+      p = nodes[2]
+
+      # When
+      actual = test_hierarchy.node_heading_parent(p)
+
+      # Then
+      expect(actual.name).to eq 'h2'
+      expect(actual.text).to eq 'H2A'
     end
   end
 
@@ -85,10 +113,10 @@ describe(AlgoliaSearchRecordExtractor) do
     end
 
     it 'returns the heading hierarchy of multiple headings' do
-      # Note: 4th <p> is inside h3, second h2 and main h1
+      # Note: 5th <p> is inside h3, second h2 and main h1
       # Given
       nodes = test_hierarchy.html_nodes
-      p = nodes[3]
+      p = nodes[4]
 
       # When
       actual = test_hierarchy.node_hierarchy(p)
@@ -98,10 +126,10 @@ describe(AlgoliaSearchRecordExtractor) do
     end
 
     it 'works even if heading not on the same level' do
-      # Note: The 5th <p> is inside a div
+      # Note: The 6th <p> is inside a div
       # Given
       nodes = test_hierarchy.html_nodes
-      p = nodes[4]
+      p = nodes[5]
 
       # When
       actual = test_hierarchy.node_hierarchy(p)
@@ -122,7 +150,7 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = test_page.node_raw_html(p)
 
       # Then
-      expect(actual).to eq '<p class="test">Another text 4</p>'
+      expect(actual).to eq '<p id="text4">Another text 4</p>'
     end
   end
 
@@ -178,31 +206,47 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  describe 'node_css_selector' do
-    it 'uses p:nth-of-type' do
-      # Given
-      nodes = test_page.html_nodes
-      p = nodes[2]
+  # describe 'node_css_selector' do
+  #   it 'uses the #id to make the selector more precise if one is found' do
+  #     # Given
+  #     nodes = test_page.html_nodes
+  #     p = nodes[3]
 
-      # When
-      actual = test_page.node_css_selector(p)
+  #     # When
+  #     actual = test_page.node_css_selector(p)
 
-      # Then
-      expect(actual).to eq 'p:nth-of-type(3)'
-    end
+  #     # Then
+  #     expect(actual[:css_selector]).to eq '#text4'
+  #   end
 
-    it 'handles custom <div> markup' do
-      # Given
-      nodes = test_page.html_nodes
-      p = nodes[5]
+  #   it 'uses p:nth-of-type' do
+  #     # Given
+  #     nodes = test_page.html_nodes
+  #     p = nodes[2]
 
-      # When
-      actual = test_page.node_css_selector(p)
+  #     # When
+  #     actual = test_page.node_css_selector(p)
 
-      # Then
-      expect(actual).to eq 'div:nth-of-type(2) > p'
-    end
-  end
+  #     # Then
+  #     expect(actual[:css_selector]).to eq 'p:nth-of-type(3)'
+  #   end
+
+  #   it 'handles custom <div> markup' do
+  #     # Given
+  #     nodes = test_page.html_nodes
+  #     p = nodes[5]
+
+  #     # When
+  #     actual = test_page.node_css_selector(p)
+
+  #     # Then
+  #     expect(actual[:css_selector]).to eq 'div:nth-of-type(2) > p'
+  #   end
+
+  #   # it 'also set selector for the closest heading' do
+
+  #   # end
+  # end
 
   describe 'weight' do
     it 'gets the number of words in text also in the title' do
@@ -264,7 +308,6 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to eq 2
-
     end
 
     it 'should only use words, no partial matches' do
@@ -279,7 +322,6 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to eq 1
-
     end
   end
 

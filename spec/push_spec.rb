@@ -20,10 +20,6 @@ describe(AlgoliaSearchJekyllPush) do
   let(:static_file) do
     Jekyll::StaticFile.new('site', 'base', 'dir', 'static.pdf')
   end
-  let(:index) do
-
-  end
-
   def mock_page(name)
     MockPage.new(name)
   end
@@ -37,8 +33,8 @@ describe(AlgoliaSearchJekyllPush) do
       push.init_options(args, options, config)
 
       # Then
-      expect(push.options).to eq(options)
-      expect(push.config).to eq(config)
+      expect(push.options).to include(options)
+      expect(push.config).to include(config)
     end
 
     it 'sets indexname from the commandline' do

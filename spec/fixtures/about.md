@@ -20,9 +20,9 @@ Text 3
 
 ### Another Heading 3
 
-<p class="test">Another text 4</p>
+<p id="text4">Another text 4</p>
 
-## Another Heading 2
+<h2 id="heading2b">Another Heading 2</h2>
 
 Another `<text>` 5
 

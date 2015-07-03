@@ -59,11 +59,28 @@ The plugin uses sensible defaults, but you may want to override some of its
 configuration. Here are the various options you can add to your `_config.yml`
 file, under the `algolia` section:
 
-- `excluded_files`. If you want to exclude some files from indexing, you can add
-  their name here (eg. `excluded_files: ['index.html', '/2015-01-01-post.md'`).
-- `css_selector`. By default, the plugin will only index the paragraphs (`<p>`).
-  Change it to any css selector to index more content (eg. `css_selector:
-  'p,ul,pre'`).
+#### `excluded_files`
+
+Defines which files should not be indexed for search.
+
+```yml
+algolia:
+  excluded_files:
+    - index.html
+    - 2015-01-01-post.md
+```
+
+#### `record_css_selector`
+
+Defines the css selector inside a page/post used to choose which parts to index.
+It is set to all paragraphs (`<p>`) by default.
+
+If you would like to also index lists, you could set it like this:
+
+```yml
+algolia:
+  record_css_selector: 'p,ul'
+```
 
 ## Usage
 

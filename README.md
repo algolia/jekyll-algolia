@@ -82,6 +82,41 @@ algolia:
   record_css_selector: 'p,ul'
 ```
 
+#### `settings`
+
+Here you can pass any custom settings you would like to push to your Algolia
+index.
+
+If you want to activate `distinct` and some snippets for example, you would do:
+
+```yml
+algolia:
+  settings:
+    attributeForDistinct: 'hierarchy'
+    distinct: true
+    attributesToSnippet: ['text:20']
+```
+
+### Hooks
+
+The `AlgoliaSearchRecordExtractor` contains two methods (`custom_hook_each` and
+`custom_hook_all`) that are here so you can overwrite them to add your custom
+logic. They currently simply return the argument they take as input.
+
+```
+class AlgoliaSearchRecordExtractor
+  # Hook to modify a record after extracting
+  def custom_hook_each(item)
+    item
+  end
+
+  # Hook to modify all records after extracting
+  def custom_hook_all(items)
+    items
+  end
+end
+```
+
 ## Usage
 
 ```shell

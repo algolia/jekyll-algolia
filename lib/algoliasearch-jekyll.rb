@@ -39,6 +39,5 @@ class AlgoliaSearchJekyll < Jekyll::Command
       command.option 'unpublished', '--unpublished',
                      'Index posts that were marked as unpublished'
     end
-
   end
 end

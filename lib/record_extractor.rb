@@ -8,6 +8,16 @@ class AlgoliaSearchRecordExtractor
     @file = file
   end
 
+  # Hook to modify a record after extracting
+  def custom_hook_each(item)
+    item
+  end
+
+  # Hook to modify all records after extracting
+  def custom_hook_all(items)
+    items
+  end
+
   # Returns metadata from the current file
   def metadata
     return metadata_page if @file.is_a?(Jekyll::Page)
@@ -143,8 +153,10 @@ class AlgoliaSearchRecordExtractor
       item[:css_selector] = node_css_selector(node)
       item[:weight] = weight(item)
 
+      item = custom_hook_each(item)
+
       items << item
     end
-    items
+    custom_hook_all(items)
   end
 end

@@ -283,5 +283,35 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  # Add a string representation of the hierarchy
+  describe 'custom_hook_each' do
+    it 'let the user call a custom hook to modify a record' do
+      # Given
+      def test_page.custom_hook_each(item)
+        item[:custom_attribute] = 'foo'
+        item
+      end
+
+      # When
+      actual = test_page.extract
+
+      # Then
+      expect(actual[0]).to include(custom_attribute: 'foo')
+    end
+  end
+
+  describe 'custom_hook_all' do
+    it 'let the user call a custom hook to modify the list of records' do
+      # Given
+      def test_page.custom_hook_all(items)
+        [items[0], { foo: 'bar' }]
+      end
+
+      # When
+      actual = test_page.extract
+
+      # Then
+      expect(actual.size).to eq 2
+      expect(actual[1]).to include(foo: 'bar')
+    end
+  end
 end

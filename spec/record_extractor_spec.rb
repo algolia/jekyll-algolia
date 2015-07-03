@@ -71,7 +71,7 @@ describe(AlgoliaSearchRecordExtractor) do
   end
 
   describe 'node_heading_parent' do
-    it 'returns the direct headin right above' do
+    it 'returns the direct heading right above' do
       # Given
       nodes = test_hierarchy.html_nodes
       p = nodes[0]
@@ -95,6 +95,21 @@ describe(AlgoliaSearchRecordExtractor) do
       # Then
       expect(actual.name).to eq 'h2'
       expect(actual.text).to eq 'H2A'
+    end
+
+    it 'should automatically go up one level when indexing headings' do
+      # Given
+      site = get_site(algolia: { 'record_css_selector' => 'p,h2' })
+      test_hierarchy = extractor.new(site.file_by_name('hierarchy.md'))
+      nodes = test_hierarchy.html_nodes
+      h2 = nodes[4]
+
+      # When
+      actual = test_hierarchy.node_heading_parent(h2)
+
+      # Then
+      expect(actual.name).to eq 'h1'
+      expect(actual.text).to eq 'H1'
     end
   end
 

@@ -66,7 +66,13 @@ class AlgoliaSearchRecordExtractor
   end
 
   # Get the closest heading parent
-  def node_heading_parent(node)
+  def node_heading_parent(node, level = 'h7')
+    headings = %w(h1 h2 h3 h4 h5 h6)
+
+    # If initially called on a heading, we must not accept it but only accept
+    # strong headings
+    level = node.name if headings.include?(node.name)
+
     previous = node.previous_element
 
     # No previous element, we go up to the parent
@@ -74,13 +80,13 @@ class AlgoliaSearchRecordExtractor
       parent = node.parent
       # No more parent, then no heading found
       return nil if parent.name == 'body'
-      return node_heading_parent(parent)
+      return node_heading_parent(parent, level)
     end
 
     # This is a heading, we return it
-    return previous if %w(h1 h2 h3 h4 h5 h6).include?(previous.name)
+    return previous if headings.include?(previous.name) && previous.name < level
 
-    node_heading_parent(previous)
+    node_heading_parent(previous, level)
   end
 
   # Get all the parent headings of the specified node

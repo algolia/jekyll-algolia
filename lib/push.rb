@@ -33,7 +33,9 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       # Keep only markdown and html files
       allowed_extensions = %w(html)
-      allowed_extensions += @config['markdown_ext'].split(',') if @config['markdown_ext']
+      if @config['markdown_ext']
+        allowed_extensions += @config['markdown_ext'].split(',')
+      end
       current_extension = File.extname(file.name)[1..-1]
       return false unless allowed_extensions.include?(current_extension)
 

@@ -13,7 +13,7 @@ class AlgoliaSearchRecordExtractor
   end
 
   # Hook to modify a record after extracting
-  def custom_hook_each(item, node)
+  def custom_hook_each(item, _node)
     item
   end
 
@@ -110,36 +110,6 @@ class AlgoliaSearchRecordExtractor
     # Add to the memo and continue
     memo[tag_name.to_sym] = content
     node_hierarchy(previous, memo)
-
-
-    # # This will actually create a hash with all the h1, h2, etc to find the
-    # # specified node
-    # previous = node.previous_element
-
-    # # No previous element, we go up to the parent
-    # unless previous
-    #   parent = node.parent
-    #   # No more parent, ending recursion
-    #   if parent.name == 'body'
-    #   end
-    #   # We start from the previous sibling of the parent
-    #   return node_hierarchy(parent, memo)
-    # end
-
-    # # Skip non-title elements
-    # tag_name = previous.name
-    # unless %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
-    #   return node_hierarchy(previous, memo)
-    # end
-
-    # # Skip if item already as title of a higher level
-    # title_level = tag_name.gsub('h', '').to_i
-    # return node_hierarchy(previous, memo) if title_level >= memo[:level]
-    # memo[:level] = title_level
-
-    # # Add to the memo and continue
-    # memo[tag_name.to_sym] = previous.content
-    # node_hierarchy(previous, memo)
   end
 
   # Return the raw HTML of the element to index

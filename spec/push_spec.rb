@@ -181,7 +181,7 @@ describe(AlgoliaSearchJekyllPush) do
       expected = {
         attributeForDistinct: 'title',
         distinct: true,
-        customRanking: ['desc(posted_at)', 'desc(title_weight)']
+        customRanking: ['desc(posted_at)', 'desc(weight)']
       }
       expect(index).to receive(:set_settings).with(hash_including(expected))
 

@@ -96,7 +96,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         exit 1
       end
 
-      unless @config['algolia']['application_id']
+      unless @config['algolia'] && @config['algolia']['application_id']
         Jekyll.logger.error 'Algolia Error: No application ID defined'
         Jekyll.logger.warn '  Please set your application id in the '\
                            '_config.yml file, like so:'

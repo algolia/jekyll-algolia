@@ -33,17 +33,13 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       # Keep only markdown and html files
       allowed_extensions = %w(html)
-      if @config['markdown_ext']
-        allowed_extensions += @config['markdown_ext'].split(',')
-      end
+      allowed_extensions += @config['markdown_ext'].split(',') if @config['markdown_ext']
       current_extension = File.extname(file.name)[1..-1]
       return false unless allowed_extensions.include?(current_extension)
 
       # Exclude files manually excluded from config
       excluded_files = @config['algolia']['excluded_files']
-      unless excluded_files.nil?
-        return false if excluded_files.include?(file.name)
-      end
+      return false if excluded_files && excluded_files.include?(file.name)
 
       true
     end
@@ -60,6 +56,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
           new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?
+
           items += new_items
         end
         AlgoliaSearchJekyllPush.push(items)
@@ -124,7 +121,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         Jekyll.logger.warn '    https://www.algolia.com/explorer'
         exit 1
       end
-      true
+      nil
     end
 
     # Get index settings
@@ -154,12 +151,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       }
 
       # Merge default settings with user custom ones
-      if @config['algolia'].key?('settings')
-        custom_settings = {}
-        @config['algolia']['settings'].each do |key, value|
-          custom_settings[key.to_sym] = value
-        end
-        settings.merge!(custom_settings)
+      (@config['algolia']['settings'] || []).each do |key, value|
+        settings[key.to_sym] = value
       end
 
       index.set_settings(settings)

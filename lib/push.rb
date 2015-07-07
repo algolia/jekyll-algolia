@@ -145,7 +145,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           css_selector
           css_selector_parent
         ),
-        customRanking: ['desc(posted_at)', 'desc(title_weight)'],
+        customRanking: ['desc(posted_at)', 'desc(weight)'],
         highlightPreTag: '<span class="algolia__result-highlight">',
         highlightPostTag: '</span>'
       }

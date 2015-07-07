@@ -13,7 +13,7 @@ class AlgoliaSearchRecordExtractor
   end
 
   # Hook to modify a record after extracting
-  def custom_hook_each(item)
+  def custom_hook_each(item, node)
     item
   end
 
@@ -71,7 +71,7 @@ class AlgoliaSearchRecordExtractor
 
     # If initially called on a heading, we must not accept it but only accept
     # strong headings
-    level = node.name if headings.include?(node.name)
+    level = node.name if level == 'h7' && headings.include?(node.name)
 
     previous = node.previous_element
 
@@ -203,7 +203,9 @@ class AlgoliaSearchRecordExtractor
       item[:css_selector_parent] = node_css_selector(node_heading_parent(node))
       item[:weight] = weight(item)
 
-      item = custom_hook_each(item)
+      # We pass item through the user defined custom hook
+      item = custom_hook_each(item, node)
+      next if item.nil?
 
       items << item
     end

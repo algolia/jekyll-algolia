@@ -117,7 +117,8 @@ logic. They currently simply return the argument they take as input.
 ```ruby
 class AlgoliaSearchRecordExtractor
   # Hook to modify a record after extracting
-  def custom_hook_each(item)
+  # `node` refers to the Nokogiri HTML node of the element
+  def custom_hook_each(item, node)
     item
   end
 

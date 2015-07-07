@@ -111,6 +111,21 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual.name).to eq 'h1'
       expect(actual.text).to eq 'H1'
     end
+
+    it 'should find the correct parent when indexing deep headings' do
+      # Given
+      site = get_site(algolia: { 'record_css_selector' => 'h2' })
+      test_hierarchy = extractor.new(site.file_by_name('hierarchy.md'))
+      nodes = test_hierarchy.html_nodes
+      h2 = nodes[2]
+
+      # When
+      actual = test_hierarchy.node_heading_parent(h2)
+
+      # Then
+      expect(actual.name).to eq 'h1'
+      expect(actual.text).to eq 'H1'
+    end
   end
 
   describe 'node_hierarchy' do
@@ -234,7 +249,7 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual).to eq '#text4'
     end
 
-    it 'uses p:nth-of-type' do
+    it 'uses p:nth-of-type if no #id found' do
       # Given
       nodes = test_page.html_nodes
       p = nodes[2]
@@ -339,7 +354,7 @@ describe(AlgoliaSearchRecordExtractor) do
   describe 'custom_hook_each' do
     it 'let the user call a custom hook to modify a record' do
       # Given
-      def test_page.custom_hook_each(item)
+      def test_page.custom_hook_each(item, _)
         item[:custom_attribute] = 'foo'
         item
       end
@@ -349,6 +364,19 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual[0]).to include(custom_attribute: 'foo')
+    end
+
+    it 'let the user discard a record by returning nil' do
+      # Given
+      def test_page.custom_hook_each(_, _)
+        nil
+      end
+
+      # When
+      actual = test_page.extract
+
+      # Then
+      expect(actual.size).to eq 0
     end
   end
 

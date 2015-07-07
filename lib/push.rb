@@ -130,7 +130,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     # Get index settings
     def configure_index(index)
       settings = {
-        typoTolerance: true,
         distinct: true,
         attributeForDistinct: 'title',
         attributesForFaceting: %w(tags type title),

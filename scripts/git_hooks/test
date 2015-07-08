@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-rubocop './lib/' './spec' && \
-  bundle exec rspec --format documentation

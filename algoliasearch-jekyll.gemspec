@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'algoliasearch-jekyll'
-  s.version     = '0.2.0'
+  s.version     = '0.2.1'
   s.date        = '2015-07-03'
   s.summary     = 'AlgoliaSearch for Jekyll'
   s.description = 'Index all your pages and posts to an Algolia index with ' \
@@ -9,7 +9,8 @@ Gem::Specification.new do |s|
   s.email       = 'tim@pixelastic.com'
   s.files       = [
     'lib/algoliasearch-jekyll.rb',
-    'lib/push.rb'
+    'lib/push.rb',
+    'lib/record_extractor.rb'
   ]
   s.add_development_dependency('jekyll', ['~> 2.5'])
   s.add_development_dependency('rspec', ['~> 3.0'])

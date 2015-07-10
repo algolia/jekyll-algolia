@@ -167,6 +167,20 @@ describe(AlgoliaSearchRecordExtractor) do
       # Then
       expect(actual).to include(h1: 'H1', h2: 'H2B', h3: 'H3', h4: 'H4')
     end
+
+    it 'includes node in the output if headings are indexed' do
+      # Given
+      site = get_site(algolia: { 'record_css_selector' => 'h1' })
+      test_hierarchy = extractor.new(site.file_by_name('hierarchy.md'))
+      nodes = test_hierarchy.html_nodes
+      h1 = nodes[0]
+
+      # When
+      actual = test_hierarchy.node_hierarchy(h1)
+
+      # Then
+      expect(actual).to include(h1: 'H1')
+    end
   end
 
   describe 'node_raw_html' do

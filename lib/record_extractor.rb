@@ -65,13 +65,15 @@ class AlgoliaSearchRecordExtractor
     document.css(@config['record_css_selector'])
   end
 
+  # Check if node is a heading
+  def node_heading?(node)
+    %w(h1 h2 h3 h4 h5 h6).include?(node.name)
+  end
+
   # Get the closest heading parent
   def node_heading_parent(node, level = 'h7')
-    headings = %w(h1 h2 h3 h4 h5 h6)
-
-    # If initially called on a heading, we must not accept it but only accept
-    # strong headings
-    level = node.name if level == 'h7' && headings.include?(node.name)
+    # If initially called on a heading, we only accept stronger headings
+    level = node.name if level == 'h7' && node_heading?(node)
 
     previous = node.previous_element
 
@@ -84,32 +86,31 @@ class AlgoliaSearchRecordExtractor
     end
 
     # This is a heading, we return it
-    return previous if headings.include?(previous.name) && previous.name < level
+    return previous if node_heading?(previous) && previous.name < level
 
     node_heading_parent(previous, level)
   end
 
   # Get all the parent headings of the specified node
-  def node_hierarchy(node, memo = { level: 7 })
-    previous = node_heading_parent(node)
+  # If the node itself is a heading, we include it
+  def node_hierarchy(node, state = { level: 7 })
+    tag_name = node.name
+    level = tag_name.gsub('h', '').to_i
 
-    # No previous heading, we can stop the recursion
-    unless previous
-      memo.delete(:level)
-      return memo
+    if node_heading?(node) && level < state[:level]
+      state[tag_name.to_sym] = node.content
+      state[:level] = level
     end
 
-    tag_name = previous.name
-    level = tag_name.gsub('h', '').to_i
-    content = previous.content
+    heading = node_heading_parent(node)
 
-    # Skip if item already as title of a higher level
-    return node_hierarchy(previous, memo) if level >= memo[:level]
-    memo[:level] = level
+    # No previous heading, we can stop the recursion
+    unless heading
+      state.delete(:level)
+      return state
+    end
 
-    # Add to the memo and continue
-    memo[tag_name.to_sym] = content
-    node_hierarchy(previous, memo)
+    node_hierarchy(heading, state)
   end
 
   # Return the raw HTML of the element to index

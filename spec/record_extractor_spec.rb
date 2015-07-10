@@ -348,6 +348,8 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to eq 1
+
+      # I don't seem fit for that
     end
 
     it 'should still work with non-string keys' do

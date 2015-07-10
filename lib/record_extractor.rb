@@ -98,7 +98,7 @@ class AlgoliaSearchRecordExtractor
     level = tag_name.gsub('h', '').to_i
 
     if node_heading?(node) && level < state[:level]
-      state[tag_name.to_sym] = node.content
+      state[tag_name.to_sym] = node_text(node)
       state[:level] = level
     end
 

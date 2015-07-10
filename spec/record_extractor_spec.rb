@@ -152,7 +152,7 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = test_hierarchy.node_hierarchy(p)
 
       # Then
-      expect(actual).to include(h1: 'H1', h2: 'H2B', h3: 'H3')
+      expect(actual).to include(h1: 'H1', h2: 'H2B', h3: 'H3A')
     end
 
     it 'works even if heading not on the same level' do
@@ -165,7 +165,7 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = test_hierarchy.node_hierarchy(p)
 
       # Then
-      expect(actual).to include(h1: 'H1', h2: 'H2B', h3: 'H3', h4: 'H4')
+      expect(actual).to include(h1: 'H1', h2: 'H2B', h3: 'H3A', h4: 'H4')
     end
 
     it 'includes node in the output if headings are indexed' do
@@ -180,6 +180,18 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to include(h1: 'H1')
+    end
+
+    it 'escape html in headings' do
+      # Given
+      nodes = test_hierarchy.html_nodes
+      p = nodes[7]
+
+      # When
+      actual = test_hierarchy.node_hierarchy(p)
+
+      # Then
+      expect(actual).to include(h3: 'H3B &lt;code&gt;')
     end
   end
 

@@ -16,7 +16,7 @@ TEXT3-H2A-H1
 
 TEXT4-H2B-H1
 
-### H3
+### H3A
 
 TEXT5-H3-H2B-H1
 
@@ -28,4 +28,8 @@ TEXT5-H3-H2B-H1
 ## H2C
 
 TEXT8-H2C-H1
+
+### H3B `<code>`
+
+TEXT9-H3B-H2C-H1
 

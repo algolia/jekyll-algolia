@@ -7,11 +7,8 @@ Gem::Specification.new do |s|
                   '`jekyll algolia push`'
   s.authors     = ['Tim Carry']
   s.email       = 'tim@pixelastic.com'
-  s.files       = [
-    'lib/algoliasearch-jekyll.rb',
-    'lib/push.rb',
-    'lib/record_extractor.rb'
-  ]
+  s.files       = ['lib/*.rb']
+
   s.add_development_dependency('jekyll', ['~> 2.5'])
   s.add_development_dependency('rspec', ['~> 3.0'])
   s.add_development_dependency('guard-rspec', ['~> 4.6'])

@@ -147,7 +147,7 @@ class AlgoliaSearchRecordExtractor
     # Get list of unique words in headings
     title_words = %i(title h1 h2 h3 h4 h5 h6)
                   .select { |title| data.key?(title) }
-                  .map { |title| data[title].split(/\W+/) }
+                  .map { |title| data[title].to_s.split(/\W+/) }
                   .flatten
                   .compact
                   .map(&:downcase)

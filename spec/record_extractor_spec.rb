@@ -349,6 +349,25 @@ describe(AlgoliaSearchRecordExtractor) do
       # Then
       expect(actual).to eq 1
     end
+
+    it 'should still work with non-string keys' do
+      # Given
+      data = {
+        title: nil,
+        h1: [],
+        h2: {},
+        h3: true,
+        h4: false,
+        h5: 'foo bar',
+        text: 'foo bar'
+      }
+
+      # When
+      actual = test_page.weight(data)
+
+      # Then
+      expect(actual).to eq 2
+    end
   end
 
   describe 'custom_hook_each' do

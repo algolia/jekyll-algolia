@@ -162,26 +162,31 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
     def push(items)
       check_credentials
-
-      index_name = @config['algolia']['index_name']
       Algolia.init(
         application_id: @config['algolia']['application_id'],
         api_key: api_key
       )
-      index = Algolia::Index.new(index_name)
-      configure_index(index)
-      index.clear_index
 
+      # Create a temporary index
+      index_name = @config['algolia']['index_name']
+      index_name_tmp = "#{index_name}_tmp"
+      index_tmp = Algolia::Index.new(index_name_tmp)
+      configure_index(index_tmp)
+
+      # Push to temporary index
       items.each_slice(1000) do |batch|
         Jekyll.logger.info "Indexing #{batch.size} items"
         begin
-          index.add_objects(batch)
+          index_tmp.add_objects!(batch)
         rescue StandardError => error
           Jekyll.logger.error 'Algolia Error: HTTP Error'
           Jekyll.logger.warn error.message
           exit 1
         end
       end
+
+      # Move temporary index to real one
+      Algolia.move_index(index_name_tmp, index_name)
 
       Jekyll.logger.info "Indexing of #{items.size} items " \
                          "in #{index_name} done."

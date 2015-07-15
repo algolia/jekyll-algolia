@@ -24,14 +24,11 @@ class AlgoliaSearchRecordExtractor
 
   # Returns metadata from the current file
   def metadata
-    metadata = {
-      type: @file.class.name.split('::')[1].downcase,
-      url: @file.url
-    }
+    metadata = {}
+    @file.data.each { |key, value| metadata[key.to_sym] = value }
 
-    metadata[:title] = @file.title if @file.respond_to? :title
-    metadata[:title] = @file.data['title'] if defined? @file.data['title']
-    metadata[:title] = @file['title'] if defined? @file['title']
+    metadata[:type] = @file.class.name.split('::')[1].downcase
+    metadata[:url] = @file.url
 
     if @file.respond_to? :slug
       metadata[:slug] = @file.slug

@@ -1,5 +1,6 @@
 ---
 title: About page
+custom: Foo
 ---
 
 # Heading 1

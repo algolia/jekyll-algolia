@@ -20,6 +20,7 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:slug]).to eq 'about'
       expect(actual[:title]).to eq 'About page'
       expect(actual[:url]).to eq '/about.html'
+      expect(actual[:custom]).to eq 'Foo'
     end
 
     it 'gets metadata from post' do
@@ -32,6 +33,7 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:title]).to eq 'Test post'
       expect(actual[:url]).to eq '/2015/07/02/test-post.html'
       expect(actual[:posted_at]).to eq 1_435_788_000
+      expect(actual[:custom]).to eq 'Foo'
     end
 
     it 'gets metadata from document' do
@@ -43,6 +45,7 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:slug]).to eq 'collection-item'
       expect(actual[:title]).to eq 'Collection Item'
       expect(actual[:url]).to eq '/my-collection/collection-item.html'
+      expect(actual[:custom]).to eq 'Foo'
     end
   end
 

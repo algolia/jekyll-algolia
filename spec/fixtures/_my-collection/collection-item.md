@@ -1,5 +1,6 @@
 ---
 title: Collection Item
+custom: Foo
 ---
 
 The grandest of omelettes. Those that feast on dragon eggs often find that there

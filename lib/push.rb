@@ -31,17 +31,19 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def indexable?(file)
       return false if file.is_a?(Jekyll::StaticFile)
 
+      basename = File.basename(file.path)
+      extname = File.extname(basename)[1..-1]
+
       # Keep only markdown and html files
       allowed_extensions = %w(html)
       if @config['markdown_ext']
         allowed_extensions += @config['markdown_ext'].split(',')
       end
-      current_extension = File.extname(file.name)[1..-1]
-      return false unless allowed_extensions.include?(current_extension)
+      return false unless allowed_extensions.include?(extname)
 
       # Exclude files manually excluded from config
       excluded_files = @config['algolia']['excluded_files']
-      return false if excluded_files && excluded_files.include?(file.name)
+      return false if excluded_files && excluded_files.include?(basename)
 
       true
     end
@@ -55,7 +57,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         items = []
         each_site_file do |file|
           next unless AlgoliaSearchJekyllPush.indexable?(file)
-
           new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?
 
@@ -182,6 +183,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           Jekyll.logger.error 'Algolia Error: HTTP Error'
           Jekyll.logger.warn error.message
           exit 1
+
         end
       end
 

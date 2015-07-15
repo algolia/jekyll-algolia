@@ -26,7 +26,7 @@ RSpec.configure do |config|
     end
 
     def site.file_by_name(file_name)
-      @__files.find() { |path, file| path =~ /#{file_name}$/ }[1]
+      @__files.find { |path, _| path =~ /#{file_name}$/ }[1]
     end
 
     site.process

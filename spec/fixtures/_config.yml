@@ -3,5 +3,5 @@ algolia:
   index_name:     'INDEXNAME'
 
 collections:
-  my_collection:
+  my-collection:
     output: true

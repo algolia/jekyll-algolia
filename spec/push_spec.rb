@@ -9,6 +9,7 @@ describe(AlgoliaSearchJekyllPush) do
   let(:post_file) { site.file_by_name('2015-07-02-test-post.md') }
   let(:static_file) { site.file_by_name('ring.png') }
   let(:document_file) { site.file_by_name('collection-item.md') }
+  let(:html_document_file) { site.file_by_name('collection-item.html') }
   let(:options) do
     {
       'drafts' => true
@@ -69,6 +70,10 @@ describe(AlgoliaSearchJekyllPush) do
 
     it 'keeps markdown documents' do
       expect(push.indexable?(document_file)).to eq true
+    end
+
+    it 'keeps html documents' do
+      expect(push.indexable?(html_document_file)).to eq true
     end
 
     it 'exclude file specified in config' do

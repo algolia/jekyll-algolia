@@ -24,9 +24,27 @@ class AlgoliaSearchRecordExtractor
 
   # Returns metadata from the current file
   def metadata
-    return metadata_page if @file.is_a?(Jekyll::Page)
-    return metadata_post if @file.is_a?(Jekyll::Post)
-    {}
+    metadata = {
+      type: @file.class.name.split('::')[1].downcase,
+      url: @file.url
+    }
+
+    metadata[:title] = @file.title if @file.respond_to? :title
+    metadata[:title] = @file.data['title'] if defined? @file.data['title']
+    metadata[:title] = @file['title'] if defined? @file['title']
+
+    if @file.respond_to? :slug
+      metadata[:slug] = @file.slug
+    else
+      basename = File.basename(@file.path)
+      extname = File.extname(basename)
+      metadata[:slug] = File.basename(basename, extname)
+    end
+
+    metadata[:posted_at] = @file.date.to_time.to_i if @file.respond_to? :date
+    metadata[:tags] = tags if @file.respond_to? :tags
+
+    metadata
   end
 
   # Extract a list of tags
@@ -35,28 +53,6 @@ class AlgoliaSearchRecordExtractor
     # Some plugins will extend the tags from simple strings to full featured
     # objects. We'll simply call .to_s to always have a string
     @file.tags.map(&:to_s)
-  end
-
-  # Extract metadata from a post
-  def metadata_post
-    {
-      type: 'post',
-      url: @file.url,
-      title: @file.title,
-      slug: @file.slug,
-      posted_at: @file.date.to_time.to_i,
-      tags: tags
-    }
-  end
-
-  # Extract metadata from a page
-  def metadata_page
-    {
-      type: 'page',
-      url: @file.url,
-      title: @file['title'],
-      slug: @file.basename
-    }
   end
 
   # Get the list of all HTML nodes to index

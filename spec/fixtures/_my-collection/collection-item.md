@@ -1,7 +1,5 @@
 ---
-type: food
-endurance: 10
-resolve: 2
+title: Collection Item
 ---
 
 The grandest of omelettes. Those that feast on dragon eggs often find that there

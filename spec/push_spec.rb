@@ -2,6 +2,13 @@ require 'spec_helper'
 
 describe(AlgoliaSearchJekyllPush) do
   let(:push) { AlgoliaSearchJekyllPush }
+  let(:site) { get_site }
+  let(:page_file) { site.file_by_name('about.md') }
+  let(:html_page_file) { site.file_by_name('authors.html') }
+  let(:excluded_page_file) { site.file_by_name('excluded.html') }
+  let(:post_file) { site.file_by_name('2015-07-02-test-post.md') }
+  let(:static_file) { site.file_by_name('ring.png') }
+  let(:document_file) { site.file_by_name('collection-item.md') }
   let(:options) do
     {
       'drafts' => true
@@ -16,12 +23,6 @@ describe(AlgoliaSearchJekyllPush) do
         'index_name' => 'INDEXNAME'
       }
     }
-  end
-  let(:static_file) do
-    Jekyll::StaticFile.new('site', 'base', 'dir', 'static.pdf')
-  end
-  def mock_page(name)
-    MockPage.new(name)
   end
 
   describe 'init_options' do
@@ -49,7 +50,7 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
-  describe 'excluded_file?' do
+  describe 'indexable?' do
     before(:each) do
       push.init_options(nil, options, config)
     end
@@ -59,11 +60,15 @@ describe(AlgoliaSearchJekyllPush) do
     end
 
     it 'keeps markdown files' do
-      expect(push.indexable?(mock_page('page.md'))).to eq true
+      expect(push.indexable?(page_file)).to eq true
     end
 
     it 'keeps html files' do
-      expect(push.indexable?(mock_page('page.html'))).to eq true
+      expect(push.indexable?(html_page_file)).to eq true
+    end
+
+    it 'keeps markdown documents' do
+      expect(push.indexable?(document_file)).to eq true
     end
 
     it 'exclude file specified in config' do
@@ -74,7 +79,7 @@ describe(AlgoliaSearchJekyllPush) do
       push.init_options(nil, options, config)
 
       # Then
-      expect(push.indexable?(mock_page('excluded.html'))).to eq false
+      expect(push.indexable?(excluded_page_file)).to eq false
     end
   end
 

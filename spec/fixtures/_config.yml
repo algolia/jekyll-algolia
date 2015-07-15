@@ -1,3 +1,7 @@
 algolia:
   application_id: 'APPID'
   index_name:     'INDEXNAME'
+
+collections:
+  my_collection:
+    output: true

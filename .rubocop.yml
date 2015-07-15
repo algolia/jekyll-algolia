@@ -1,0 +1,25 @@
+# Defaults:
+# https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+Metrics/AbcSize:
+  Max: 100
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Style/FileName:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false

@@ -30,25 +30,15 @@ Jeweler::RubygemsDotOrgTasks.new
 require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.rspec_opts = '--color --format documentation'
+  # spec.rspec_opts = '--color --format documentation'
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 task test: :spec
 
 desc 'Code coverage detail'
-task :simplecov do
+task :coverage do
   ENV['COVERAGE'] = 'true'
-  Rake::Task['test'].execute
+  Rake::Task['spec'].execute
 end
 
 task default: :test
-
-require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ''
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "algoliasearch-jekyll #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end

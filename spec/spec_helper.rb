@@ -1,9 +1,7 @@
-require 'jekyll'
 require 'awesome_print'
+require_relative './spec_helper_jekyll.rb'
+require_relative './spec_helper_simplecov.rb'
 require './lib/push.rb'
-
-# Prevent Jekyll from displaying the "Configuration file:..." on every test
-Jekyll.logger.log_level = :error
 
 RSpec.configure do |config|
   config.filter_run(focus: true)

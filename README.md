@@ -1,4 +1,6 @@
-# Algolia Jekyll Plugin
+# Algolia Jekyll Plugin 
+
+[![Gem Version](https://badge.fury.io/rb/algoliasearch-jekyll.svg)](http://badge.fury.io/rb/algoliasearch-jekyll)
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
 Algolia index by simply running `jekyll algolia push`.

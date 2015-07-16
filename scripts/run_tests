@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-bundle exec rspec --color --format documentation

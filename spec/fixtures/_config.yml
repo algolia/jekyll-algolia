@@ -1,6 +1,8 @@
+timezone: Europe/Paris
+
 algolia:
-  application_id: 'APPID'
-  index_name:     'INDEXNAME'
+  application_id: APPID
+  index_name:     INDEXNAME
 
 collections:
   my-collection:

@@ -36,6 +36,16 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:custom]).to eq 'Foo'
     end
 
+    it 'gets posted_at timestamp based on the configured timezone' do
+      # Given
+      site = get_site(timezone: 'America/New_York')
+      post_file =  extractor.new(site.file_by_name('test-post.md'))
+      actual = post_file.metadata
+
+      # Then
+      expect(actual[:posted_at]).to eq 1_435_809_600
+    end
+
     it 'gets metadata from document' do
       # Given
       actual = document_file.metadata

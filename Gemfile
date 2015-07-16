@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby '2.2.1'
+
 gem 'algoliasearch', '~> 1.4'
 gem 'awesome_print', '~> 1.6'
 gem 'json', '~> 1.8'

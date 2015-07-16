@@ -12,4 +12,5 @@ group :development do
   gem 'rspec', '~> 3.0'
   gem 'rubocop', '~> 0.31'
   gem 'simplecov', '~> 0.10'
+  gem 'coveralls', '~> 0.8'
 end

@@ -1,3 +1,8 @@
+if ENV['TRAVIS']
+  require 'coveralls'
+  Coveralls.wear!
+end
+
 require 'awesome_print'
 require_relative './spec_helper_jekyll.rb'
 require_relative './spec_helper_simplecov.rb'

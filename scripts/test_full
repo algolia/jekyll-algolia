@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+source ~/.rvm/scripts/rvm
+
+(rvm use 2.0 || rvm install ruby-2.0) && \
+  rake && \
+  (rvm use 2.1 || rvm install ruby-2.1) && \
+  rake

@@ -131,6 +131,11 @@ class AlgoliaSearchRecordExtractor
 end
 ```
 
+## Dependencies
+
+The `algoliasearch-jekyll` plugin works form versions of Jekyll starting from
+2.5, with a version of Ruby of at least 2.0.
+
 ## Searching
 
 This plugin will only index your data in your Algolia index. Adding search

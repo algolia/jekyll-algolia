@@ -23,6 +23,9 @@ Jeweler::Tasks.new do |gem|
                     '`jekyll algolia push`'
   gem.email = 'tim@pixelastic.com'
   gem.authors = ['Tim Carry']
+
+  gem.required_ruby_version = '2.0'
+
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

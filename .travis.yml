@@ -1,4 +1,6 @@
 language: ruby
+cache: bundler
+before_script: bundle update
 rvm:
  - 2.2
  - 2.1

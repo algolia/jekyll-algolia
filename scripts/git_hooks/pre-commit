@@ -7,4 +7,7 @@ if grep --color -r 'spec' -E -e '^( |\t)*(fit|fdescribe|xit|xdescribe)'; then
 fi
 
 # Match style guide
-rubocop './lib/' './spec'
+rubocop -F './lib/' './spec' || exit 1
+
+# No over-complex methods
+./scripts/check_flog

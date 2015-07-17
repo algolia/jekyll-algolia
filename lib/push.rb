@@ -48,11 +48,12 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       true
     end
 
-    # Run the default `jekyll build` command but overwrite the actual "write
-    # files on disk" part to instead push data to Algolia
-    def process
-      site = Jekyll::Site.new(@config)
+    # Return a patched version of a Jekyll instance
+    def jekyll_new(config)
+      site = Jekyll::Site.new(config)
 
+      # Patched version of `write` that will push to Algolia instead of writing
+      # on disk
       def site.write
         items = []
         each_site_file do |file|
@@ -65,9 +66,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         AlgoliaSearchJekyllPush.push(items)
       end
 
-      # This will call the build command by default, which will in turn call our
-      # custom .write method
-      site.process
+      site
     end
 
     # Read the API key either from ENV or from an _algolia_api_key file in
@@ -183,7 +182,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           Jekyll.logger.error 'Algolia Error: HTTP Error'
           Jekyll.logger.warn error.message
           exit 1
-
         end
       end
 

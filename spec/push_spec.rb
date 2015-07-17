@@ -10,6 +10,15 @@ describe(AlgoliaSearchJekyllPush) do
   let(:static_file) { site.file_by_name('ring.png') }
   let(:document_file) { site.file_by_name('collection-item.md') }
   let(:html_document_file) { site.file_by_name('collection-item.html') }
+  let(:items) do
+    [{
+      name: 'foo',
+      url: '/foo'
+    }, {
+      name: 'bar',
+      url: '/bar'
+    }]
+  end
   let(:options) do
     {
       'drafts' => true
@@ -215,6 +224,129 @@ describe(AlgoliaSearchJekyllPush) do
 
       # When
       push.configure_index(index)
+    end
+  end
+
+  describe 'jekyll_new' do
+    it 'should return a patched version of site with a custom write' do
+      # Given
+      normal_site = Jekyll::Site.new(Jekyll.configuration(config))
+      normal_method = normal_site.method(:write).source_location
+
+      patched_site = get_site({}, mock_write_method: false, process: false)
+      patched_method = patched_site.method(:write).source_location
+
+      # When
+      # Then
+      expect(patched_method).not_to eq normal_method
+    end
+  end
+
+  describe 'process' do
+    it 'should call the site write method' do
+      # Given
+      site = get_site({}, process: false)
+
+      # When
+      site.process
+
+      # Then
+      expect(site).to have_received(:write)
+    end
+
+    it 'should push items to Algolia' do
+      # Given
+      site = get_site({}, mock_write_method: false, process: false)
+      # Keep only page_file
+      allow(AlgoliaSearchJekyllPush).to receive(:indexable?) do |file|
+        file.path == page_file.path
+      end
+      allow(AlgoliaSearchJekyllPush).to receive(:push)
+
+      # When
+      site.process
+
+      # Then
+      expect(AlgoliaSearchJekyllPush).to have_received(:push) do |arg|
+        expect(arg.size).to eq 6
+      end
+    end
+  end
+
+  describe 'push' do
+    let(:index_double) { double('Algolia Index').as_null_object }
+
+    before(:each) do
+      push.init_options(nil, options, config)
+      # Mock all calls to not send anything
+      allow(push).to receive(:check_credentials)
+      allow(Algolia).to receive(:init)
+      allow(Algolia).to receive(:move_index)
+      allow(Algolia::Index).to receive(:new).and_return(index_double)
+      allow(Jekyll.logger).to receive(:info)
+    end
+
+    it 'should init the Algolia client' do
+      # Given
+      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(Algolia).to have_received(:init).with(
+        application_id: 'APPID',
+        api_key: 'APIKEY_FROM_ENV'
+      )
+    end
+
+    it 'should create a temporary index' do
+      # Given
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(Algolia::Index).to have_received(:new).with('INDEXNAME_tmp')
+    end
+
+    it 'should add elements to the temporary index' do
+      # Given
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(index_double).to have_received(:add_objects!)
+    end
+
+    it 'should move the temporary index as the main one' do
+      # Given
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(Algolia).to have_received(:move_index)
+                         .with('INDEXNAME_tmp', 'INDEXNAME')
+    end
+
+    it 'should display the number of elements indexed' do
+      # Given
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(Jekyll.logger).to have_received(:info).with(/of 2 items/i)
+    end
+
+    it 'should display an error if `add_objects!` failed' do
+      # Given
+      allow(index_double).to receive(:add_objects!).and_raise
+
+      expect(Jekyll.logger).to receive(:error)
+      expect(-> { push.push(items) }).to raise_error SystemExit
     end
   end
 end

@@ -12,27 +12,30 @@ RSpec.configure do |config|
   config.filter_run(focus: true)
   config.run_all_when_everything_filtered = true
 
-  # Build a jekyll site, creating access to @__files used internally
-  def get_site(config = {})
+  # Create a Jekyll::Site instance, patched with a `file_by_name` method
+  def get_site(config = {}, options = {})
+    default_options = {
+      mock_write_method: true,
+      process: true
+    }
+    options = default_options.merge(options)
+
     config = config.merge(
       source: File.expand_path('./spec/fixtures')
     )
     config = Jekyll.configuration(config)
-    site = Jekyll::Site.new(config)
 
-    # Keep a list of all files
-    def site.write
-      @__files = {}
+    site = AlgoliaSearchJekyllPush.jekyll_new(config)
+
+    def site.file_by_name(file_name)
       each_site_file do |file|
-        @__files[file.path] = file
+        return file if file.path =~ /#{file_name}$/
       end
     end
 
-    def site.file_by_name(file_name)
-      @__files.find { |path, _| path =~ /#{file_name}$/ }[1]
-    end
+    allow(site).to receive(:write) if options[:mock_write_method]
 
-    site.process
+    site.process if options[:process]
     site
   end
 end

@@ -188,6 +188,22 @@ describe(AlgoliaSearchJekyllPush) do
       expect(Jekyll.logger).to receive(:warn).at_least(:once)
       expect(-> { push.check_credentials }).to raise_error SystemExit
     end
+
+    it 'should init the Algolia client' do
+      # Given
+      push.init_options(nil, options, config)
+      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
+      allow(Algolia).to receive(:init)
+
+      # When
+      push.check_credentials
+
+      # Then
+      expect(Algolia).to have_received(:init).with(
+        application_id: 'APPID',
+        api_key: 'APIKEY_FROM_ENV'
+      )
+    end
   end
 
   describe 'configure_index' do
@@ -284,20 +300,6 @@ describe(AlgoliaSearchJekyllPush) do
       allow(Algolia).to receive(:move_index)
       allow(Algolia::Index).to receive(:new).and_return(index_double)
       allow(Jekyll.logger).to receive(:info)
-    end
-
-    it 'should init the Algolia client' do
-      # Given
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-
-      # When
-      push.push(items)
-
-      # Then
-      expect(Algolia).to have_received(:init).with(
-        application_id: 'APPID',
-        api_key: 'APIKEY_FROM_ENV'
-      )
     end
 
     it 'should create a temporary index' do

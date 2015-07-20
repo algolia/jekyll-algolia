@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+MAX_SCORE = 45
+
+flay_lines = `flay -s ./lib/`.split("\n")
+
+errors = []
+flay_lines.each_with_index do |line, index|
+  # Skip header
+  next if index < 2
+
+  pattern = /^ *(.*): (.*)/
+  matches = line.match(pattern)
+  next if matches.nil?
+  score = matches[1].to_f
+
+  next if score < MAX_SCORE
+  errors << {
+    score: score,
+    file: matches[2]
+  }
+end
+
+exit 0 if errors.size == 0
+
+puts 'Flay test failed:'
+errors.sort_by { |a| a[:score] }.each do |error|
+  puts "#{error[:score]} / #{MAX_SCORE} in #{error[:file]}"
+end
+exit 1

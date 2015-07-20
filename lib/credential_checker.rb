@@ -24,47 +24,36 @@ class AlgoliaSearchCredentialChecker
     nil
   end
 
+  def display_error(file)
+    file = File.expand_path(File.join(File.dirname(__FILE__), '../txt', file))
+    content = File.open(file).readlines.map(&:chomp)
+    content.each_with_index do |line, index|
+      if index == 0
+        Jekyll.logger.error line
+        next
+      end
+      Jekyll.logger.warn line
+    end
+  end
+
   # Check that the API key is available
   def check_api_key
     return if api_key
-    Jekyll.logger.error 'Algolia Error: No API key defined'
-    Jekyll.logger.warn '  You have two ways to configure your API key:'
-    Jekyll.logger.warn '    - The ALGOLIA_API_KEY environment variable'
-    Jekyll.logger.warn '    - A file named ./_algolia_api_key in your '\
-      'source folder'
+    display_error('api_key_missing')
     exit 1
   end
 
   # Check that the application id is defined
   def check_application_id
     return if @config['algolia'] && @config['algolia']['application_id']
-    Jekyll.logger.error 'Algolia Error: No application ID defined'
-    Jekyll.logger.warn '  Please set your application id in the '\
-      '_config.yml file, like so:'
-    Jekyll.logger.warn ''
-    # The spaces are needed otherwise the text is centered
-    Jekyll.logger.warn '  algolia:         '
-    Jekyll.logger.warn '    application_id: \'{your_application_id}\''
-    Jekyll.logger.warn ''
-    Jekyll.logger.warn '  Your application ID can be found in your algolia'\
-      ' dashboard'
-    Jekyll.logger.warn '    https://www.algolia.com/licensing'
+    display_error('application_id_missing')
     exit 1
   end
 
   # Check that the index name is defined
   def check_index_name
     return if @config['algolia'] && @config['algolia']['index_name']
-    Jekyll.logger.error 'Algolia Error: No index name defined'
-    Jekyll.logger.warn '  Please set your index name in the _config.yml'\
-      ' file, like so:'
-    Jekyll.logger.warn ''
-    # The spaces are needed otherwise the text is centered
-    Jekyll.logger.warn '  algolia:         '
-    Jekyll.logger.warn '    index_name: \'{your_index_name}\''
-    Jekyll.logger.warn ''
-    Jekyll.logger.warn '  You can edit your indices in your dashboard'
-    Jekyll.logger.warn '    https://www.algolia.com/explorer'
+    display_error('index_name_missing')
     exit 1
   end
 

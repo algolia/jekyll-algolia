@@ -7,6 +7,7 @@ gem 'nokogiri', '~> 1.6'
 
 group :development do
   gem 'coveralls', '~> 0.8'
+  gem 'flay', '~> 2.6'
   gem 'flog', '~> 4.3'
   gem 'guard-rspec', '~> 4.6'
   gem 'jekyll', '~> 2.5' # Jekyll custom commands only available from 2.5

@@ -1,0 +1,8 @@
+Algolia Error: No application ID defined
+  Please set your application id in the _config.yml file, like so:
+
+  algolia:         
+    application_id: {your_application_id}
+
+  Your application ID can be found in your algolia dashboard:
+    https://www.algolia.com/licensing

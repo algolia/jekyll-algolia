@@ -1,0 +1,4 @@
+Algolia Error: No API key defined
+  You have two ways to configure your API key:
+    - The ALGOLIA_API_KEY environment variable
+    - A file named _algolia_api_key in your source folder

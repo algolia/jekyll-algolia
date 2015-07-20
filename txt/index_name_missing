@@ -1,0 +1,9 @@
+Algolia Error: No index name defined
+  Please set your index name in the _config.yml file, like so:
+
+  algolia:         
+    index_name: {your_index_name}
+
+  You can edit your indices in your dashboard:
+    https://www.algolia.com/explorer
+

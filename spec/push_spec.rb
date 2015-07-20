@@ -97,115 +97,6 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
-  describe 'api_key' do
-    it 'returns nil if no key found' do
-      # Given
-      push.init_options(nil, options, config)
-
-      # When
-      expect(push.api_key).to be_nil
-    end
-
-    it 'reads from ENV var if set' do
-      # Given
-      push.init_options(nil, options, config)
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-
-      # When
-      actual = push.api_key
-
-      # Then
-      expect(actual).to eq 'APIKEY_FROM_ENV'
-    end
-
-    it 'reads from _algolia_api_key in source if set' do
-      # Given
-      config['source'] = File.join(config['source'], 'api_key_dir')
-      push.init_options(nil, options, config)
-
-      # When
-      actual = push.api_key
-
-      # Then
-      expect(actual).to eq 'APIKEY_FROM_FILE'
-    end
-
-    it 'reads from ENV before from file' do
-      # Given
-      config['source'] = File.join(config['source'], 'api_key_dir')
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-      push.init_options(nil, options, config)
-
-      # When
-      actual = push.api_key
-
-      # Then
-      expect(actual).to eq 'APIKEY_FROM_ENV'
-    end
-  end
-
-  describe 'check_credentials' do
-    it 'should display error if no api key' do
-      # Given
-      config['algolia'] = {
-        'application_id' => 'APP_ID',
-        'index_name' => 'INDEX_NAME'
-      }
-      push.init_options(nil, options, config)
-
-      # Then
-      expect(Jekyll.logger).to receive(:error).with(/api key/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
-      expect(-> { push.check_credentials }).to raise_error SystemExit
-    end
-
-    it 'should display error if no application id' do
-      # Given
-      config['algolia'] = {
-        'application_id' => nil,
-        'index_name' => 'INDEX_NAME'
-      }
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-      push.init_options(nil, options, config)
-
-      # Then
-      expect(Jekyll.logger).to receive(:error).with(/application id/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
-      expect(-> { push.check_credentials }).to raise_error SystemExit
-    end
-
-    it 'should display error if no index name' do
-      # Given
-      config['algolia'] = {
-        'application_id' => 'APPLICATION_ID',
-        'index_name' => nil
-      }
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-      push.init_options(nil, options, config)
-
-      # Then
-      expect(Jekyll.logger).to receive(:error).with(/index name/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
-      expect(-> { push.check_credentials }).to raise_error SystemExit
-    end
-
-    it 'should init the Algolia client' do
-      # Given
-      push.init_options(nil, options, config)
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
-      allow(Algolia).to receive(:init)
-
-      # When
-      push.check_credentials
-
-      # Then
-      expect(Algolia).to have_received(:init).with(
-        application_id: 'APPID',
-        api_key: 'APIKEY_FROM_ENV'
-      )
-    end
-  end
-
   describe 'configure_index' do
     it 'sets some sane defaults' do
       # Given
@@ -295,7 +186,8 @@ describe(AlgoliaSearchJekyllPush) do
     before(:each) do
       push.init_options(nil, options, config)
       # Mock all calls to not send anything
-      allow(push).to receive(:check_credentials)
+      allow_any_instance_of(AlgoliaSearchCredentialChecker)
+        .to receive(:assert_valid)
       allow(Algolia).to receive(:init)
       allow(Algolia).to receive(:move_index)
       allow(Algolia::Index).to receive(:new).and_return(index_double)

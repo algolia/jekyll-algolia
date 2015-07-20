@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-MAX_SCORE=45
+MAX_SCORE = 45
 
 flog_lines = `flog ./lib/`.split("\n")
 
@@ -11,6 +11,7 @@ flog_lines.each_with_index do |line, index|
 
   pattern = /^ *(.*): (.*) (.*):[0-9]*/
   matches = line.match(pattern)
+  next if matches.nil?
   score = matches[1].to_f
 
   next if score < MAX_SCORE

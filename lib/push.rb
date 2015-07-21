@@ -22,9 +22,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       @config = config
       @is_verbose = @config['verbose']
 
-      # Allow for passing index name on the command line
-      index_name = args[0]
-      @config['algolia']['index_name'] = index_name if index_name
       self
     end
 
@@ -42,6 +39,9 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         allowed_extensions += @config['markdown_ext'].split(',')
       end
       return false unless allowed_extensions.include?(extname)
+
+      # Exclude pagination pages
+      return false if file.path =~ %r{^page([0-9]*)/index\.html}
 
       # Exclude files manually excluded from config
       excluded_files = @config['algolia']['excluded_files']
@@ -100,8 +100,10 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       }
 
       # Merge default settings with user custom ones
-      (@config['algolia']['settings'] || []).each do |key, value|
-        settings[key.to_sym] = value
+      if @config['algolia']
+        (@config['algolia']['settings'] || []).each do |key, value|
+          settings[key.to_sym] = value
+        end
       end
 
       index.set_settings(settings)

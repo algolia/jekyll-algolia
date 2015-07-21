@@ -25,12 +25,14 @@ RSpec.configure do |config|
     )
     config = Jekyll.configuration(config)
 
-    site = AlgoliaSearchJekyllPush.jekyll_new(config)
+    site = AlgoliaSearchJekyllPush.init_options({}, options, config)
+                           .jekyll_new(config)
 
     def site.file_by_name(file_name)
       each_site_file do |file|
         return file if file.path =~ /#{file_name}$/
       end
+      nil
     end
 
     allow(site).to receive(:write) if options[:mock_write_method]

@@ -10,6 +10,7 @@ describe(AlgoliaSearchJekyllPush) do
   let(:static_file) { site.file_by_name('ring.png') }
   let(:document_file) { site.file_by_name('collection-item.md') }
   let(:html_document_file) { site.file_by_name('collection-item.html') }
+  let(:pagination_page) { site.file_by_name('page2/index.html') }
   let(:items) do
     [{
       name: 'foo',
@@ -19,26 +20,13 @@ describe(AlgoliaSearchJekyllPush) do
       url: '/bar'
     }]
   end
-  let(:options) do
-    {
-      'drafts' => true
-    }
-  end
-  let(:config) do
-    {
-      'source' => File.expand_path('./spec/fixtures'),
-      'markdown_ext' => 'md,mkd',
-      'algolia' => {
-        'application_id' => 'APPID',
-        'index_name' => 'INDEXNAME'
-      }
-    }
-  end
 
   describe 'init_options' do
     it 'sets options and config' do
       # Given
       args = nil
+      options = { 'foo' => 'bar' }
+      config = { 'bar' => 'foo' }
 
       # When
       push.init_options(args, options, config)
@@ -47,24 +35,9 @@ describe(AlgoliaSearchJekyllPush) do
       expect(push.options).to include(options)
       expect(push.config).to include(config)
     end
-
-    it 'sets indexname from the commandline' do
-      # Given
-      args = ['newindex']
-
-      # When
-      push.init_options(args, options, config)
-
-      # Then
-      expect(push.config['algolia']['index_name']).to eq 'newindex'
-    end
   end
 
   describe 'indexable?' do
-    before(:each) do
-      push.init_options(nil, options, config)
-    end
-
     it 'exclude StaticFiles' do
       expect(push.indexable?(static_file)).to eq false
     end
@@ -86,21 +59,18 @@ describe(AlgoliaSearchJekyllPush) do
     end
 
     it 'exclude file specified in config' do
-      # Given
-      config['algolia']['excluded_files'] = [
-        'excluded.html'
-      ]
-      push.init_options(nil, options, config)
-
-      # Then
       expect(push.indexable?(excluded_page_file)).to eq false
+    end
+
+    it 'does not index pagination pages' do
+      expect(push.indexable?(pagination_page)).to eq false
     end
   end
 
   describe 'configure_index' do
     it 'sets some sane defaults' do
       # Given
-      push.init_options(nil, options, config)
+      push.init_options(nil, {}, {})
       index = double
 
       # Then
@@ -122,8 +92,12 @@ describe(AlgoliaSearchJekyllPush) do
         customSetting: 'foo',
         customRanking: ['asc(foo)', 'desc(bar)']
       }
-      config['algolia']['settings'] = settings
-      push.init_options(nil, options, config)
+      config = {
+        'algolia' => {
+          'settings' => settings
+        }
+      }
+      push.init_options(nil, {}, config)
       index = double
 
       # Then
@@ -137,7 +111,7 @@ describe(AlgoliaSearchJekyllPush) do
   describe 'jekyll_new' do
     it 'should return a patched version of site with a custom write' do
       # Given
-      normal_site = Jekyll::Site.new(Jekyll.configuration(config))
+      normal_site = Jekyll::Site.new(Jekyll.configuration)
       normal_method = normal_site.method(:write).source_location
 
       patched_site = get_site({}, mock_write_method: false, process: false)
@@ -182,9 +156,16 @@ describe(AlgoliaSearchJekyllPush) do
 
   describe 'push' do
     let(:index_double) { double('Algolia Index').as_null_object }
+    let(:config) do
+      {
+        'algolia' => {
+          'index_name' => 'INDEXNAME'
+        }
+      }
+    end
 
     before(:each) do
-      push.init_options(nil, options, config)
+      push.init_options(nil, {}, config)
       # Mock all calls to not send anything
       allow_any_instance_of(AlgoliaSearchCredentialChecker)
         .to receive(:assert_valid)

@@ -1,9 +1,13 @@
+collections:
+  my-collection:
+    output: true
+markdown_ext: 'md,mkd'
+paginate: 1
 timezone: Europe/Paris
 
 algolia:
   application_id: APPID
   index_name:     INDEXNAME
+  excluded_files:
+    - excluded.html
 
-collections:
-  my-collection:
-    output: true

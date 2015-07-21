@@ -20,6 +20,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       @args = args
       @options = options
       @config = config
+      @is_verbose = @config['verbose']
 
       # Allow for passing index name on the command line
       index_name = args[0]
@@ -57,8 +58,10 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       # on disk
       def site.write
         items = []
+        is_verbose = config['verbose']
         each_site_file do |file|
           next unless AlgoliaSearchJekyllPush.indexable?(file)
+          Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
           new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?
 
@@ -107,7 +110,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def push(items)
       AlgoliaSearchCredentialChecker.new(@config).assert_valid
 
-      is_dry_run = @options['dry_run']
+      is_dry_run = @config['dry_run']
       Jekyll.logger.info '=== DRY RUN ===' if is_dry_run
 
       # Create a temporary index

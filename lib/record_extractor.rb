@@ -6,6 +6,7 @@ require 'json'
 class AlgoliaSearchRecordExtractor
   def initialize(file)
     @file = file
+    @config = file.site.config
     default_config = {
       'record_css_selector' => 'p'
     }

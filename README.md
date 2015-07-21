@@ -134,10 +134,25 @@ class AlgoliaSearchRecordExtractor
 end
 ```
 
+## Command line
+
+Here is the list of command line options you can pass to the `jekyll algolia
+push` command:
+
+| Flag                     | Description                                                           | 
+| ----                     | -----                                                                 | 
+| `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` | 
+| `--future`               | With this flag, the command will also index posts with a future date  | 
+| `--limit_posts 10`       | Limits the number of posts to parse and index                         | 
+| `--drafts`               | Index drafts in the `_drafts` folder as well                          | 
+| `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             | 
+| `--verbose`              | Display more information about what is going to be indexed            | 
+
 ## Dependencies
 
-The `algoliasearch-jekyll` plugin works form versions of Jekyll starting from
-2.5, with a version of Ruby of at least 2.0.
+The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
+2.5, with a version of Ruby of at least 2.0. You also need
+[Bundler](http://bundler.io/) to easily add the gem as a dependency to Jekyll.
 
 ## Searching
 

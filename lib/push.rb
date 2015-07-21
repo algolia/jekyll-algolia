@@ -21,6 +21,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       @options = options
       @config = config
       @is_verbose = @config['verbose']
+      @is_dry_run = @config['dry_run']
 
       self
     end
@@ -120,32 +121,37 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       index.set_settings(settings)
     end
 
-    def push(items)
-      AlgoliaSearchCredentialChecker.new(@config).assert_valid
+    # Create an index to push our data
+    def create_index(index_name)
+      index = Algolia::Index.new(index_name)
+      configure_index(index) unless @is_dry_run
+      index
+    end
 
-      is_dry_run = @config['dry_run']
-      Jekyll.logger.info '=== DRY RUN ===' if is_dry_run
-
-      # Create a temporary index
-      index_name = @config['algolia']['index_name']
-      index_name_tmp = "#{index_name}_tmp"
-      index_tmp = Algolia::Index.new(index_name_tmp)
-      configure_index(index_tmp) unless is_dry_run
-
-      # Push to temporary index
+    # Push records to the index
+    def batch_add_items(items, index)
       items.each_slice(1000) do |batch|
         Jekyll.logger.info "Indexing #{batch.size} items"
         begin
-          index_tmp.add_objects!(batch) unless is_dry_run
+          index.add_objects!(batch) unless @is_dry_run
         rescue StandardError => error
           Jekyll.logger.error 'Algolia Error: HTTP Error'
           Jekyll.logger.warn error.message
           exit 1
         end
       end
+    end
 
-      # Move temporary index to real one
-      Algolia.move_index(index_name_tmp, index_name) unless is_dry_run
+    def push(items)
+      AlgoliaSearchCredentialChecker.new(@config).assert_valid
+
+      Jekyll.logger.info '=== DRY RUN ===' if @is_dry_run
+
+      # Add items to a temp index, then rename it
+      index_name = @config['algolia']['index_name']
+      index_name_tmp = "#{index_name}_tmp"
+      batch_add_items(items, create_index(index_name_tmp))
+      Algolia.move_index(index_name_tmp, index_name) unless @is_dry_run
 
       Jekyll.logger.info "Indexing of #{items.size} items " \
                          "in #{index_name} done."

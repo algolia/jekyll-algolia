@@ -9,8 +9,3 @@ fi
 # Match style guide
 rubocop -F './lib/' './spec' || exit 1
 
-# No over-complex methods
-./scripts/check_flog || exit 1
-
-# No duplication
-./scripts/check_flay

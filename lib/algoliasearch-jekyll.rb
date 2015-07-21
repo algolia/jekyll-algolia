@@ -21,6 +21,11 @@ class AlgoliaSearchJekyll < Jekyll::Command
 
           subcommand.action do |args, options|
             @config = configuration_from_options(options)
+
+            default_options = {
+              'dry_run' => false
+            }
+            options = default_options.merge(options)
             AlgoliaSearchJekyllPush.init_options(args, options, @config)
                                    .jekyll_new(@config)
                                    .process
@@ -40,6 +45,8 @@ class AlgoliaSearchJekyll < Jekyll::Command
                      'Index posts in the _drafts folder'
       command.option 'unpublished', '--unpublished',
                      'Index posts that were marked as unpublished'
+      command.option 'dry_run', '--dry-run', '-n',
+                     'Do a dry run, do not push records'
     end
   end
 end

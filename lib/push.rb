@@ -107,17 +107,20 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def push(items)
       AlgoliaSearchCredentialChecker.new(@config).assert_valid
 
+      is_dry_run = @options['dry_run']
+      Jekyll.logger.info '=== DRY RUN ===' if is_dry_run
+
       # Create a temporary index
       index_name = @config['algolia']['index_name']
       index_name_tmp = "#{index_name}_tmp"
       index_tmp = Algolia::Index.new(index_name_tmp)
-      configure_index(index_tmp)
+      configure_index(index_tmp) unless is_dry_run
 
       # Push to temporary index
       items.each_slice(1000) do |batch|
         Jekyll.logger.info "Indexing #{batch.size} items"
         begin
-          index_tmp.add_objects!(batch)
+          index_tmp.add_objects!(batch) unless is_dry_run
         rescue StandardError => error
           Jekyll.logger.error 'Algolia Error: HTTP Error'
           Jekyll.logger.warn error.message
@@ -126,7 +129,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       end
 
       # Move temporary index to real one
-      Algolia.move_index(index_name_tmp, index_name)
+      Algolia.move_index(index_name_tmp, index_name) unless is_dry_run
 
       Jekyll.logger.info "Indexing of #{items.size} items " \
                          "in #{index_name} done."

@@ -10,4 +10,3 @@ algolia:
   index_name:     INDEXNAME
   excluded_files:
     - excluded.html
-

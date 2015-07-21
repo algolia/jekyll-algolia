@@ -40,14 +40,25 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       end
       return false unless allowed_extensions.include?(extname)
 
-      # Exclude pagination pages
-      return false if file.path =~ %r{^page([0-9]*)/index\.html}
-
-      # Exclude files manually excluded from config
-      excluded_files = @config['algolia']['excluded_files']
-      return false if excluded_files && excluded_files.include?(basename)
+      return false if excluded_file?(file.path)
 
       true
+    end
+
+    # Check if the file is in the list of excluded files
+    def excluded_file?(filepath)
+      excluded = [
+        %r{^page([0-9]*)/index\.html}
+      ]
+      if @config['algolia']
+        excluded += (@config['algolia']['excluded_files'] || [])
+      end
+
+      excluded.each do |pattern|
+        pattern = /#{Regexp.quote(pattern)}/ if pattern.is_a? String
+        return true if filepath =~ pattern
+      end
+      false
     end
 
     # Return a patched version of a Jekyll instance

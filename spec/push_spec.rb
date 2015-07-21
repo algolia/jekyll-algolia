@@ -67,6 +67,20 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
+  describe 'excluded_files?' do
+    before(:each) do
+      push.init_options(nil, {}, site.config)
+    end
+
+    it 'should alway exclude pagination pages' do
+      expect(push.excluded_file?('page3/index.html')).to eq true
+    end
+
+    it 'should exclude user specified strings' do
+      expect(push.excluded_file?('excluded.html')).to eq true
+    end
+  end
+
   describe 'configure_index' do
     it 'sets some sane defaults' do
       # Given

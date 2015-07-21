@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Succeed fast if we did not change any ruby file
+if ! git status --short | grep -q '\.rb$'; then
+  exit 0
+fi
+
 # Do not commit any focused or excluded tests
 if grep --color -r 'spec' -E -e '^( |\t)*(fit|fdescribe|xit|xdescribe)'; then
   echo '✘ You have focused and/or skipped tests'

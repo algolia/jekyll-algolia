@@ -76,6 +76,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
           new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?
+          ap new_items if is_verbose
 
           items += new_items
         end

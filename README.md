@@ -134,6 +134,23 @@ class AlgoliaSearchRecordExtractor
 end
 ```
 
+The `AlgoliaSearchJekyllPush` class also lets user define the
+`custom_hook_excluded_file?` method. This method is called on every file that
+the plugin thinks it should parse and index. If it returns `true`, the file is
+not indexed. You can add here your custom logic to exclude some files.
+
+```ruby
+class AlgoliaSearchJekyllPush < Jekyll::Command
+  class << self
+    # Hook to exclude some files from indexing
+    def custom_hook_excluded_file?(file)
+      return true if filepath =~ %r{^/excluded_dir/}
+      false
+    end
+  end
+end
+```
+
 ## Command line
 
 Here is the list of command line options you can pass to the `jekyll algolia

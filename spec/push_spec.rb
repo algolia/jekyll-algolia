@@ -72,12 +72,28 @@ describe(AlgoliaSearchJekyllPush) do
       push.init_options(nil, {}, site.config)
     end
 
+    it 'should not exclude normal pages' do
+      expect(push.excluded_file?(html_page_file)).to eq false
+    end
+
     it 'should alway exclude pagination pages' do
-      expect(push.excluded_file?('page3/index.html')).to eq true
+      expect(push.excluded_file?(pagination_page)).to eq true
     end
 
     it 'should exclude user specified strings' do
-      expect(push.excluded_file?('excluded.html')).to eq true
+      expect(push.excluded_file?(excluded_page_file)).to eq true
+    end
+  end
+
+  describe 'custom_hook_excluded_file?' do
+    it 'let the user call a custom hook to exclude some files' do
+      # Given
+      def push.custom_hook_excluded_file?(_file)
+        true
+      end
+
+      # Then
+      expect(push.excluded_file?(html_page_file)).to eq true
     end
   end
 

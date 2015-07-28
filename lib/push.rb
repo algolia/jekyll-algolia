@@ -41,13 +41,13 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       end
       return false unless allowed_extensions.include?(extname)
 
-      return false if excluded_file?(file.path)
+      return false if excluded_file?(file)
 
       true
     end
 
     # Check if the file is in the list of excluded files
-    def excluded_file?(filepath)
+    def excluded_file?(file)
       excluded = [
         %r{^page([0-9]*)/index\.html}
       ]
@@ -55,10 +55,21 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         excluded += (@config['algolia']['excluded_files'] || [])
       end
 
+      # Exclude files explicitly excluded in _config
       excluded.each do |pattern|
         pattern = /#{Regexp.quote(pattern)}/ if pattern.is_a? String
-        return true if filepath =~ pattern
+        return true if file.path =~ pattern
       end
+
+      # Call user custom exclude hook on remaining files
+      return true if custom_hook_excluded_file?(file)
+
+      false
+    end
+
+    # User custom method to exclude some files when algolia.excluded_files is
+    # not enough
+    def custom_hook_excluded_file?(_file)
       false
     end
 
@@ -90,7 +101,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def configure_index(index)
       settings = {
         distinct: true,
-        attributeForDistinct: 'title',
+        attributeForDistinct: 'url',
         attributesForFaceting: %w(tags type title),
         attributesToIndex: %w(
           title h1 h2 h3 h4 h5 h6

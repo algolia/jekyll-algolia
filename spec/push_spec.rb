@@ -105,7 +105,7 @@ describe(AlgoliaSearchJekyllPush) do
 
       # Then
       expected = {
-        attributeForDistinct: 'title',
+        attributeForDistinct: 'url',
         distinct: true,
         customRanking: ['desc(posted_at)', 'desc(weight)']
       }

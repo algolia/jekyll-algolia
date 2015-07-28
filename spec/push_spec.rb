@@ -184,6 +184,29 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
+  describe 'set_user_agent_header' do
+    it 'should set a User-Agent with the plugin name and version' do
+      # Given
+      expected = '48.1516.2342'
+      spec = Gem::Specification.load('algoliasearch-jekyll.gemspec')
+      spec.version = expected
+      allow(Algolia).to receive(:set_extra_header)
+
+      # When
+      push.set_user_agent_header
+
+      # Then
+      expect(Algolia).to have_received(:set_extra_header).with(
+        'User-Agent',
+        /Jekyll/
+      )
+      expect(Algolia).to have_received(:set_extra_header).with(
+        'User-Agent',
+        /#{expected}/
+      )
+    end
+  end
+
   describe 'push' do
     let(:index_double) { double('Algolia Index').as_null_object }
     let(:config) do
@@ -199,6 +222,7 @@ describe(AlgoliaSearchJekyllPush) do
       # Mock all calls to not send anything
       allow_any_instance_of(AlgoliaSearchCredentialChecker)
         .to receive(:assert_valid)
+      allow(Algolia).to receive(:set_extra_header)
       allow(Algolia).to receive(:init)
       allow(Algolia).to receive(:move_index)
       allow(Algolia::Index).to receive(:new).and_return(index_double)

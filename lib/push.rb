@@ -124,8 +124,15 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       index.set_settings(settings)
     end
 
+    # Change the User-Agent header to isolate calls from this plugin
+    def set_user_agent_header
+      version = Gem::Specification.load('algoliasearch-jekyll.gemspec').version
+      Algolia.set_extra_header('User-Agent', "Algolia for Jekyll #{version}")
+    end
+
     # Create an index to push our data
     def create_index(index_name)
+      set_user_agent_header
       index = Algolia::Index.new(index_name)
       configure_index(index) unless @is_dry_run
       index

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# Succeed fast if we did not change any ruby file
-if ! git status --short | grep -q '\.rb$'; then
-  exit 0
-fi
-
 rake spec || exit 1
 
 # No over-complex methods

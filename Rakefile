@@ -12,10 +12,12 @@ end
 require 'rake'
 
 require 'jeweler'
+require_relative 'lib/version'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see
   # http://guides.rubygems.org/specification-reference/ for more options
   gem.name = 'algoliasearch-jekyll'
+  gem.version = AlgoliaSearchJekyllVersion.to_s
   gem.homepage = 'https://github.com/algolia/algoliasearch-jekyll'
   gem.license = 'MIT'
   gem.summary = 'AlgoliaSearch for Jekyll'

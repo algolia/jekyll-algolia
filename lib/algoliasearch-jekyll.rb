@@ -3,7 +3,8 @@ require 'bundler/setup'
 
 require 'awesome_print'
 
-require_relative './push.rb'
+require_relative './version'
+require_relative './push'
 
 # `jekyll algolia` main entry
 class AlgoliaSearchJekyll < Jekyll::Command

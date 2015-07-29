@@ -185,12 +185,13 @@ describe(AlgoliaSearchJekyllPush) do
   end
 
   describe 'set_user_agent_header' do
+    before(:each) do
+      allow(Algolia).to receive(:set_extra_header)
+    end
+
     it 'should set a User-Agent with the plugin name and version' do
       # Given
-      expected = '48.1516.2342'
-      spec = Gem::Specification.load('algoliasearch-jekyll.gemspec')
-      spec.version = expected
-      allow(Algolia).to receive(:set_extra_header)
+      allow(AlgoliaSearchJekyllVersion).to receive(:to_s).and_return '99.42'
 
       # When
       push.set_user_agent_header
@@ -198,11 +199,7 @@ describe(AlgoliaSearchJekyllPush) do
       # Then
       expect(Algolia).to have_received(:set_extra_header).with(
         'User-Agent',
-        /Jekyll/
-      )
-      expect(Algolia).to have_received(:set_extra_header).with(
-        'User-Agent',
-        /#{expected}/
+        /Jekyll(.*)99.42/
       )
     end
   end

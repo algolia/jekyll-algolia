@@ -1,8 +1,9 @@
 require 'algoliasearch'
 require 'nokogiri'
 require 'json'
-require_relative './record_extractor.rb'
-require_relative './credential_checker.rb'
+require_relative './version'
+require_relative './record_extractor'
+require_relative './credential_checker'
 
 # `jekyll algolia push` command
 class AlgoliaSearchJekyllPush < Jekyll::Command
@@ -126,7 +127,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
     # Change the User-Agent header to isolate calls from this plugin
     def set_user_agent_header
-      version = Gem::Specification.load('algoliasearch-jekyll.gemspec').version
+      version = AlgoliaSearchJekyllVersion.to_s
       Algolia.set_extra_header('User-Agent', "Algolia for Jekyll #{version}")
     end
 

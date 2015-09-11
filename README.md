@@ -28,10 +28,10 @@ minimum content to get your started.
 ```ruby
 source 'https://rubygems.org'
 
-gem 'jekyll', '>=2.5.3'
+gem 'jekyll', '~> 2.5.3'
 
 group :jekyll_plugins do
-  gem 'algoliasearch-jekyll'
+  gem 'algoliasearch-jekyll', '~> 0.4.3'
 end
 ```
 

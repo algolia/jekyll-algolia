@@ -1,9 +1,9 @@
 # Algolia Jekyll Plugin 
 
-[![Gem Version](https://badge.fury.io/rb/algoliasearch-jekyll.svg)](http://badge.fury.io/rb/algoliasearch-jekyll)
-[![Build Status](https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master)](https://travis-ci.org/algolia/algoliasearch-jekyll)
-[![Coverage Status](https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github)](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
-[![Code Climate](https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg)](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
+[![Gem Version][1]](http://badge.fury.io/rb/algoliasearch-jekyll)
+[![Build Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll)
+[![Coverage Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
+[![Code Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
 Algolia index by simply running `jekyll algolia push`.
@@ -59,13 +59,13 @@ algolia:
   index_name:     'your_index_name'
 ```
 
-You admin api key will be read from the `ALGOLIA_API_KEY` environment variable.
+You write api key will be read from the `ALGOLIA_API_KEY` environment variable.
 You can define it on the same line as your command, allowing you to type
-`ALGOLIA_API_KEY='your_admin_api_key' jekyll algolia push`.
+`ALGOLIA_API_KEY='your_write_api_key' jekyll algolia push`.
 
 ### ⚠ Other, unsecure, method ⚠
 
-You can also store your admin api key in a file named `_algolia_api_key`, in
+You can also store your write api key in a file named `_algolia_api_key`, in
 your source directory. If you do this we __very, very, very strongly__ encourage
 you to make sure the file is not tracked in your versioning system.
 
@@ -169,20 +169,83 @@ push` command:
 
 The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
 2.5, with a version of Ruby of at least 2.0. You also need
-[Bundler](http://bundler.io/) to easily add the gem as a dependency to Jekyll.
+[Bundler][5] to easily add the gem as a dependency to Jekyll.
 
 ## Searching
 
 This plugin will only index your data in your Algolia index. Adding search
-capabilities is quite easy. You can follow [our tutorials][1] or use our forked
-version of the popular [Hyde theme][2].
+capabilities is quite easy. You can follow [our tutorials][6] or use our forked
+version of the popular [Hyde theme][7].
 
 ## GitHub Pages
 
-Unfortunatly, GitHub does not allow custom plugins to be run on GitHub Pages.
-This mean that you will have to manually run `jekyll algolia push` before
-pushing your content to GitHub.
+GitHub does not allow custom plugins to be run on GitHub Pages. This means that
+you'll either have to run `jekyll algolia push` manually, or configure TravisCI
+to do it for you.
 
+[Travis CI][8] is an hosted continuous integration
+service, and it's free for open-source projects. Properly configured, it can
+automatically reindex your data whenever you push to `gh-pages`.
 
-[1]: https://www.algolia.com/doc/javascript
-[2]: https://github.com/algolia/hyde
+For it to work, you'll have 3 steps to perform.
+
+### 1. Create a `.travis.yml` file
+
+Create a file named `.travis.yml` at the root of your project, with the
+following content:
+
+```yml
+language: ruby
+cache: bundler
+branches:
+  only:
+    - gh-pages
+script: 
+  - bundle exec jekyll algolia push
+rvm:
+ - 2.2
+```
+
+This file will be read by Travis and instruct it to fetch all dependencies
+defined in the `Gemfile`, then run `jekyll algolia push`. This will only be
+triggered when data is pushed to the `gh-pages` branch.
+
+### 2. Update your `_config.yml` file to exclude `vendor`
+
+Travis will download all you `Gemfile` dependencies into a directory named
+`vendor`. You have to tell Jekyll to ignore this directory, otherwise Jekyll
+will try to parse it (and fail).
+
+Doing so is easy, just add the following line to your `_config.yml` file:
+
+```yml
+exclude: [vendor]
+```
+
+### 3. Configure Travis
+
+In order for Travis to be able to push data to your index on your behalf, you
+have to give it your write API Key. This is achieved by defining an
+`ALGOLIA_API_KEY` [environment variable][9] in Travis settings.
+
+You should also uncheck the "Build pull requests" option, otherwise any pull
+request targeting `gh-pages` will trigger the reindexing.
+
+![Travis Configuration][10]
+
+### Done
+
+Commit all the changes to the files, and then push to `gh-pages`. Travis will
+catch the event and trigger your indexing for you. You can follow the Travis job
+execution directly on [their website](https://travis-ci.org).
+
+[1]: https://badge.fury.io/rb/algoliasearch-jekyll.svg
+[2]: https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master
+[3]: https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github
+[4]: https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg
+[5]: http://bundler.io/
+[6]: https://www.algolia.com/doc/javascript
+[7]: https://github.com/algolia/hyde
+[8]: https://travis-ci.org/
+[9]: http://docs.travis-ci.com/user/environment-variables/
+[10]: /docs/travis-settings.png

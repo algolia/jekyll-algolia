@@ -100,8 +100,10 @@ algolia:
 
 #### `settings`
 
-Here you can pass any custom settings you would like to push to your Algolia
-index.
+Here you can pass any specific [index settings][5] to your Algolia index. All
+the settings supported by the API can be passed here.
+
+##### Examples 
 
 If you want to activate `distinct` and some snippets for example, you would do:
 
@@ -111,6 +113,28 @@ algolia:
     attributeForDistinct: 'hierarchy'
     distinct: true
     attributesToSnippet: ['text:20']
+```
+
+If you want to search in other fields than the default ones, you'll have to edit
+the `attributesToIndex` (default is `%w(title h1 h2 h3 h4 h5 h6 unordered(text)
+unordered(tags))`
+
+```yml
+algolia:
+  settings:
+    attributesToIndex:
+      - title
+      - h1
+      - h2
+      - h3
+      - h4
+      - h5
+      - h6
+      - unordered(text)
+      - unordered(tags)
+      - your_custom_attribute_1
+      - your_custom_attribute_2
+      - ...
 ```
 
 ### Hooks
@@ -169,13 +193,13 @@ push` command:
 
 The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
 2.5, with a version of Ruby of at least 2.0. You also need
-[Bundler][5] to easily add the gem as a dependency to Jekyll.
+[Bundler][6] to easily add the gem as a dependency to Jekyll.
 
 ## Searching
 
 This plugin will only index your data in your Algolia index. Adding search
-capabilities is quite easy. You can follow [our tutorials][6] or use our forked
-version of the popular [Hyde theme][7].
+capabilities is quite easy. You can follow [our tutorials][7] or use our forked
+version of the popular [Hyde theme][8].
 
 ## GitHub Pages
 
@@ -183,7 +207,7 @@ GitHub does not allow custom plugins to be run on GitHub Pages. This means that
 you'll either have to run `jekyll algolia push` manually, or configure TravisCI
 to do it for you.
 
-[Travis CI][8] is an hosted continuous integration
+[Travis CI][9] is an hosted continuous integration
 service, and it's free for open-source projects. Properly configured, it can
 automatically reindex your data whenever you push to `gh-pages`.
 
@@ -226,26 +250,29 @@ exclude: [vendor]
 
 In order for Travis to be able to push data to your index on your behalf, you
 have to give it your write API Key. This is achieved by defining an
-`ALGOLIA_API_KEY` [environment variable][9] in Travis settings.
+`ALGOLIA_API_KEY` [environment variable][10] in Travis settings.
 
 You should also uncheck the "Build pull requests" option, otherwise any pull
 request targeting `gh-pages` will trigger the reindexing.
 
-![Travis Configuration][10]
+![Travis Configuration][11]
 
 ### Done
 
 Commit all the changes to the files, and then push to `gh-pages`. Travis will
 catch the event and trigger your indexing for you. You can follow the Travis job
-execution directly on [their website](https://travis-ci.org).
+execution directly on [their website][12].
+
 
 [1]: https://badge.fury.io/rb/algoliasearch-jekyll.svg
 [2]: https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master
 [3]: https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github
 [4]: https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg
-[5]: http://bundler.io/
-[6]: https://www.algolia.com/doc/javascript
-[7]: https://github.com/algolia/hyde
-[8]: https://travis-ci.org/
-[9]: http://docs.travis-ci.com/user/environment-variables/
-[10]: /docs/travis-settings.png
+[5]: https://www.algolia.com/doc/ruby#indexing-parameters
+[6]: http://bundler.io/
+[7]: https://www.algolia.com/doc/javascript
+[8]: https://github.com/algolia/hyde
+[9]: https://travis-ci.org/
+[10]: http://docs.travis-ci.com/user/environment-variables/
+[11]: /docs/travis-settings.png
+[12]: https://travis-ci.org

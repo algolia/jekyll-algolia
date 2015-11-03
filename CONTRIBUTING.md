@@ -7,12 +7,11 @@ already referenced. If not, feel free to open one.
 We use [pull requests](https://github.com/algolia/algoliasearch-jekyll/pulls)
 for collaboration. The workflow is as follow:
 
-- Create a local branch, starting from `master`
-- Submit the PR on `master`
+- Create a local branch, starting from `develop`
+- Submit the PR on `develop`
 - Wait for review
 - Do the changes requested (if any)
-- We may ask you to rebase the branch to latest master if it gets out of sync
-  with `master`
+- We may ask you to rebase the branch to latest `develop` if it gets out of sync
 - Receive the thanks of the Algolia team :)
 
 # Development workflow
@@ -42,7 +41,7 @@ This part is for main contributors:
 # Update master and release
 ./scripts/release
 
-# Install the gem locally
+# Install the gem locally (optional)
 rake install
 ```
 

@@ -110,7 +110,11 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           unordered(tags)
         ),
         attributesToRetrieve: nil,
-        customRanking: ['desc(posted_at)', 'desc(weight)'],
+        customRanking: [
+          'desc(posted_at)',
+          'desc(weight.tag_name)',
+          'asc(weight.position)'
+        ],
         highlightPreTag: '<span class="algolia__result-highlight">',
         highlightPostTag: '</span>'
       }

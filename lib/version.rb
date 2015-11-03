@@ -1,8 +1,8 @@
 # Expose gem version
 class AlgoliaSearchJekyllVersion
   MAJOR = 0
-  MINOR = 4
-  PATCH = 3
+  MINOR = 5
+  PATCH = 0
   BUILD = nil
 
   def self.to_s

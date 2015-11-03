@@ -40,7 +40,7 @@ This part is for main contributors:
 # Bump the version
 vim ./lib/version.rb
 git add ./lib/version.rb
-git commit -m 'Version bump to X.Y.Z'
+git commit -m 'chore(bump): Version bump to X.Y.Z'
 
 # Install the gem locally
 rake install

@@ -316,7 +316,7 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  describe 'weight' do
+  describe 'weight_heading_relevance' do
     it 'gets the number of words in text also in the title' do
       # Given
       data = {
@@ -325,7 +325,7 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 2
@@ -341,7 +341,7 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 3
@@ -357,7 +357,7 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 2
@@ -372,7 +372,7 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 2
@@ -386,7 +386,7 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 1
@@ -407,10 +407,68 @@ describe(AlgoliaSearchRecordExtractor) do
       }
 
       # When
-      actual = page_file.weight(data)
+      actual = page_file.weight_heading_relevance(data)
 
       # Then
       expect(actual).to eq 2
+    end
+  end
+
+  describe 'weight_tag_name' do
+    it 'gives a score of 0 to non-headings' do
+      # Given
+      data = {
+        tag_name: 'p'
+      }
+
+      # When
+      actual = page_file.weight_tag_name(data)
+
+      # Then
+      expect(actual).to eq 0
+    end
+    it 'gives a score of 100 to h1' do
+      # Given
+      data = {
+        tag_name: 'h1'
+      }
+
+      # When
+      actual = page_file.weight_tag_name(data)
+
+      # Then
+      expect(actual).to eq 100
+    end
+    it 'gives a score of 40 to h6' do
+      # Given
+      data = {
+        tag_name: 'h6'
+      }
+
+      # When
+      actual = page_file.weight_tag_name(data)
+
+      # Then
+      expect(actual).to eq 50
+    end
+  end
+
+  describe 'weight' do
+    it 'returns an object with all weights' do
+      # Given
+      item = {
+        tag_name: 'p'
+      }
+      allow(page_file).to receive(:weight_tag_name) { 10 }
+      allow(page_file).to receive(:weight_heading_relevance) { 20 }
+
+      # When
+      actual = page_file.weight(item, 42)
+
+      # Then
+      expect(actual).to include(tag_name: 10)
+      expect(actual).to include(heading_relevance: 20)
+      expect(actual).to include(position: 42)
     end
   end
 

@@ -135,10 +135,9 @@ class AlgoliaSearchRecordExtractor
     node.css_path.gsub('html > body > ', '')
   end
 
-  # Returns a custom numeric value representing how relevant to its hierarchy
-  # this record is. This value can be used in the custom ranking to display more
-  # relevant records first.
-  def weight(data)
+  # The more words are in common between this node and its parent heading, the
+  # higher the score
+  def weight_heading_relevance(data)
     # Get list of unique words in headings
     title_words = %i(title h1 h2 h3 h4 h5 h6)
                   .select { |title| data.key?(title) }
@@ -152,13 +151,30 @@ class AlgoliaSearchRecordExtractor
     (title_words & text_words).size
   end
 
+  # Returns a weight based on the tag_name
+  def weight_tag_name(item)
+    tag_name = item[:tag_name]
+    # No a heading, no weight
+    return 0 unless  %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
+    # h1: 100, h2: 90, ..., h6: 50
+    100 - (tag_name.gsub('h', '').to_i - 1) * 10
+  end
+
+  # Returns an object of all weights
+  def weight(item, index)
+    {
+      tag_name: weight_tag_name(item),
+      heading_relevance: weight_heading_relevance(item),
+      position: index
+    }
+  end
+
   def extract
     items = []
     html_nodes.each_with_index do |node, index|
       next unless node.text.size > 0
 
       item = metadata.clone
-      item[:objectID] = "#{item[:slug]}_#{index}"
       item.merge!(node_hierarchy(node))
       item[:tag_name] = node.name
       item[:raw_html] = node_raw_html(node)
@@ -166,7 +182,7 @@ class AlgoliaSearchRecordExtractor
       item[:unique_hierarchy] = unique_hierarchy(item)
       item[:css_selector] = node_css_selector(node)
       item[:css_selector_parent] = node_css_selector(node_heading_parent(node))
-      item[:weight] = weight(item)
+      item[:weight] = weight(item, index)
 
       # We pass item through the user defined custom hook
       item = custom_hook_each(item, node)

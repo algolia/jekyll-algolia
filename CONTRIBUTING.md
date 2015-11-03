@@ -36,17 +36,23 @@ but running them locally gives faster feedback.
 This part is for main contributors:
 
 ```
-
-# Bump the version
+# Bump the version manually
 vim ./lib/version.rb
+
+# Commit it
 git add ./lib/version.rb
 git commit -m 'chore(bump): Version bump to X.Y.Z'
 
+# Merge develop into master
+git checkout master
+git rebase develop
+
+# Tag and release
+rake release
+
+
 # Install the gem locally
 rake install
-
-# Release to Rubygems
-rake release
 ```
 
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+git checkout master || exit 1
+git pull || exit 1
+git rebase develop || exit 1
+rake release || exit 1
+git checkout develop || exit 1
+git rebase master || exit 1

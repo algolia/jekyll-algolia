@@ -33,7 +33,8 @@ class BumpVersion
     old_version = AlgoliaSearchJekyllVersion.to_s
     new_version = bump(old_version, @type)
 
-    file = File.expand_path('../lib/version.rb')
+    script_dir = File.expand_path(File.dirname(__FILE__))
+    file = File.join(script_dir, '../lib/version.rb')
     old_content = File.read(file)
     new_content = old_content.gsub(old_version, new_version)
     File.write(file, new_content)

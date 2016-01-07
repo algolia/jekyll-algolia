@@ -79,10 +79,118 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  describe 'tags' do
-    it 'returns nil if no tag found' do
-      expect(page_file.tags).to eq nil
+  describe 'slug' do
+    it 'gets it from data if available' do
+      # Given
+      post_file.file.data['slug'] = 'foo'
+      allow(post_file.file).to receive(:respond_to?).with(:slug) do
+        false
+      end
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
     end
+
+    it 'gets it from the root if not in data' do
+      # Given
+      post_file.file.data.delete 'slug'
+      allow(post_file.file).to receive(:slug).and_return('foo')
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
+    end
+
+    it 'gets it from the data even if in the root' do
+      # Given
+      post_file.file.data['slug'] = 'foo'
+      allow(post_file.file).to receive(:slug).and_return('bar')
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
+    end
+
+    it 'guesses it from the path if not found' do
+      # Given
+      post_file.file.data.delete 'slug'
+      allow(post_file.file).to receive(:respond_to?).with(:slug) do
+        false
+      end
+      allow(post_file.file).to receive(:path) do
+        '/path/to/file/foo.html'
+      end
+
+      # When
+      actual = post_file.slug
+
+      # # Then
+      expect(actual).to eql('foo')
+    end
+  end
+
+  describe 'tags' do
+    it 'returns tags in data if available' do
+      # Given
+      post_file.file.data['tags'] = %w(foo bar)
+      allow(post_file.file).to receive(:respond_to?).with(:tags) do
+        false
+      end
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
+    it 'returns tags at the root if not in data' do
+      # Given
+      post_file.file.data.delete 'tags'
+      allow(post_file.file).to receive(:tags).and_return(%w(foo bar))
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
+    it 'returns tags in data even if in root' do
+      # Given
+      post_file.file.data['tags'] = %w(foo bar)
+      allow(post_file.file).to receive(:tags).and_return(%w(js css))
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
+    it 'parses tags as string if they are another type' do
+      # Given
+      tag_foo = double('Extended Tag', to_s: 'foo')
+      tag_bar = double('Extended Tag', to_s: 'bar')
+      post_file.file.data['tags'] = [tag_foo, tag_bar]
+      allow(post_file.file).to receive(:respond_to?).with(:tags) do
+        false
+      end
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
     it 'extract tags from front matter' do
       # Given
       actual = post_file.tags

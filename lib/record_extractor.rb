@@ -4,6 +4,8 @@ require 'json'
 
 # Given an HTML file as input, will return an array of records to index
 class AlgoliaSearchRecordExtractor
+  attr_reader :file
+
   def initialize(file)
     @file = file
     @config = file.site.config

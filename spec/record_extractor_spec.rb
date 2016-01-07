@@ -10,6 +10,12 @@ describe(AlgoliaSearchRecordExtractor) do
   let(:weight_page_file) { extractor.new(site.file_by_name('weight.md')) }
   let(:document_file) { extractor.new(site.file_by_name('collection-item.md')) }
 
+  before(:each) do
+    # Disabling the logs, while still allowing to spy them
+    Jekyll.logger = double('Specific Mock Logger').as_null_object
+    @logger = Jekyll.logger.writer
+  end
+
   describe 'metadata' do
     it 'gets metadata from page' do
       # Given
@@ -28,7 +34,6 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = post_file.metadata
 
       # Then
-      expect(actual[:type]).to eq 'post'
       expect(actual[:slug]).to eq 'test-post'
       expect(actual[:title]).to eq 'Test post'
       expect(actual[:url]).to eq '/2015/07/02/test-post.html'
@@ -56,6 +61,21 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:title]).to eq 'Collection Item'
       expect(actual[:url]).to eq '/my-collection/collection-item.html'
       expect(actual[:custom]).to eq 'Foo'
+    end
+
+    if restrict_jekyll_version(more_than: '3.0')
+      describe 'Jekyll > 3.0' do
+        it 'should not throw any deprecation warnings' do
+          # Given
+
+          # When
+          post_file.metadata
+
+          # Expect
+          expect(@logger).to_not have_received(:warn)
+        end
+      end
+
     end
   end
 
@@ -390,8 +410,6 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to eq 1
-
-      # I don't seem fit for that
     end
 
     it 'should still work with non-string keys' do

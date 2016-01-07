@@ -1,0 +1,17 @@
+collections:
+  my-collection:
+    output: true
+markdown_ext: 'md,mkd'
+paginate: 1
+timezone: Europe/Paris
+
+algolia:
+  application_id: APPID
+  index_name:     INDEXNAME
+  excluded_files:
+    - excluded.html
+
+# Jekyll 3.0 extracted the secondary features into their own plugins
+gems: 
+  - jekyll-paginate
+

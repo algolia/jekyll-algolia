@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-rake spec || exit 1
+./scripts/test || exit 1
 
 # No over-complex methods
 ./scripts/check_flog || exit 1

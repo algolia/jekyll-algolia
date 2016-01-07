@@ -1,6 +1,10 @@
 language: ruby
 cache: bundler
+gemfile:
+  - gemfiles/jekyll_v2.gemfile
+  - gemfiles/jekyll_v3.gemfile
 before_script: bundle update
+script: ./scripts/test_ci
 rvm:
  - 2.2
  - 2.1

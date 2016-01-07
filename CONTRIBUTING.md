@@ -16,8 +16,17 @@ for collaboration. The workflow is as follow:
 
 # Development workflow
 
-After the necessary `bundle install`, you can simply launch `guard` to start the
-test suite in watch mode (perfect for TDD).
+After the necessary `bundle install`, you'll also need to run `appraisal
+install`. This will configure the repository so that tests can be run both from
+Jekyll 2.5 and Jekyll 3.
+
+You can then launch:
+- `./scripts/test_v2` to launch tests on Jekyll v2
+- `./scripts/test_v3` to launch tests on Jekyll v3
+- `./scripts/test` to launch tests on both
+- `./scripts/watch` to start a test watcher (for TDD) for Jekyll v2
+- `./scripts/watch_v3` to start a test watcher (for TDD) for Jekyll v3 (you
+  cannot run both at the same time)
 
 If you want to test the plugin on an existing Jekyll website while developping,
 I suggest updating the website `Gemfile` to point to the correct local directory

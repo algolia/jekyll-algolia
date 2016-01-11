@@ -4,6 +4,7 @@
 [![Build Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll)
 [![Coverage Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
 [![Code Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
+![Jekyll >= 2.5](https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg)
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
 Algolia index by simply running `jekyll algolia push`.

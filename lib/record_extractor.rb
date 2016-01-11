@@ -4,6 +4,8 @@ require 'json'
 
 # Given an HTML file as input, will return an array of records to index
 class AlgoliaSearchRecordExtractor
+  attr_reader :file
+
   def initialize(file)
     @file = file
     @config = file.site.config
@@ -31,26 +33,42 @@ class AlgoliaSearchRecordExtractor
     metadata[:type] = @file.class.name.split('::')[1].downcase
     metadata[:url] = @file.url
 
-    if @file.respond_to? :slug
-      metadata[:slug] = @file.slug
-    else
-      basename = File.basename(@file.path)
-      extname = File.extname(basename)
-      metadata[:slug] = File.basename(basename, extname)
-    end
+    metadata[:slug] = slug
 
     metadata[:posted_at] = @file.date.to_time.to_i if @file.respond_to? :date
-    metadata[:tags] = tags if @file.respond_to? :tags
+    metadata[:tags] = tags
 
     metadata
   end
 
+  # Returns the slug of the document
+  def slug
+    # Jekyll v3 has it in data
+    return @file.data['slug'] if @file.data.key?('slug')
+    # Old Jekyll v2 has it at the root
+    return @file.slug if @file.respond_to? :slug
+    # Otherwise, we guess it from the filename
+    basename = File.basename(@file.path)
+    extname = File.extname(basename)
+    File.basename(basename, extname)
+  end
+
   # Extract a list of tags
   def tags
-    return nil unless @file.respond_to? :tags
-    # Some plugins will extend the tags from simple strings to full featured
-    # objects. We'll simply call .to_s to always have a string
-    @file.tags.map(&:to_s)
+    tags = nil
+
+    # Jekyll v3 has it in data, while v2 have it at the root
+    if @file.data.key?('tags')
+      tags = @file.data['tags']
+    elsif @file.respond_to? :tags
+      tags = @file.tags
+    end
+
+    return tags if tags.nil?
+
+    # Anyway, we force cast it to string as some plugins will extend the tags to
+    # full featured objects
+    tags.map(&:to_s)
   end
 
   # Get the list of all HTML nodes to index

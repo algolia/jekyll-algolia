@@ -3,7 +3,7 @@ require 'spec_helper'
 describe(AlgoliaSearchCredentialChecker) do
   let(:config) do
     {
-      'source' => File.expand_path('./spec/fixtures'),
+      'source' => fixture_path,
       'markdown_ext' => 'md,mkd',
       'algolia' => {
         'application_id' => 'APPID',

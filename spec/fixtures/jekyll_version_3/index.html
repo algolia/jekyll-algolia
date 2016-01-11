@@ -1,0 +1,13 @@
+---
+layout: default
+title: Home
+---
+
+This default index page is used to display the paginated posts
+
+{% for post in paginator.posts %}
+  <a href="{{ site.baseurl }}{{ post.url }}">
+    {{ post.title }}
+  </a>
+  {{ post.content }}
+{% endfor %}

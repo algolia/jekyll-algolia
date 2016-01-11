@@ -10,6 +10,12 @@ describe(AlgoliaSearchRecordExtractor) do
   let(:weight_page_file) { extractor.new(site.file_by_name('weight.md')) }
   let(:document_file) { extractor.new(site.file_by_name('collection-item.md')) }
 
+  before(:each) do
+    # Disabling the logs, while still allowing to spy them
+    Jekyll.logger = double('Specific Mock Logger').as_null_object
+    @logger = Jekyll.logger.writer
+  end
+
   describe 'metadata' do
     it 'gets metadata from page' do
       # Given
@@ -28,7 +34,6 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = post_file.metadata
 
       # Then
-      expect(actual[:type]).to eq 'post'
       expect(actual[:slug]).to eq 'test-post'
       expect(actual[:title]).to eq 'Test post'
       expect(actual[:url]).to eq '/2015/07/02/test-post.html'
@@ -57,12 +62,135 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[:url]).to eq '/my-collection/collection-item.html'
       expect(actual[:custom]).to eq 'Foo'
     end
+
+    if restrict_jekyll_version(more_than: '3.0')
+      describe 'Jekyll > 3.0' do
+        it 'should not throw any deprecation warnings' do
+          # Given
+
+          # When
+          post_file.metadata
+
+          # Expect
+          expect(@logger).to_not have_received(:warn)
+        end
+      end
+
+    end
+  end
+
+  describe 'slug' do
+    it 'gets it from data if available' do
+      # Given
+      post_file.file.data['slug'] = 'foo'
+      allow(post_file.file).to receive(:respond_to?).with(:slug) do
+        false
+      end
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
+    end
+
+    it 'gets it from the root if not in data' do
+      # Given
+      post_file.file.data.delete 'slug'
+      allow(post_file.file).to receive(:slug).and_return('foo')
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
+    end
+
+    it 'gets it from the data even if in the root' do
+      # Given
+      post_file.file.data['slug'] = 'foo'
+      allow(post_file.file).to receive(:slug).and_return('bar')
+
+      # When
+      actual = post_file.slug
+
+      # Then
+      expect(actual).to eql('foo')
+    end
+
+    it 'guesses it from the path if not found' do
+      # Given
+      post_file.file.data.delete 'slug'
+      allow(post_file.file).to receive(:respond_to?).with(:slug) do
+        false
+      end
+      allow(post_file.file).to receive(:path) do
+        '/path/to/file/foo.html'
+      end
+
+      # When
+      actual = post_file.slug
+
+      # # Then
+      expect(actual).to eql('foo')
+    end
   end
 
   describe 'tags' do
-    it 'returns nil if no tag found' do
-      expect(page_file.tags).to eq nil
+    it 'returns tags in data if available' do
+      # Given
+      post_file.file.data['tags'] = %w(foo bar)
+      allow(post_file.file).to receive(:respond_to?).with(:tags) do
+        false
+      end
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
     end
+
+    it 'returns tags at the root if not in data' do
+      # Given
+      post_file.file.data.delete 'tags'
+      allow(post_file.file).to receive(:tags).and_return(%w(foo bar))
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
+    it 'returns tags in data even if in root' do
+      # Given
+      post_file.file.data['tags'] = %w(foo bar)
+      allow(post_file.file).to receive(:tags).and_return(%w(js css))
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
+    it 'parses tags as string if they are another type' do
+      # Given
+      tag_foo = double('Extended Tag', to_s: 'foo')
+      tag_bar = double('Extended Tag', to_s: 'bar')
+      post_file.file.data['tags'] = [tag_foo, tag_bar]
+      allow(post_file.file).to receive(:respond_to?).with(:tags) do
+        false
+      end
+
+      # When
+      actual = post_file.tags
+
+      # Then
+      expect(actual).to include('foo', 'bar')
+    end
+
     it 'extract tags from front matter' do
       # Given
       actual = post_file.tags
@@ -390,8 +518,6 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual).to eq 1
-
-      # I don't seem fit for that
     end
 
     it 'should still work with non-string keys' do

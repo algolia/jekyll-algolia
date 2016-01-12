@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 cd "$(dirname "$BASH_SOURCE")"/..
 
-guard -g jekyll_v3
+appraisal jekyll-v3 guard 

@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
     "gemfiles/jekyll_v3.gemfile",
     "lib/algoliasearch-jekyll.rb",
     "lib/credential_checker.rb",
+    "lib/error_handler.rb",
     "lib/push.rb",
     "lib/record_extractor.rb",
     "lib/version.rb",
@@ -53,6 +54,7 @@ Gem::Specification.new do |s|
     "scripts/watch_v2",
     "scripts/watch_v3",
     "spec/credential_checker_spec.rb",
+    "spec/error_handler_spec.rb",
     "spec/fixtures/jekyll_version_2/_config.yml",
     "spec/fixtures/jekyll_version_2/_layouts/default.html",
     "spec/fixtures/jekyll_version_2/_my-collection/collection-item.html",
@@ -89,7 +91,8 @@ Gem::Specification.new do |s|
     "spec/spec_helper_simplecov.rb",
     "txt/api_key_missing",
     "txt/application_id_missing",
-    "txt/index_name_missing"
+    "txt/index_name_missing",
+    "txt/sample"
   ]
   s.homepage = "https://github.com/algolia/algoliasearch-jekyll"
   s.licenses = ["MIT"]
@@ -103,8 +106,10 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<algoliasearch>, ["~> 1.4"])
       s.add_runtime_dependency(%q<appraisal>, ["~> 2.1.0"])
       s.add_runtime_dependency(%q<awesome_print>, ["~> 1.6"])
+      s.add_runtime_dependency(%q<jekyll>, ["~> 2.5"])
       s.add_runtime_dependency(%q<json>, ["~> 1.8"])
       s.add_runtime_dependency(%q<nokogiri>, ["~> 1.6"])
+      s.add_runtime_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
       s.add_development_dependency(%q<coveralls>, ["~> 0.8"])
       s.add_development_dependency(%q<flay>, ["~> 2.6"])
       s.add_development_dependency(%q<flog>, ["~> 4.3"])
@@ -117,8 +122,10 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<algoliasearch>, ["~> 1.4"])
       s.add_dependency(%q<appraisal>, ["~> 2.1.0"])
       s.add_dependency(%q<awesome_print>, ["~> 1.6"])
+      s.add_dependency(%q<jekyll>, ["~> 2.5"])
       s.add_dependency(%q<json>, ["~> 1.8"])
       s.add_dependency(%q<nokogiri>, ["~> 1.6"])
+      s.add_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
       s.add_dependency(%q<coveralls>, ["~> 0.8"])
       s.add_dependency(%q<flay>, ["~> 2.6"])
       s.add_dependency(%q<flog>, ["~> 4.3"])
@@ -132,8 +139,10 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<algoliasearch>, ["~> 1.4"])
     s.add_dependency(%q<appraisal>, ["~> 2.1.0"])
     s.add_dependency(%q<awesome_print>, ["~> 1.6"])
+    s.add_dependency(%q<jekyll>, ["~> 2.5"])
     s.add_dependency(%q<json>, ["~> 1.8"])
     s.add_dependency(%q<nokogiri>, ["~> 1.6"])
+    s.add_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
     s.add_dependency(%q<coveralls>, ["~> 0.8"])
     s.add_dependency(%q<flay>, ["~> 2.6"])
     s.add_dependency(%q<flog>, ["~> 4.3"])

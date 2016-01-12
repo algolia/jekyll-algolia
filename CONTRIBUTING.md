@@ -34,6 +34,9 @@ I suggest updating the website `Gemfile` to point to the correct local directory
 ```ruby
 gem "algoliasearch-jekyll", :path => "/path/to/local/gem/folder"
 ```
+You should also run `rake gemspec` from the `algoliasearch-jekyll` repository if
+you added new files or dependencies.
+
 
 If you plan on submitting a PR, I suggest you install the git hooks. This will
 run pre-commit and pre-push checks. Those checks will also be run by TravisCI,

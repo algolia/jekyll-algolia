@@ -140,6 +140,66 @@ describe(AlgoliaSearchJekyllPush) do
       # When
       push.configure_index(index)
     end
+
+    describe 'throw an error' do
+      before(:each) do
+        @index_double = double('Algolia Index').as_null_object
+        @error_handler_double = double('Error Handler double').as_null_object
+        push.init_options(nil, {}, {})
+        allow(@index_double).to receive(:set_settings).and_raise
+        allow(Jekyll.logger).to receive(:error)
+      end
+
+      it 'stops if API throw an error' do
+        # Given
+
+        # When
+
+        # Then
+        expect(-> { push.configure_index(@index_double) })
+          .to raise_error SystemExit
+      end
+
+      it 'displays the error directly if unknown' do
+        # Given
+        allow(@error_handler_double)
+          .to receive(:readable_algolia_error).and_return false
+        allow(@error_handler_double)
+          .to receive(:display)
+        allow(AlgoliaSearchErrorHandler)
+          .to receive(:new).and_return(@error_handler_double)
+
+        # When
+
+        # Then
+        expect(-> { push.configure_index(@index_double) })
+          .to raise_error SystemExit
+        expect(@error_handler_double)
+          .to have_received(:display).exactly(0).times
+        expect(Jekyll.logger)
+          .to have_received(:error).with('Algolia Error: HTTP Error')
+      end
+
+      it 'display a human readable version of the error if one is found' do
+        # Given
+        allow(@error_handler_double)
+          .to receive(:readable_algolia_error).and_return 'known_errors'
+        allow(@error_handler_double)
+          .to receive(:display)
+        allow(AlgoliaSearchErrorHandler)
+          .to receive(:new).and_return(@error_handler_double)
+
+        # When
+
+        # Then
+        expect(-> { push.configure_index(@index_double) })
+          .to raise_error SystemExit
+        expect(@error_handler_double)
+          .to have_received(:display)
+          .exactly(1).times
+          .with('known_errors')
+      end
+    end
   end
 
   describe 'jekyll_new' do
@@ -272,7 +332,6 @@ describe(AlgoliaSearchJekyllPush) do
     end
 
     it 'should display an error if `add_objects!` failed' do
-      # Given
       allow(index_double).to receive(:add_objects!).and_raise
 
       expect(Jekyll.logger).to receive(:error)

@@ -4,6 +4,7 @@ require 'json'
 require_relative './version'
 require_relative './record_extractor'
 require_relative './credential_checker'
+require_relative './error_handler'
 
 # `jekyll algolia push` command
 class AlgoliaSearchJekyllPush < Jekyll::Command
@@ -126,7 +127,25 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         end
       end
 
-      index.set_settings(settings)
+      begin
+        index.set_settings(settings)
+      rescue StandardError => error
+        display_error(error)
+        exit 1
+      end
+    end
+
+    # Display the error in a human-friendly way if possible
+    def display_error(error)
+      error_handler = AlgoliaSearchErrorHandler.new
+      readable_error = error_handler.readable_algolia_error(error.message)
+
+      if readable_error
+        error_handler.display(readable_error)
+      else
+        Jekyll.logger.error 'Algolia Error: HTTP Error'
+        Jekyll.logger.warn error.message
+      end
     end
 
     # Change the User-Agent header to isolate calls from this plugin
@@ -150,8 +169,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         begin
           index.add_objects!(batch) unless @is_dry_run
         rescue StandardError => error
-          Jekyll.logger.error 'Algolia Error: HTTP Error'
-          Jekyll.logger.warn error.message
+          display_error(error)
           exit 1
         end
       end

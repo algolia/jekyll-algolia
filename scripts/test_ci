@@ -4,4 +4,4 @@
 # worrying about appraisal
 cd "$(dirname "$BASH_SOURCE")"/..
 
-bundle exec rspec
+COVERAGE=1 bundle exec rspec

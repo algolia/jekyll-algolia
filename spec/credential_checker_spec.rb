@@ -60,14 +60,16 @@ describe(AlgoliaSearchCredentialChecker) do
   end
 
   describe 'assert_valid' do
+    before(:each) do
+      allow(checker.logger).to receive(:display)
+    end
     it 'should display error if no api key' do
       # Given
-      allow(checker).to receive(:api_key) { nil }
+      allow(checker).to receive(:api_key).and_return nil
 
       # Then
-      expect(Jekyll.logger).to receive(:error).with(/api key/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
       expect(-> { checker.assert_valid }).to raise_error SystemExit
+      expect(checker.logger).to have_received(:display).with('api_key_missing')
     end
 
     it 'should display error if no application id' do
@@ -79,9 +81,10 @@ describe(AlgoliaSearchCredentialChecker) do
       stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
 
       # Then
-      expect(Jekyll.logger).to receive(:error).with(/application id/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
       expect(-> { checker.assert_valid }).to raise_error SystemExit
+      expect(checker.logger)
+        .to have_received(:display)
+        .with('application_id_missing')
     end
 
     it 'should display error if no index name' do
@@ -93,9 +96,10 @@ describe(AlgoliaSearchCredentialChecker) do
       stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
 
       # Then
-      expect(Jekyll.logger).to receive(:error).with(/index name/i)
-      expect(Jekyll.logger).to receive(:warn).at_least(:once)
       expect(-> { checker.assert_valid }).to raise_error SystemExit
+      expect(checker.logger)
+        .to have_received(:display)
+        .with('index_name_missing')
     end
 
     it 'should init the Algolia client' do

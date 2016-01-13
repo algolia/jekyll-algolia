@@ -64,6 +64,11 @@ You write api key will be read from the `ALGOLIA_API_KEY` environment variable.
 You can define it on the same line as your command, allowing you to type
 `ALGOLIA_API_KEY='your_write_api_key' jekyll algolia push`.
 
+Note that your API key should have write access to both the `index_name` and
+`_tmp` suffixed version of it (eg. `your_index_name` and `your_index_name_tmp`)
+in the previous example). This is due to the way we do atomic pushes by pushing
+to a temporary index and then renaming it.
+
 ### ⚠ Other, unsecure, method ⚠
 
 You can also store your write api key in a file named `_algolia_api_key`, in

@@ -2,7 +2,13 @@
 
 git checkout master || exit 1
 git pull || exit 1
+bundle install && appraisal install
+
 git rebase develop || exit 1
+bundle install && appraisal install
 rake release || exit 1
+
 git checkout develop || exit 1
+bundle install && appraisal install
 git rebase master || exit 1
+bundle install && appraisal install

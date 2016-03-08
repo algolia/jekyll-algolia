@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+rubocop -F './lib/' './spec'

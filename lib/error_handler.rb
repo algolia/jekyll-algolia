@@ -50,7 +50,7 @@ class AlgoliaSearchErrorHandler
   end
 
   def parse_algolia_error(error)
-    error.gsub!("\n", '')
+    error.delete!("\n")
 
     tester = error_tester
     matches = tester.match(error)

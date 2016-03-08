@@ -318,7 +318,7 @@ describe(AlgoliaSearchJekyllPush) do
 
       # Then
       expect(Algolia).to have_received(:move_index)
-                         .with('INDEXNAME_tmp', 'INDEXNAME')
+        .with('INDEXNAME_tmp', 'INDEXNAME')
     end
 
     it 'should display the number of elements indexed' do

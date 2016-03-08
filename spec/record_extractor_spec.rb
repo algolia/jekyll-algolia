@@ -44,7 +44,7 @@ describe(AlgoliaSearchRecordExtractor) do
     it 'gets posted_at timestamp based on the configured timezone' do
       # Given
       site = get_site(timezone: 'America/New_York')
-      post_file =  extractor.new(site.file_by_name('test-post.md'))
+      post_file = extractor.new(site.file_by_name('test-post.md'))
       actual = post_file.metadata
 
       # Then

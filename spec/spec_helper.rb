@@ -31,7 +31,7 @@ def get_site(config = {}, options = {})
   config = Jekyll.configuration(config)
 
   site = AlgoliaSearchJekyllPush.init_options({}, options, config)
-  .jekyll_new(config)
+                                .jekyll_new(config)
 
   def site.file_by_name(file_name)
     each_site_file do |file|

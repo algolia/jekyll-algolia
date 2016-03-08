@@ -25,8 +25,11 @@ You can then launch:
 - `./scripts/test_v3` to launch tests on Jekyll v3
 - `./scripts/test` to launch tests on both
 - `./scripts/watch` to start a test watcher (for TDD) for Jekyll v2
-- `./scripts/watch_v3` to start a test watcher (for TDD) for Jekyll v3 (you
-  cannot run both at the same time)
+- `./scripts/watch_v3` to start a test watcher (for TDD) for Jekyll v3
+
+The watched test will both launch Guard (with `guard-rspec`), but each will use
+its own `Guardfile` version, launching the correct `appraisal` before the
+`rspec` command.
 
 If you want to test the plugin on an existing Jekyll website while developping,
 I suggest updating the website `Gemfile` to point to the correct local directory

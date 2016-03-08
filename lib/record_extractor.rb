@@ -107,7 +107,7 @@ class AlgoliaSearchRecordExtractor
   # If the node itself is a heading, we include it
   def node_hierarchy(node, state = { level: 7 })
     tag_name = node.name
-    level = tag_name.gsub('h', '').to_i
+    level = tag_name.delete('h').to_i
 
     if node_heading?(node) && level < state[:level]
       state[tag_name.to_sym] = node_text(node)
@@ -173,9 +173,9 @@ class AlgoliaSearchRecordExtractor
   def weight_tag_name(item)
     tag_name = item[:tag_name]
     # No a heading, no weight
-    return 0 unless  %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
+    return 0 unless %w(h1 h2 h3 h4 h5 h6).include?(tag_name)
     # h1: 100, h2: 90, ..., h6: 50
-    100 - (tag_name.gsub('h', '').to_i - 1) * 10
+    100 - (tag_name.delete('h').to_i - 1) * 10
   end
 
   # Returns an object of all weights
@@ -190,7 +190,7 @@ class AlgoliaSearchRecordExtractor
   def extract
     items = []
     html_nodes.each_with_index do |node, index|
-      next unless node.text.size > 0
+      next if node.text.empty?
 
       item = metadata.clone
       item.merge!(node_hierarchy(node))

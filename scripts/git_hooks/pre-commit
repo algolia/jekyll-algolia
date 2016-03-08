@@ -12,5 +12,5 @@ if grep --color -r 'spec' -E -e '^( |\t)*(fit|fdescribe|xit|xdescribe)'; then
 fi
 
 # Match style guide
-rubocop -F './lib/' './spec' || exit 1
+./scripts/lint || exit 1
 

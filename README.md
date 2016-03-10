@@ -149,11 +149,17 @@ The `AlgoliaSearchRecordExtractor` contains two methods (`custom_hook_each` and
 `custom_hook_all`) that are here so you can overwrite them to add your custom
 logic. They currently simply return the argument they take as input.
 
+The best way to override them is to create a `./_plugins/search.rb` file, with
+the following content:
+
 ```ruby
 class AlgoliaSearchRecordExtractor
   # Hook to modify a record after extracting
-  # `node` refers to the Nokogiri HTML node of the element
   def custom_hook_each(item, node)
+    # `node` is a Nokogiri HTML node, so you can access its type through `node.name`
+    # or its classname through `node.attr('class')` for example
+
+    # Just return `nil` instead of `item` if you want to discard this record
     item
   end
 

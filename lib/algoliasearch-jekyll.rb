@@ -1,12 +1,10 @@
 require 'rubygems'
 require 'bundler/setup'
-
 require 'awesome_print'
-
 require_relative './version'
 require_relative './push'
 
-# `jekyll algolia` main entry
+# Registering the `jekyll algolia push` command
 class AlgoliaSearchJekyll < Jekyll::Command
   class << self
     def init_with_program(prog)

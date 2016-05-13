@@ -3,7 +3,8 @@ require 'nokogiri'
 require 'json'
 require_relative './error_handler.rb'
 
-# Given an HTML file as input, will return an array of records to index
+# Will check that all the needed credentials are correctly given by the user
+# before starting any push process
 class AlgoliaSearchCredentialChecker
   attr_accessor :config, :logger
 

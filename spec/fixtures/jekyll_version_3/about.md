@@ -1,6 +1,9 @@
 ---
 title: About page
 custom: Foo
+tags:
+  - tag
+  - another tag
 ---
 
 # Heading 1

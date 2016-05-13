@@ -7,6 +7,7 @@ require 'awesome_print'
 require 'jekyll'
 require_relative './spec_helper_simplecov.rb'
 require './lib/push.rb'
+require './lib/utils.rb'
 
 RSpec.configure do |config|
   config.filter_run(focus: true)
@@ -55,11 +56,8 @@ end
 
 # Check the current Jekyll version
 def restrict_jekyll_version(more_than: nil, less_than: nil)
-  jekyll_version = Gem::Version.new(Jekyll::VERSION)
-  minimum_version = Gem::Version.new(more_than)
-  maximum_version = Gem::Version.new(less_than)
-
-  return false if !more_than.nil? && jekyll_version < minimum_version
-  return false if !less_than.nil? && jekyll_version > maximum_version
-  true
+  AlgoliaSearchUtils.restrict_jekyll_version(
+    more_than: more_than,
+    less_than: less_than
+  )
 end

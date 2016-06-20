@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Tim Carry"]
-  s.date = "2016-03-08"
+  s.date = "2016-06-20"
   s.description = "Index all your pages and posts to an Algolia index with `jekyll algolia push`"
   s.email = "tim@pixelastic.com"
   s.extra_rdoc_files = [
@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
     "lib/error_handler.rb",
     "lib/push.rb",
     "lib/record_extractor.rb",
+    "lib/utils.rb",
     "lib/version.rb",
     "scripts/bump_version",
     "scripts/check_flay",
@@ -58,6 +59,7 @@ Gem::Specification.new do |s|
     "scripts/watch_v3",
     "spec/credential_checker_spec.rb",
     "spec/error_handler_spec.rb",
+    "spec/extractor_spec.old",
     "spec/fixtures/jekyll_version_2/_config.yml",
     "spec/fixtures/jekyll_version_2/_layouts/default.html",
     "spec/fixtures/jekyll_version_2/_my-collection/collection-item.html",
@@ -69,8 +71,11 @@ Gem::Specification.new do |s|
     "spec/fixtures/jekyll_version_2/assets/ring.png",
     "spec/fixtures/jekyll_version_2/authors.html",
     "spec/fixtures/jekyll_version_2/excluded.html",
+    "spec/fixtures/jekyll_version_2/front_matter.md",
     "spec/fixtures/jekyll_version_2/hierarchy.md",
     "spec/fixtures/jekyll_version_2/index.html",
+    "spec/fixtures/jekyll_version_2/only-divs.md",
+    "spec/fixtures/jekyll_version_2/only-paragraphs.md",
     "spec/fixtures/jekyll_version_2/page2/index.html",
     "spec/fixtures/jekyll_version_2/weight.md",
     "spec/fixtures/jekyll_version_3/_config.yml",
@@ -84,8 +89,11 @@ Gem::Specification.new do |s|
     "spec/fixtures/jekyll_version_3/assets/ring.png",
     "spec/fixtures/jekyll_version_3/authors.html",
     "spec/fixtures/jekyll_version_3/excluded.html",
+    "spec/fixtures/jekyll_version_3/front_matter.md",
     "spec/fixtures/jekyll_version_3/hierarchy.md",
     "spec/fixtures/jekyll_version_3/index.html",
+    "spec/fixtures/jekyll_version_3/only-divs.md",
+    "spec/fixtures/jekyll_version_3/only-paragraphs.md",
     "spec/fixtures/jekyll_version_3/page2/index.html",
     "spec/fixtures/jekyll_version_3/weight.md",
     "spec/push_spec.rb",
@@ -112,6 +120,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<awesome_print>, ["~> 1.6"])
       s.add_runtime_dependency(%q<json>, ["~> 1.8"])
       s.add_runtime_dependency(%q<nokogiri>, ["~> 1.6"])
+      s.add_runtime_dependency(%q<html-hierarchy-extractor>, [">= 0"])
       s.add_runtime_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
       s.add_development_dependency(%q<coveralls>, ["~> 0.8"])
       s.add_development_dependency(%q<flay>, ["~> 2.6"])
@@ -127,6 +136,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<awesome_print>, ["~> 1.6"])
       s.add_dependency(%q<json>, ["~> 1.8"])
       s.add_dependency(%q<nokogiri>, ["~> 1.6"])
+      s.add_dependency(%q<html-hierarchy-extractor>, [">= 0"])
       s.add_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
       s.add_dependency(%q<coveralls>, ["~> 0.8"])
       s.add_dependency(%q<flay>, ["~> 2.6"])
@@ -143,6 +153,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<awesome_print>, ["~> 1.6"])
     s.add_dependency(%q<json>, ["~> 1.8"])
     s.add_dependency(%q<nokogiri>, ["~> 1.6"])
+    s.add_dependency(%q<html-hierarchy-extractor>, [">= 0"])
     s.add_dependency(%q<verbal_expressions>, ["~> 0.1.5"])
     s.add_dependency(%q<coveralls>, ["~> 0.8"])
     s.add_dependency(%q<flay>, ["~> 2.6"])

@@ -35,8 +35,11 @@ If you want to test the plugin on an existing Jekyll website while developping,
 I suggest updating the website `Gemfile` to point to the correct local directory
 
 ```ruby
-gem "algoliasearch-jekyll", :path => "/path/to/local/gem/folder"
+group :jekyll_plugins do
+  gem "algoliasearch-jekyll", :path => "/path/to/local/gem/folder"
+end
 ```
+
 You should also run `rake gemspec` from the `algoliasearch-jekyll` repository if
 you added/deleted any file or dependency.
 

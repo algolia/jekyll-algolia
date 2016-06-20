@@ -11,6 +11,9 @@ describe(AlgoliaSearchRecordExtractor) do
   let(:fixture_only_paragraphs) do
     extractor.new(site.file_by_name('only-paragraphs.md'))
   end
+  let(:fixture_front_matter) do
+    extractor.new(site.file_by_name('front_matter.md'))
+  end
   # let(:html_page_file) { extractor.new(site.file_by_name('authors.html')) }
   # let(:hierarchy_page_file) {
   # extractor.new(site.file_by_name('hierarchy.md'))
@@ -212,6 +215,7 @@ describe(AlgoliaSearchRecordExtractor) do
       # When
       actual = input.date
 
+      # Then
       expect(actual).to eq 1_435_788_000
     end
 
@@ -222,6 +226,7 @@ describe(AlgoliaSearchRecordExtractor) do
       # When
       actual = input.date
 
+      # Then
       expect(actual).to eq nil
     end
 
@@ -238,16 +243,47 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
-  describe 'text' do
-    it 'should get the inner text of a node' do
+  describe 'front_matter' do
+    it 'should get a hash of all front matter data' do
       # Given
-      input = fixture_page
+      input = fixture_front_matter
 
       # When
-      actual = input.date
+      actual = input.front_matter
 
       # Then
-      expect(actual).to eq nil
+      expect(actual[:author]).to eq 'John Doe'
+      expect(actual[:custom]).to eq 'foo'
+    end
+
+    it 'should remove known keys from the front-matter' do
+      # Given
+      input = fixture_front_matter
+
+      # When
+      actual = input.front_matter
+
+      # Then
+      expect(actual[:title]).to eq nil
+      expect(actual[:tags]).to eq nil
+      expect(actual[:slug]).to eq nil
+      expect(actual[:url]).to eq nil
+      expect(actual[:date]).to eq nil
+      expect(actual[:type]).to eq nil
+    end
+
+    it 'should cast keys as symbols' do
+      # Given
+      input = fixture_front_matter
+
+      # When
+      actual = input.front_matter
+
+      # Then
+      expect(actual['custom']).to eq nil
+      expect(actual[:custom]).to_not eq nil
+      expect(actual['author']).to eq nil
+      expect(actual[:author]).to_not eq nil
     end
   end
 
@@ -273,6 +309,75 @@ describe(AlgoliaSearchRecordExtractor) do
 
       # Then
       expect(actual.size).to eq 6
+    end
+
+    it 'should contain all the basic top level info' do
+      # Given
+      input = fixture_page
+      allow(input).to receive(:date) { 'mock_date' }
+      allow(input).to receive(:slug) { 'mock_slug' }
+      allow(input).to receive(:tags) { 'mock_tags' }
+      allow(input).to receive(:title) { 'mock_title' }
+      allow(input).to receive(:url) { 'mock_url' }
+      allow(input).to receive(:type) { 'mock_type' }
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0][:date]).to eq 'mock_date'
+      expect(actual[0][:slug]).to eq 'mock_slug'
+      expect(actual[0][:tags]).to eq 'mock_tags'
+      expect(actual[0][:title]).to eq 'mock_title'
+      expect(actual[0][:url]).to eq 'mock_url'
+      expect(actual[0][:type]).to eq 'mock_type'
+    end
+
+    it 'should add node data from extractor' do
+      # Given
+      input = fixture_page
+      allow(input).to receive(:hierarchy_nodes) do
+        [
+          { name: 'foo' },
+          { name: 'bar' }
+        ]
+      end
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0][:name]).to eq 'foo'
+    end
+
+    it 'should get a complete record' do
+      # Given
+      input = fixture_page
+
+      # When
+      actual = input.extract
+
+      # Then
+      # Jekyll auto-generates anchors on heading
+      expect(actual[0][:anchor]).to eq 'heading-1'
+      # It's a page, so no date
+      expect(actual[0][:date]).to eq nil
+      # Hierarchy on first level
+      expect(actual[0][:hierarchy][:lvl0]).to eq 'Heading 1'
+      expect(actual[0][:hierarchy][:lvl1]).to eq nil
+      # Node content
+      expect(actual[0][:tag_name]).to eq 'p'
+      expect(actual[0][:html]).to eq '<p>Text 1</p>'
+      expect(actual[0][:text]).to eq 'Text 1'
+      # Page
+      expect(actual[0][:title]).to eq 'About page'
+      expect(actual[0][:slug]).to eq 'about'
+      expect(actual[0][:url]).to eq '/about.html'
+      # Tags
+      expect(actual[0][:tags]).to eq ['tag', 'another tag']
+      # Weight
+      expect(actual[0][:weight][:heading]).to eq 90
+      expect(actual[0][:weight][:position]).to eq 0
     end
   end
 

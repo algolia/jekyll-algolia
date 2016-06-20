@@ -59,5 +59,9 @@ This part is for main contributors:
 rake install
 ```
 
+# Project owner
+
+[@pixelastic](https://github.com/pixelastic)
+
 
 

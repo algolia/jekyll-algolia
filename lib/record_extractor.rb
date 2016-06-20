@@ -100,24 +100,59 @@ class AlgoliaSearchRecordExtractor
     @file.date.to_time.to_i
   end
 
-  # Extract all records from the page and return the list
-  def extract
+  ##
+  # Get a hash of all front-matter data
+  def front_matter
+    raw_data = @file.data
+
+    # We clean some keys that will be handled by specific methods
+    attributes_to_remove = %w(title tags slug url date type)
+    attributes_to_remove.each do |attribute|
+      raw_data.delete(attribute)
+    end
+
+    # Convert to symbols
+    data = {}
+    raw_data.each do |key, value|
+      data[key.to_sym] = value
+    end
+
+    data
+  end
+
+  ##
+  # Get the list of all node data
+  def hierarchy_nodes
     extractor_options = {
       css_selector: @config['record_css_selector']
     }
 
-    # Getting all hierarchical nodes from the HTML input
-    raw_items = HTMLHierarchyExtractor.new(
+    HTMLHierarchyExtractor.new(
       @file.content,
       options: extractor_options
     ).extract
+  end
+
+  # Extract all records from the page and return the list
+  def extract
+    # Getting all hierarchical nodes from the HTML input
+    raw_items = hierarchy_nodes
+
+    # Shared attributes relative to the page that all records will have
+    shared_attributes = {
+      type: type,
+      url: url,
+      title: title,
+      slug: slug,
+      date: date,
+      tags: tags
+    }
 
     # Enriching with page metadata
     items = []
     raw_items.each do |raw_item|
       nokogiri_node = raw_item[:node]
-      item = {
-      }
+      item = shared_attributes.merge(raw_item)
 
       item = custom_hook_each(item, nokogiri_node)
       next if item.nil?

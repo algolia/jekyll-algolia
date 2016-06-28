@@ -152,6 +152,7 @@ class AlgoliaSearchRecordExtractor
     items = []
     raw_items.each do |raw_item|
       nokogiri_node = raw_item[:node]
+      raw_item.delete(:node)
       item = shared_attributes.merge(raw_item)
 
       item = custom_hook_each(item, nokogiri_node)

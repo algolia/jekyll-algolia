@@ -350,6 +350,17 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[0][:name]).to eq 'foo'
     end
 
+    it 'should not expose the HTML node' do
+      # Given
+      input = fixture_only_paragraphs
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0][:node]).to eq nil
+    end
+
     it 'should get a complete record' do
       # Given
       input = fixture_page

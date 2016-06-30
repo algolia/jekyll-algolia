@@ -36,16 +36,17 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
       # Jekyll auto-converts markdown to HTML, so if the file is neither
       # markdown or HTML, we should probably not index it
-      extname = File.extname(File.basename(file.path))[1..-1]
       allowed_extensions = %w(html)
       if @config['markdown_ext']
         allowed_extensions += @config['markdown_ext'].split(',')
       end
-      return false unless allowed_extensions.include?(extname)
+      extname = File.extname(File.basename(file.path))
+      return false unless allowed_extensions.include?(extname[1..-1])
 
       # We should not index GitHub pages 404 pages
       # https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
-      return false if file.path == '404.md'
+      basename_no_ext = File.basename(file.path, extname)
+      return false if basename_no_ext == '404'
 
       # Users can also define their own blacklist and hooks to exclude files
       return false if excluded_file?(file)

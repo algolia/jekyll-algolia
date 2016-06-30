@@ -12,6 +12,7 @@ describe(AlgoliaSearchJekyllPush) do
   let(:html_document_file) { site.file_by_name('collection-item.html') }
   let(:pagination_page) { site.file_by_name('page2/index.html') }
   let(:err_404) { site.file_by_name('404.md') }
+  let(:err_404_html) { site.file_by_name('404.html') }
   let(:items) do
     [{
       name: 'foo',
@@ -67,8 +68,12 @@ describe(AlgoliaSearchJekyllPush) do
       expect(push.indexable?(pagination_page)).to eq false
     end
 
-    it 'does not index 404 pages' do
+    it 'does not index 404 pages (in markdown)' do
       expect(push.indexable?(err_404)).to eq false
+    end
+
+    it 'does not index 404 pages (in html)' do
+      expect(push.indexable?(err_404_html)).to eq false
     end
   end
 

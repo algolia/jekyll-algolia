@@ -3,7 +3,9 @@ layout: default
 title: Home
 ---
 
-This default index page is used to display the paginated posts
+This default index page is usually used to display the list of posts, or briefly explain the product.
+
+I feel that it should not be indexed.
 
 {% for post in paginator.posts %}
   <a href="{{ site.baseurl }}{{ post.url }}">

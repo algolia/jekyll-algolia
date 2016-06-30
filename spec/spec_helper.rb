@@ -35,9 +35,17 @@ def get_site(config = {}, options = {})
                                 .jekyll_new(config)
 
   def site.file_by_name(file_name)
+    # We first check the exact match
+    each_site_file do |file|
+      return file if file.path == file_name
+    end
+
+    # If not found (happens for static files that uses a full absolute path), we
+    # try with a loose regexp
     each_site_file do |file|
       return file if file.path =~ /#{file_name}$/
     end
+
     nil
   end
 

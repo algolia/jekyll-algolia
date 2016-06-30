@@ -43,6 +43,10 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       end
       return false unless allowed_extensions.include?(extname)
 
+      # We should not index GitHub pages 404 pages
+      # https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
+      return false if file.path == '404.md'
+
       # Users can also define their own blacklist and hooks to exclude files
       return false if excluded_file?(file)
 

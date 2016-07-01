@@ -3,6 +3,6 @@ appraise 'jekyll-v2' do
 end
 
 appraise 'jekyll-v3' do
-  gem 'jekyll', '~> 3.0'
+  gem 'jekyll', '3.1.6'
   gem 'jekyll-paginate', '~> 1.1.0'
 end

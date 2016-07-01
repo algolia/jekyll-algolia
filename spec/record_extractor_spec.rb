@@ -14,15 +14,10 @@ describe(AlgoliaSearchRecordExtractor) do
   let(:fixture_front_matter) do
     extractor.new(site.file_by_name('front_matter.md'))
   end
-  # let(:html_page_file) { extractor.new(site.file_by_name('authors.html')) }
-  # let(:hierarchy_page_file) {
-  # extractor.new(site.file_by_name('hierarchy.md'))
-  # }
-  # let(:weight_page_file) { extractor.new(site.file_by_name('weight.md')) }
 
   before(:each) do
     # Disabling the logs, while still allowing to spy them
-    Jekyll.logger = double('Specific Mock Logger').as_null_object
+    # Jekyll.logger = double('Specific Mock Logger').as_null_object
     @logger = Jekyll.logger.writer
   end
 
@@ -152,6 +147,25 @@ describe(AlgoliaSearchRecordExtractor) do
 
       expect(actual).to eq 'collection-item'
     end
+
+    # if restrict_jekyll_version(more_than: '3.0')
+    #   fit 'should not throw a deprecation warning' do
+    #     # Given
+    #     input = fixture_post
+
+    #     # When
+    #     # allow(Jekyll).to receive(:logger) do 
+    #     #   double('AAA').as_null_object
+    #     # end
+    #     # Jekyll.logger = double('BBB').as_null_object
+    #     # Jekyll.logger.writer = double('CCC').as_null_object
+
+    #     actual = input.slug
+
+
+    #     # expect(actual).to eq 'collection-item'
+    #   end
+    # end
   end
 
   describe 'tags' do

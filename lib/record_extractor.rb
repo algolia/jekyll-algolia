@@ -67,11 +67,11 @@ class AlgoliaSearchRecordExtractor
     extname = File.extname(basename)
     slug = File.basename(basename, extname)
 
-    # Jekyll v2 posts have a specific slug method
-    return @file.slug if @file.respond_to? :slug
-
     # Jekyll v3 posts have it in data
     return @file.data['slug'] if @file.data.key?('slug')
+
+    # Jekyll v2 posts have a specific slug method
+    return @file.slug if @file.respond_to?(:slug)
 
     slug
   end
@@ -81,11 +81,19 @@ class AlgoliaSearchRecordExtractor
   def tags
     tags = []
 
-    # Jekyll v2 posts have a specific tags methods
-    tags = @file.tags if @file.respond_to?(:tags)
+    is_v2 = AlgoliaSearchUtils.restrict_jekyll_version(less_than: '3.0')
+    is_v3 = AlgoliaSearchUtils.restrict_jekyll_version(more_than: '3.0')
+    has_tags_method = @file.respond_to?(:tags)
+    has_tags_data = @file.data.key?('tags')
 
-    # Others have it in data
-    tags = @file.data['tags'] if tags.empty? && @file.data.key?('tags')
+    # Starting from Jekyll v3, all tags are in data['tags']
+    tags = @file.data['tags'] if is_v3 && has_tags_data
+
+    # In Jekyll v2, tags are in data['tags'], or in .tags
+    if is_v2
+      tags = @file.tags if has_tags_method
+      tags = @file.data['tags'] if tags.empty? && has_tags_data
+    end
 
     # Some extension extends the tags with custom classes, so we make sure we
     # cast them as strings

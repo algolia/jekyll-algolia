@@ -24,6 +24,10 @@ describe(AlgoliaSearchJekyllPush) do
     }]
   end
 
+  before(:each) do
+    mock_logger
+  end
+
   describe 'init_options' do
     it 'sets options and config' do
       # Given
@@ -162,7 +166,9 @@ describe(AlgoliaSearchJekyllPush) do
         @error_handler_double = double('Error Handler double').as_null_object
         push.init_options(nil, {}, {})
         allow(@index_double).to receive(:set_settings).and_raise
+        # Do not really log the errors/warnings on screen
         allow(Jekyll.logger).to receive(:error)
+        allow(Jekyll.logger).to receive(:warn)
       end
 
       it 'stops if API throw an error' do
@@ -220,6 +226,7 @@ describe(AlgoliaSearchJekyllPush) do
   describe 'jekyll_new' do
     it 'should return a patched version of site with a custom write' do
       # Given
+      allow(Jekyll.logger).to receive(:warn)
       normal_site = Jekyll::Site.new(Jekyll.configuration)
       normal_method = normal_site.method(:write).source_location
 
@@ -347,8 +354,13 @@ describe(AlgoliaSearchJekyllPush) do
     end
 
     it 'should display an error if `add_objects!` failed' do
+      # Given
       allow(index_double).to receive(:add_objects!).and_raise
+      allow(Jekyll.logger).to receive(:error)
+      allow(Jekyll.logger).to receive(:warn)
 
+      # When
+      # Then
       expect(Jekyll.logger).to receive(:error)
       expect(-> { push.push(items) }).to raise_error SystemExit
     end

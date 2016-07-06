@@ -63,7 +63,12 @@ def get_site(config = {}, options = {})
 end
 
 def mock_logger
+  allow(Jekyll.logger).to receive(:info).and_wrap_original do |method, *args|
+    next if args[0] == 'Configuration file:'
+    method.call(*args)
+  end
   allow(Jekyll.logger).to receive(:warn).and_call_original
+  allow(Jekyll.logger).to receive(:error).and_call_original
 end
 
 # Return the fixture path, according to the current Jekyll version being tested

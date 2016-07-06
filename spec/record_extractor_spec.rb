@@ -16,9 +16,7 @@ describe(AlgoliaSearchRecordExtractor) do
   end
 
   before(:each) do
-    # Disabling the logs, while still allowing to spy them
-    Jekyll.logger = double('Specific Mock Logger').as_null_object
-    @logger = Jekyll.logger.writer
+    mock_logger
   end
 
   describe 'type' do
@@ -148,23 +146,19 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual).to eq 'collection-item'
     end
 
-    # if restrict_jekyll_version(more_than: '3.0')
-    #   fit 'should not throw a deprecation warning' do
-    #     # Given
-    #     input = fixture_post
+    if restrict_jekyll_version(more_than: '3.0')
+      fit 'should not throw a deprecation warning' do
+        # Given
+        input = fixture_post
 
-    #     # When
-    #     # allow(Jekyll).to receive(:logger) do
-    #     #   double('AAA').as_null_object
-    #     # end
-    #     # Jekyll.logger = double('BBB').as_null_object
-    #     # Jekyll.logger.writer = double('CCC').as_null_object
+        # When
+        input.slug
 
-    #     actual = input.slug
-
-    #     # expect(actual).to eq 'collection-item'
-    #   end
-    # end
+        # Then
+        expect(Jekyll.logger)
+          .to_not have_received(:warn).with('Deprecation:', any_args)
+      end
+    end
   end
 
   describe 'tags' do

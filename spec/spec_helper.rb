@@ -16,7 +16,7 @@ RSpec.configure do |config|
 end
 
 # Disabling the logs
-Jekyll.logger.log_level = :error
+# Jekyll.logger.log_level = :error
 
 # Create a Jekyll::Site instance, patched with a `file_by_name` method
 def get_site(config = {}, options = {})
@@ -60,6 +60,10 @@ def get_site(config = {}, options = {})
 
   site.process if options[:process]
   site
+end
+
+def mock_logger
+  allow(Jekyll.logger).to receive(:warn).and_call_original
 end
 
 # Return the fixture path, according to the current Jekyll version being tested

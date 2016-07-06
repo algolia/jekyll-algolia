@@ -54,7 +54,6 @@ describe(AlgoliaSearchJekyllPush) do
     end
 
     it 'keeps markdown documents' do
-      ap document_file
       expect(push.indexable?(document_file)).to eq true
     end
 

@@ -1,5 +1,5 @@
 collections:
-  api:
+  my-collection:
     output: true
 markdown_ext: 'md,mkd'
 paginate: 1

@@ -264,6 +264,41 @@ describe(AlgoliaSearchRecordExtractor) do
     end
   end
 
+  describe 'collection' do
+    it 'should get the collection name for documents' do
+      # Given
+      input = fixture_document
+
+      # When
+      actual = input.collection
+
+      # Then
+      expect(actual).to eq 'my-collection'
+    end
+
+    it 'should be nil for pages' do
+      # Given
+      input = fixture_page
+
+      # When
+      actual = input.collection
+
+      # Then
+      expect(actual).to eq nil
+    end
+
+    it 'should be nil for posts' do
+      # Given
+      input = fixture_post
+
+      # When
+      actual = input.collection
+
+      # Then
+      expect(actual).to eq nil
+    end
+  end
+
   describe 'front_matter' do
     it 'should get a hash of all front matter data' do
       # Given
@@ -410,6 +445,50 @@ describe(AlgoliaSearchRecordExtractor) do
       # Weight
       expect(actual[0][:weight][:heading]).to eq 90
       expect(actual[0][:weight][:position]).to eq 0
+    end
+
+    it 'should not contain a collection key for pages' do
+      # Given
+      input = fixture_page
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0]).not_to have_key(:collection)
+    end
+
+    it 'should not contain a collection key for posts' do
+      # Given
+      input = fixture_post
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0]).not_to have_key(:collection)
+    end
+
+    it 'should contain the collection name for documents' do
+      # Given
+      page = fixture_document
+
+      # When
+      page_data = page.extract
+
+      # Then
+      expect(page_data[0][:collection]).to eq 'my-collection'
+    end
+
+    it 'should not contain a date key for pages' do
+      # Given
+      input = fixture_page
+
+      # When
+      actual = input.extract
+
+      # Then
+      expect(actual[0]).not_to have_key(:date)
     end
   end
 

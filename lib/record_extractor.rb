@@ -40,7 +40,7 @@ class AlgoliaSearchRecordExtractor
 
     # In Jekyll v3, Post are actually a specific type of Documents
     if type == 'document'
-      collection_name = @file.collection.instance_variable_get('@label')
+      collection_name = @file.collection.label
       return 'post' if collection_name == 'posts'
     end
 
@@ -109,6 +109,18 @@ class AlgoliaSearchRecordExtractor
   end
 
   ##
+  # Get the collection name of a document
+  def collection
+    return nil unless @file.respond_to?(:collection)
+
+    collection_name = @file.collection.label
+
+    # In Jekyll v3, posts are actually a collection
+    return nil if collection_name == 'posts'
+    collection_name
+  end
+
+  ##
   # Get a hash of all front-matter data
   def front_matter
     raw_data = @file.data
@@ -153,8 +165,13 @@ class AlgoliaSearchRecordExtractor
       title: title,
       slug: slug,
       date: date,
+      collection: collection,
       tags: tags
     }
+    # Remove empty attributes
+    shared_attributes = shared_attributes.delete_if do |_, value|
+      value.nil?
+    end
 
     # Enriching with page metadata
     items = []

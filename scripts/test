@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 cd "$(dirname "$BASH_SOURCE")"
 
-./test_v2 && ./test_v3_1_3 && ./test_v3_1_6
+./test_v2 && ./test_v3

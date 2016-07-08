@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+cd "$(dirname "$BASH_SOURCE")"/..
+guard --guardfile ./Guardfile_jekyllv3_1_6
+

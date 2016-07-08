@@ -15,9 +15,6 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 end
 
-# Disabling the logs
-# Jekyll.logger.log_level = :error
-
 # Create a Jekyll::Site instance, patched with a `file_by_name` method
 def get_site(config = {}, options = {})
   default_options = {
@@ -39,6 +36,7 @@ def get_site(config = {}, options = {})
 
     # We get the list of all classic files
     each_site_file do |file|
+      ap file.path
       files[file.path] = file
     end
 
@@ -63,12 +61,29 @@ def get_site(config = {}, options = {})
 end
 
 def mock_logger
+  is_more_than_v3_1_4 = restrict_jekyll_version(more_than: '3.1.4')
+
+  # Handling of logging has changed in 3.1.4
+  return mock_logger_3_1_4 if is_more_than_v3_1_4
+
+  # Spying on default logging method, still calling them
   allow(Jekyll.logger).to receive(:info).and_wrap_original do |method, *args|
+    # Hiding the basic "Configuration file" display
     next if args[0] == 'Configuration file:'
     method.call(*args)
   end
   allow(Jekyll.logger).to receive(:warn).and_call_original
   allow(Jekyll.logger).to receive(:error).and_call_original
+end
+
+# Starting form 3.1.4, the Jekyll.logger is no longer used, but the $stderr.puts
+# is used instead.
+def mock_logger_3_1_4
+  allow($stderr).to receive(:puts).and_wrap_original do |method, *args|
+    # Hiding the basic "Configuration file" display
+    next if args[0] =~ /Configuration file:/
+    method.call(*args)
+  end
 end
 
 # Return the fixture path, according to the current Jekyll version being tested

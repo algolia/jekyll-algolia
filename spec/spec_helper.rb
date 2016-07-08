@@ -24,7 +24,7 @@ def get_site(config = {}, options = {})
   options = default_options.merge(options)
 
   config = config.merge(
-    source: fixture_path
+    'source' => fixture_path
   )
   config = Jekyll.configuration(config)
 
@@ -36,7 +36,6 @@ def get_site(config = {}, options = {})
 
     # We get the list of all classic files
     each_site_file do |file|
-      ap file.path
       files[file.path] = file
     end
 

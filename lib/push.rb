@@ -97,7 +97,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
           # Skip files that should not be indexed
           next unless AlgoliaSearchJekyllPush.indexable?(file)
           Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
-          p file.path
 
           new_items = AlgoliaSearchRecordExtractor.new(file).extract
           next if new_items.nil?

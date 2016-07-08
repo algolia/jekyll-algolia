@@ -1,0 +1,19 @@
+Algolia Error: Record too big
+  Records pushed to Algolia have a max possible size of 10KB. Records above this
+  limit will be rejected.
+
+  You see this error because at least one of the records the plugin is trying to
+  push is above this limit.
+  
+  The plugin creates a record for each `<p>` paragraph of text found in your
+  pages. If one of them contains a huge chunk of text it may trigger this error.
+
+  You can configure the CSS selector used to create records through the
+  `record_css_selector` option. The default is `p` (meaning all `<p>`
+  paragraphs). You can update this value to use a negation selector to exclude
+  some parts.
+
+  For example `p:not(.do-not-index)` will only index paragraphs that do not have
+  the class `do-not-index`.
+
+  See https://github.com/algolia/algoliasearch-jekyll for more information

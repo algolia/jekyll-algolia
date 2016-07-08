@@ -82,6 +82,12 @@ class AlgoliaSearchErrorHandler
       return 'check_key_acl_to_tmp_index'
     end
 
+    # Pushed record is above the 10KB limit
+    if error['http_error'] == 400 &&
+       error['json']['message'] =~ /^Record is too big/
+      return 'record_too_big'
+    end
+
     false
   end
 end

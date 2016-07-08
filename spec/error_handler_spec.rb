@@ -121,6 +121,23 @@ describe(AlgoliaSearchErrorHandler) do
       expect(actual).to eq('check_key_acl_to_tmp_index')
     end
 
+    it 'should warn about big records' do
+      # Given
+      parsed = {
+        'http_error' => 400,
+        'json' => {
+          'message' => 'Record is too big size=220062 bytes'
+        }
+      }
+      allow(@error_handler).to receive(:parse_algolia_error).and_return(parsed)
+
+      # When
+      actual = @error_handler.readable_algolia_error('error')
+
+      # Then
+      expect(actual).to eq('record_too_big')
+    end
+
     it 'should return false if no nice message found' do
       # Given
       parsed = false

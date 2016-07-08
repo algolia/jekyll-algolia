@@ -7,7 +7,7 @@
 ![Jekyll >= 2.5](https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg)
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
-Algolia index by simply running `jekyll algolia push`.
+Algolia index by running `jekyll algolia push`.
 
 ## Usage
 
@@ -17,14 +17,14 @@ $ jekyll algolia push
 
 This will push the content of your jekyll website to your Algolia index.
 
-You can specify any option you would normally pass to `jekyll build`, like
+You can specify any option you would pass to `jekyll build`, like
 `--config`, `--source`, `--destination`, etc.
 
 ## Installation
 
 First, add the `algoliasearch-jekyll` gem to your `Gemfile`, in the
 `:jekyll_plugins` section. If you do not yet have a `Gemfile`, here is the
-minimum content to get your started.
+minimal content to get your started.
 
 ```ruby
 source 'https://rubygems.org'
@@ -46,7 +46,7 @@ gems:
   - algoliasearch-jekyll
 ```
 
-If everything went well, you should be able to execute `jekyll help` and see the
+If everything went well, you should be able to run `jekyll help` and see the
 `algolia` subcommand listed.
 
 ## Configuration
@@ -78,7 +78,7 @@ you to make sure the file is not tracked in your versioning system.
 ### Options
 
 The plugin uses sensible defaults, but you may want to override some of its
-configuration. Here are the various options you can add to your `_config.yml`
+configuration. Here are the options you can add to your `_config.yml`
 file, under the `algolia` section:
 
 #### `excluded_files`
@@ -94,8 +94,8 @@ algolia:
 
 #### `record_css_selector`
 
-Defines the css selector inside a page/post used to choose which parts to index.
-It is set to all paragraphs (`<p>`) by default.
+All HTML nodes matching this CSS Selector will be indexed. Default value is `p`,
+meaning that all `<p>` paragraphs will be indexed.
 
 If you would like to also index lists, you could set it like this:
 
@@ -147,7 +147,8 @@ algolia:
 
 The `AlgoliaSearchRecordExtractor` contains two methods (`custom_hook_each` and
 `custom_hook_all`) that are here so you can overwrite them to add your custom
-logic. They currently simply return the argument they take as input.
+logic. By default, they do nothing except returning the argument they take as
+input, and are placeholder for you to override.
 
 The best way to override them is to create a `./_plugins/search.rb` file, with
 the following content:
@@ -205,13 +206,13 @@ push` command:
 
 The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
 2.5, with a version of Ruby of at least 2.0. You also need
-[Bundler][6] to easily add the gem as a dependency to Jekyll.
+[Bundler][6] to add the gem as a dependency to Jekyll.
 
 ## Searching
 
-This plugin will only index your data in your Algolia index. Adding search
-capabilities is quite easy. You can follow [our tutorials][7] or use our forked
-version of the popular [Hyde theme][8].
+This plugin will index your data in your Algolia index. Building the front-end
+search is of the scope of this plugin, but you can follow [our tutorials][7] or
+use our forked version of the popular [Hyde theme][8].
 
 ## GitHub Pages
 
@@ -243,7 +244,7 @@ rvm:
 ```
 
 This file will be read by Travis and instruct it to fetch all dependencies
-defined in the `Gemfile`, then run `jekyll algolia push`. This will only be
+defined in the `Gemfile`, then run `jekyll algolia push`. This will be
 triggered when data is pushed to the `gh-pages` branch.
 
 ### 2. Update your `_config.yml` file to exclude `vendor`
@@ -252,7 +253,7 @@ Travis will download all you `Gemfile` dependencies into a directory named
 `vendor`. You have to tell Jekyll to ignore this directory, otherwise Jekyll
 will try to parse it (and fail).
 
-Doing so is easy, just add the following line to your `_config.yml` file:
+Doing so is easy, add the following line to your `_config.yml` file:
 
 ```yml
 exclude: [vendor]
@@ -274,6 +275,24 @@ request targeting `gh-pages` will trigger the reindexing.
 Commit all the changes to the files, and then push to `gh-pages`. Travis will
 catch the event and trigger your indexing for you. You can follow the Travis job
 execution directly on [their website][12].
+
+## FAQS
+
+### How can I exclude some HTML nodes from the indexing
+
+By default, the plugin will index every HTML node that matches the
+`record_css_selector` CSS selector option. The default value is `p`, meaning
+that it will index all the paragraphs.
+
+You can use a [negation
+selector](https://developer.mozilla.org/en/docs/Web/CSS/:not) to be even more
+explicit. For example the value `p:not(.do-not-index)` will index all `<p>`
+paragraphs, *except* those that have the class `do-not-index`.
+
+If you need a finer granularity on your indexing that cannot be expressed
+through CSS selectors, you'll have to use the [hook mechanism](#hooks). The
+`custom_hook_each` method takes a [Nokogiri](http://www.nokogiri.org/) HTML node
+as a second argument and should let you write more complex filters.
 
 
 [1]: https://badge.fury.io/rb/algoliasearch-jekyll.svg

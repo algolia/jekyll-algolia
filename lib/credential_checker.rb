@@ -27,30 +27,27 @@ class AlgoliaSearchCredentialChecker
     nil
   end
 
-  # Read the application id either from the config file or from ENV
-  def application_id
+  # Read key either from ENV or _config.yml
+  def get_key(env_name, config_key)
     # First read in ENV
-    return ENV['ALGOLIA_APPLICATION_ID'] if ENV['ALGOLIA_APPLICATION_ID']
+    return ENV[env_name] if ENV[env_name]
 
     # Otherwise read from _config.yml
-    if @config['algolia'] && @config['algolia']['application_id']
-      return @config['algolia']['application_id']
+    if @config['algolia'] && @config['algolia'][config_key]
+      return @config['algolia'][config_key]
     end
 
     nil
   end
 
+  # Read the application id either from the config file or from ENV
+  def application_id
+    get_key('ALGOLIA_APPLICATION_ID', 'application_id')
+  end
+
   # Read the index name either from the config file or from ENV
   def index_name
-    # First read in ENV
-    return ENV['ALGOLIA_INDEX_NAME'] if ENV['ALGOLIA_INDEX_NAME']
-
-    # Otherwise read from _config.yml
-    if @config['algolia'] && @config['algolia']['index_name']
-      return @config['algolia']['index_name']
-    end
-
-    nil
+    get_key('ALGOLIA_INDEX_NAME', 'index_name')
   end
 
   # Check that the API key is available

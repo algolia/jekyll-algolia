@@ -27,6 +27,32 @@ class AlgoliaSearchCredentialChecker
     nil
   end
 
+  # Read the application id either from the config file or from ENV
+  def application_id
+    # First read in ENV
+    return ENV['ALGOLIA_APPLICATION_ID'] if ENV['ALGOLIA_APPLICATION_ID']
+
+    # Otherwise read from _config.yml
+    if @config['algolia'] && @config['algolia']['application_id']
+      return @config['algolia']['application_id']
+    end
+
+    nil
+  end
+
+  # Read the index name either from the config file or from ENV
+  def index_name
+    # First read in ENV
+    return ENV['ALGOLIA_INDEX_NAME'] if ENV['ALGOLIA_INDEX_NAME']
+
+    # Otherwise read from _config.yml
+    if @config['algolia'] && @config['algolia']['index_name']
+      return @config['algolia']['index_name']
+    end
+
+    nil
+  end
+
   # Check that the API key is available
   def check_api_key
     return if api_key
@@ -36,14 +62,14 @@ class AlgoliaSearchCredentialChecker
 
   # Check that the application id is defined
   def check_application_id
-    return if @config['algolia'] && @config['algolia']['application_id']
+    return if application_id
     @logger.display('application_id_missing')
     exit 1
   end
 
   # Check that the index name is defined
   def check_index_name
-    return if @config['algolia'] && @config['algolia']['index_name']
+    return if index_name
     @logger.display('index_name_missing')
     exit 1
   end
@@ -56,7 +82,7 @@ class AlgoliaSearchCredentialChecker
     check_index_name
 
     Algolia.init(
-      application_id: @config['algolia']['application_id'],
+      application_id: application_id,
       api_key: api_key
     )
 

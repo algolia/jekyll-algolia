@@ -4,5 +4,7 @@ Algolia Error: No application ID defined
   algolia:         
     application_id: {your_application_id}
 
+  You can also define the ALGOLIA_APPLICATION_ID environment variable.
+
   Your application ID can be found in your algolia dashboard:
     https://www.algolia.com/licensing

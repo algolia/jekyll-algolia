@@ -59,6 +59,130 @@ describe(AlgoliaSearchCredentialChecker) do
     end
   end
 
+  describe 'check_api_key' do
+    it 'should exit with error if no API key' do
+      # Given
+      allow(checker).to receive(:api_key).and_return(nil)
+      allow(checker.logger).to receive(:display)
+
+      # When / Then
+      expect(-> { checker.check_api_key }).to raise_error SystemExit
+    end
+
+    it 'should do nothing when an API key is found' do
+      # Given
+      allow(checker).to receive(:api_key).and_return('APIKEY')
+
+      # When / Then
+      expect(-> { checker.check_api_key }).not_to raise_error
+    end
+  end
+
+  describe 'application_id' do
+    it 'reads value from the _config.yml file' do
+      # Given
+
+      # When
+      actual = checker.application_id
+
+      # Then
+      expect(actual).to eq 'APPID'
+    end
+
+    it 'reads from ENV var if set' do
+      # Given
+      stub_const('ENV', 'ALGOLIA_APPLICATION_ID' => 'APPLICATION_ID_FROM_ENV')
+
+      # When
+      actual = checker.application_id
+
+      # Then
+      expect(actual).to eq 'APPLICATION_ID_FROM_ENV'
+    end
+
+    it 'returns nil if no key found' do
+      # Given
+      config['algolia']['application_id'] = nil
+
+      # When
+      actual = checker.application_id
+
+      # Then
+      expect(actual).to be_nil
+    end
+  end
+
+  describe 'check_application_id' do
+    it 'should exit with error if no application ID' do
+      # Given
+      allow(checker).to receive(:application_id).and_return(nil)
+      allow(checker.logger).to receive(:display)
+
+      # When / Then
+      expect(-> { checker.check_application_id }).to raise_error SystemExit
+    end
+
+    it 'should do nothing when an application ID is found' do
+      # Given
+      allow(checker).to receive(:application_id).and_return('APPLICATIONID')
+
+      # When / Then
+      expect(-> { checker.check_application_id }).not_to raise_error
+    end
+  end
+
+  describe 'index_name' do
+    it 'reads value from the _config.yml file' do
+      # Given
+
+      # When
+      actual = checker.index_name
+
+      # Then
+      expect(actual).to eq 'INDEXNAME'
+    end
+
+    it 'reads from ENV var if set' do
+      # Given
+      stub_const('ENV', 'ALGOLIA_INDEX_NAME' => 'INDEX_NAME_FROM_ENV')
+
+      # When
+      actual = checker.index_name
+
+      # Then
+      expect(actual).to eq 'INDEX_NAME_FROM_ENV'
+    end
+
+    it 'returns nil if no key found' do
+      # Given
+      config['algolia']['index_name'] = nil
+
+      # When
+      actual = checker.index_name
+
+      # Then
+      expect(actual).to be_nil
+    end
+  end
+  describe 'check_index_name' do
+    it 'should exit with error if no index name' do
+      # Given
+      allow(checker).to receive(:index_name).and_return(nil)
+      allow(checker.logger).to receive(:display)
+
+      # When / Then
+      expect(-> { checker.check_index_name }).to raise_error SystemExit
+    end
+
+    it 'should do nothing when an index name is found' do
+      # Given
+      allow(checker).to receive(:index_name).and_return('INDEXNAME')
+
+      # When / Then
+      expect(-> { checker.check_index_name }).not_to raise_error
+    end
+  end
+
   describe 'assert_valid' do
     before(:each) do
       allow(checker.logger).to receive(:display)
@@ -104,7 +228,8 @@ describe(AlgoliaSearchCredentialChecker) do
 
     it 'should init the Algolia client' do
       # Given
-      stub_const('ENV', 'ALGOLIA_API_KEY' => 'APIKEY_FROM_ENV')
+      allow(checker).to receive(:application_id).and_return('FOO')
+      allow(checker).to receive(:api_key).and_return('BAR')
       allow(Algolia).to receive(:init)
 
       # When
@@ -112,8 +237,8 @@ describe(AlgoliaSearchCredentialChecker) do
 
       # Then
       expect(Algolia).to have_received(:init).with(
-        application_id: 'APPID',
-        api_key: 'APIKEY_FROM_ENV'
+        application_id: 'FOO',
+        api_key: 'BAR'
       )
     end
   end

@@ -4,6 +4,8 @@ Algolia Error: No index name defined
   algolia:         
     index_name: {your_index_name}
 
+  You can also define the ALGOLIA_INDEX_NAME environment variable.
+
   You can edit your indices in your dashboard:
     https://www.algolia.com/explorer
 

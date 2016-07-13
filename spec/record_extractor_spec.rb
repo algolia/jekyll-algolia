@@ -355,6 +355,36 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual.size).to eq 6
     end
 
+    it 'should get a complete record' do
+      # Given
+      input = fixture_page
+
+      # When
+      actual = input.extract
+
+      # Then
+      # Jekyll auto-generates anchors on heading
+      expect(actual[0][:anchor]).to eq 'heading-1'
+      # It's a page, so no date
+      expect(actual[0][:date]).to eq nil
+      # Hierarchy on first level
+      expect(actual[0][:hierarchy][:lvl0]).to eq 'Heading 1'
+      expect(actual[0][:hierarchy][:lvl1]).to eq nil
+      # Node content
+      expect(actual[0][:tag_name]).to eq 'p'
+      expect(actual[0][:html]).to eq '<p>Text 1</p>'
+      expect(actual[0][:text]).to eq 'Text 1'
+      # Page
+      expect(actual[0][:title]).to eq 'About page'
+      expect(actual[0][:slug]).to eq 'about'
+      expect(actual[0][:url]).to eq '/about.html'
+      # Tags
+      expect(actual[0][:tags]).to eq ['tag', 'another tag']
+      # Weight
+      expect(actual[0][:weight][:heading]).to eq 90
+      expect(actual[0][:weight][:position]).to eq 0
+    end
+
     it 'should allow overriding the node selector' do
       # Given
       site = get_site(algolia: { 'record_css_selector' => 'div' })
@@ -417,7 +447,7 @@ describe(AlgoliaSearchRecordExtractor) do
       expect(actual[0][:node]).to eq nil
     end
 
-    it 'should get a complete record' do
+    it 'should set the objectID as a hash' do
       # Given
       input = fixture_page
 
@@ -425,26 +455,8 @@ describe(AlgoliaSearchRecordExtractor) do
       actual = input.extract
 
       # Then
-      # Jekyll auto-generates anchors on heading
-      expect(actual[0][:anchor]).to eq 'heading-1'
-      # It's a page, so no date
-      expect(actual[0][:date]).to eq nil
-      # Hierarchy on first level
-      expect(actual[0][:hierarchy][:lvl0]).to eq 'Heading 1'
-      expect(actual[0][:hierarchy][:lvl1]).to eq nil
-      # Node content
-      expect(actual[0][:tag_name]).to eq 'p'
-      expect(actual[0][:html]).to eq '<p>Text 1</p>'
-      expect(actual[0][:text]).to eq 'Text 1'
-      # Page
-      expect(actual[0][:title]).to eq 'About page'
-      expect(actual[0][:slug]).to eq 'about'
-      expect(actual[0][:url]).to eq '/about.html'
-      # Tags
-      expect(actual[0][:tags]).to eq ['tag', 'another tag']
-      # Weight
-      expect(actual[0][:weight][:heading]).to eq 90
-      expect(actual[0][:weight][:position]).to eq 0
+      expect(actual[0]).not_to have_key(:uuid)
+      expect(actual[0]).to have_key(:objectID)
     end
 
     it 'should not contain a collection key for pages' do

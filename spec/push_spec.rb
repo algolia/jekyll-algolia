@@ -25,7 +25,9 @@ describe(AlgoliaSearchJekyllPush) do
   end
 
   before(:each) do
-    mock_logger
+    allow(Jekyll.logger).to receive(:info)
+    allow(Jekyll.logger).to receive(:warn)
+    allow(Jekyll.logger).to receive(:error)
   end
 
   describe 'init_options' do
@@ -41,6 +43,35 @@ describe(AlgoliaSearchJekyllPush) do
       # Then
       expect(push.options).to include(options)
       expect(push.config).to include(config)
+    end
+  end
+
+  describe 'lazy_update?' do
+    it 'should return false by default' do
+      # Given
+      push.init_options(nil, {}, {})
+
+      # When
+      actual = push.lazy_update?
+
+      # Then
+      expect(actual).to eq false
+    end
+
+    it 'should return true if such an option is set in the config' do
+      # Given
+      config = {
+        'algolia' => {
+          'lazy_update' => true
+        }
+      }
+      push.init_options(nil, {}, config)
+
+      # When
+      actual = push.lazy_update?
+
+      # Then
+      expect(actual).to eq true
     end
   end
 
@@ -166,9 +197,6 @@ describe(AlgoliaSearchJekyllPush) do
         @error_handler_double = double('Error Handler double').as_null_object
         push.init_options(nil, {}, {})
         allow(@index_double).to receive(:set_settings).and_raise
-        # Do not really log the errors/warnings on screen
-        allow(Jekyll.logger).to receive(:error)
-        allow(Jekyll.logger).to receive(:warn)
       end
 
       it 'stops if API throw an error' do
@@ -226,7 +254,6 @@ describe(AlgoliaSearchJekyllPush) do
   describe 'jekyll_new' do
     it 'should return a patched version of site with a custom write' do
       # Given
-      allow(Jekyll.logger).to receive(:warn)
       normal_site = Jekyll::Site.new(Jekyll.configuration)
       normal_method = normal_site.method(:write).source_location
 
@@ -291,6 +318,53 @@ describe(AlgoliaSearchJekyllPush) do
   end
 
   describe 'push' do
+    before(:each) do
+      allow_any_instance_of(AlgoliaSearchCredentialChecker)
+        .to receive(:assert_valid)
+    end
+
+    it 'should do a lazy update if such is configured' do
+      # Given
+      allow(push).to receive(:lazy_update?).and_return(true)
+      allow(push).to receive(:lazy_update)
+      push.init_options(nil, {}, {})
+      items = ['foo']
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(push).to have_received(:lazy_update).with(items)
+    end
+
+    it 'should do a greedy update if such is configured' do
+      # Given
+      allow(push).to receive(:greedy_update?).and_return(true)
+      allow(push).to receive(:greedy_update)
+      push.init_options(nil, {}, {})
+      items = ['foo']
+
+      # When
+      push.push(items)
+
+      # Then
+      expect(push).to have_received(:greedy_update).with(items)
+    end
+  end
+
+  describe 'batch_add_items' do
+    it 'should display an error if `add_objects!` failed' do
+      # Given
+      index = double('Algolia Index').as_null_object
+      allow(index).to receive(:add_objects!).and_raise
+
+      # When / Then
+      expect(-> { push.batch_add_items(items, index) })
+        .to raise_error SystemExit
+    end
+  end
+
+  describe 'greedy_update' do
     let(:index_double) { double('Algolia Index').as_null_object }
     let(:config) do
       {
@@ -302,21 +376,19 @@ describe(AlgoliaSearchJekyllPush) do
 
     before(:each) do
       push.init_options(nil, {}, config)
-      # Mock all calls to not send anything
       allow_any_instance_of(AlgoliaSearchCredentialChecker)
         .to receive(:assert_valid)
       allow(Algolia).to receive(:set_extra_header)
       allow(Algolia).to receive(:init)
       allow(Algolia).to receive(:move_index)
       allow(Algolia::Index).to receive(:new).and_return(index_double)
-      allow(Jekyll.logger).to receive(:info)
     end
 
     it 'should create a temporary index' do
       # Given
 
       # When
-      push.push(items)
+      push.greedy_update(items)
 
       # Then
       expect(Algolia::Index).to have_received(:new).with('INDEXNAME_tmp')
@@ -352,17 +424,121 @@ describe(AlgoliaSearchJekyllPush) do
       # Then
       expect(Jekyll.logger).to have_received(:info).with(/of 2 items/i)
     end
+  end
 
-    it 'should display an error if `add_objects!` failed' do
+  describe 'lazy_update' do
+    let(:items) do
+      [
+        { objectID: 'foo' },
+        { objectID: 'baz' }
+      ]
+    end
+    let(:remote) { %w(foo bar) }
+    let(:local) { %w(foo baz) }
+    let(:index) { double.as_null_object }
+
+    describe 'remote_ids' do
+      it 'should call browse on the index with the attributesToRetrieve ' do
+        # Given
+        index = double.as_null_object
+
+        # Then
+        push.remote_ids(index)
+
+        # Then
+        expect(index).to have_received(:browse)
+      end
+
+      it 'should return an array of all objectID returned by browse' do
+        # Given
+        index = double.as_null_object
+        hit1 = { 'objectID' => 'foo' }
+        hit2 = { 'objectID' => 'bar' }
+        allow(index).to receive(:browse).and_yield(hit1).and_yield(hit2)
+
+        # Then
+        actual = push.remote_ids(index)
+
+        # Then
+        expect(actual).to eq %w(foo bar)
+      end
+    end
+
+    describe 'delete_remote_not_in_local' do
+      it 'calls delete_objects! with the array of items to delete' do
+        # Given
+
+        # When
+        push.delete_remote_not_in_local(index, local, remote)
+
+        # Then
+        expect(index).to have_received(:delete_objects!).with(['bar'])
+      end
+
+      it 'displays the number of items deleted' do
+        # Given
+
+        # When
+        push.delete_remote_not_in_local(index, local, remote)
+
+        # Then
+        expect(Jekyll.logger).to have_received(:info).with('Deleting 1 items')
+      end
+
+      it 'should do not do an API call if there is nothing to delete' do
+        # Given
+        input = %w(foo bar)
+
+        # When
+        push.delete_remote_not_in_local(index, input, input)
+
+        # Then
+        expect(index).not_to have_received(:delete_objects!)
+      end
+    end
+
+    describe 'add_local_not_in_remote' do
+      it 'should push all local items not yet in remote' do
+        # Given
+        allow(push).to receive(:batch_add_items)
+
+        # When
+        push.add_local_not_in_remote(index, items, local, remote)
+
+        # Then
+        expected = [{ objectID: 'baz' }]
+        expect(push).to have_received(:batch_add_items).with(expected, index)
+      end
+
+      it 'should warn about pushing 0 records' do
+        # Given
+        input = %w(foo bar)
+
+        # When
+        push.add_local_not_in_remote(index, items, input, input)
+
+        # Then
+        expect(Jekyll.logger)
+          .to have_received(:info).with('Adding 0 items')
+      end
+    end
+
+    it 'should delete items from remote and push new ones' do
       # Given
-      allow(index_double).to receive(:add_objects!).and_raise
-      allow(Jekyll.logger).to receive(:error)
-      allow(Jekyll.logger).to receive(:warn)
+      allow(push).to receive(:create_index).and_return(index)
+      allow(push).to receive(:remote_ids).and_return(remote)
+      allow(push).to receive(:delete_remote_not_in_local)
+      allow(push).to receive(:add_local_not_in_remote)
+      push.init_options(nil, {}, {})
 
       # When
+      push.lazy_update(items)
+
       # Then
-      expect(Jekyll.logger).to receive(:error)
-      expect(-> { push.push(items) }).to raise_error SystemExit
+      expect(push).to have_received(:delete_remote_not_in_local)
+        .with(index, local, remote)
+      expect(push).to have_received(:add_local_not_in_remote)
+        .with(index, items, local, remote)
     end
   end
 end

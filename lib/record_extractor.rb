@@ -179,6 +179,8 @@ class AlgoliaSearchRecordExtractor
       nokogiri_node = raw_item[:node]
       raw_item.delete(:node)
       item = shared_attributes.merge(raw_item)
+      item[:objectID] = item[:uuid]
+      item.delete(:uuid)
 
       item = custom_hook_each(item, nokogiri_node)
       next if item.nil?

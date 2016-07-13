@@ -104,6 +104,21 @@ algolia:
   record_css_selector: 'p,ul'
 ```
 
+#### `lazy_update`
+
+`false`: The plugin will push all the records to a temporary index and once
+everything is pushed will override the current index with it. This is the most
+straightforward way and will ensure that all the changes happen in one move. You
+either search in the old data, or in the new data. This is the default value.
+
+`true`: With `lazy_update` enabled, the plugin will try to reduce the number of
+calls done to the API, to consume less operations on your quota. It will get
+a list of all the records in your index and all the records ready to be pushed.
+It will compare both and push the new while deleting the old. In most cases it
+should consume less operations, but the changes won't be atomic (ie. you might
+have your index in an hybrid state, with old records not yet removed and/or new
+records not yet added for a couple of minutes).
+
 #### `settings`
 
 Here you can pass any specific [index settings][5] to your Algolia index. All

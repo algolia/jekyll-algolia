@@ -7,12 +7,12 @@
 ![Jekyll >= 2.5](https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg)
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
-Algolia index by running `jekyll algolia push`.
+Algolia index by running `bundle exec jekyll algolia push`.
 
 ## Usage
 
 ```shell
-$ jekyll algolia push
+$ bundle exec jekyll algolia push
 ```
 
 This will push the content of your jekyll website to your Algolia index.
@@ -62,7 +62,7 @@ algolia:
 
 You write api key will be read from the `ALGOLIA_API_KEY` environment variable.
 You can define it on the same line as your command, allowing you to type
-`ALGOLIA_API_KEY='your_write_api_key' jekyll algolia push`.
+`ALGOLIA_API_KEY='your_write_api_key' bundle exec jekyll algolia push`.
 
 Note that your API key should have write access to both the `index_name` and
 `_tmp` suffixed version of it (eg. `your_index_name` and `your_index_name_tmp`)
@@ -232,8 +232,8 @@ use our forked version of the popular [Hyde theme][8].
 ## GitHub Pages
 
 GitHub does not allow custom plugins to be run on GitHub Pages. This means that
-you'll either have to run `jekyll algolia push` manually, or configure TravisCI
-to do it for you.
+you'll either have to run `bundle exec jekyll algolia push` manually, or
+configure TravisCI to do it for you.
 
 [Travis CI][9] is an hosted continuous integration
 service, and it's free for open-source projects. Properly configured, it can

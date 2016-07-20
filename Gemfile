@@ -5,7 +5,7 @@ gem 'appraisal', '~> 2.1.0'
 gem 'awesome_print', '~> 1.6'
 gem 'json', '~> 1.8'
 gem 'nokogiri', '~> 1.6'
-gem 'html-hierarchy-extractor', path: '../html-hierarchy-extractor/'
+gem 'html-hierarchy-extractor', '~> 1.0'
 gem 'verbal_expressions', '~> 0.1.5'
 
 group :development do

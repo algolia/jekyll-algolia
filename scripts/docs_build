@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 cd "$(dirname "$BASH_SOURCE")"/../docs
 
-guard --guardfile ./Guardfile_jekyllv2
+middleman build

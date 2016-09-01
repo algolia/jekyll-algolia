@@ -1,0 +1,34 @@
+.ac-nav
+  .ac-nav-container
+    .ac-nav-brand
+      %a.ac-logo{:href => "https://community.algolia.com/", :title => "Algolia Community"}
+        %img.ac-logo__lg{:alt => "Algolia Community", :src => "https://res.cloudinary.com/hilnmyskv/image/upload/logo-community-inline-dark.svg", :width => "150"}/
+        %img.ac-logo__sm{:alt => "Algolia Community", :src => "https://res.cloudinary.com/hilnmyskv/image/upload/v1461180081/logo-community-sm.svg"}/
+      %span.ac-nav-brand-breadcrumb
+      %a.ac-nav-brand-title{:href => "./", :title => "Home"} Jekyll
+
+    .ac-nav-menu
+      .ac-nav-searchbox
+        %form.searchbox#docsearch-form{:novalidate => "novalidate", :onsubmit => "return false;", :style => "visibility:hidden;height:0"}
+          .searchbox__wrapper{:role => "search"}
+            %input#docsearch.searchbox__input{:autocomplete => "off", :name => "search", :placeholder => "Search in the doc", :required => "required", :type => "search"}
+              %button.searchbox__submit{:title => "Submit your search query.", :type => "submit"}
+                %svg{"aria-label" => "Search", :role => "img"}
+                  %use{"xlink:href" => "#sbx-icon-search-13", "xmlns:xlink" => "http://www.w3.org/1999/xlink"}
+              %button.searchbox__reset.hide{:title => "Clear the search query.", :type => "reset"}
+                %svg{"aria-label" => "Reset", :role => "img"}
+                  %use{"xlink:href" => "#sbx-icon-clear-3", "xmlns:xlink" => "http://www.w3.org/1999/xlink"}
+        .svg-icons{:style => "height: 0; width: 0; position: absolute; visibility: hidden"}
+          %svg{:xmlns => "http://www.w3.org/2000/svg"}
+            <symbol id="sbx-icon-clear-3" viewBox="0 0 40 40"><path d="M16.228 20L1.886 5.657 0 3.772 3.772 0l1.885 1.886L20 16.228 34.343 1.886 36.228 0 40 3.772l-1.886 1.885L23.772 20l14.342 14.343L40 36.228 36.228 40l-1.885-1.886L20 23.772 5.657 38.114 3.772 40 0 36.228l1.886-1.885L16.228 20z" fill-rule="evenodd"/></symbol>
+            <symbol id="sbx-icon-search-13" viewBox="0 0 12 12"><path d="M12 11.077c0-.245-.1-.483-.267-.65L9.26 7.955c.584-.843.894-1.853.894-2.877C10.154 2.272 7.882 0 5.077 0S0 2.272 0 5.077s2.272 5.077 5.077 5.077c1.024 0 2.034-.31 2.877-.894l2.474 2.466c.166.173.404.274.65.274.504 0 .922-.418.922-.923zm-3.692-6c0 1.78-1.45 3.23-3.23 3.23-1.782 0-3.232-1.45-3.232-3.23s1.45-3.23 3.23-3.23c1.782 0 3.232 1.45 3.232 3.23z" fill="#FFF" fill-rule="evenodd" opacity="0.85"/></symbol>
+
+
+      %ul.ac-nav-menu-list
+        %li.ac-nav-menu-list-item.active
+          %a{:href => "documentation.html", :title => "Documentation", :data => {:path => "documentation.html"}} Documentation
+        %li.ac-nav-menu-list-item
+          %a{:href => "examples.html", :title => "Examples", :data => {:path => "examples.html"}} Examples
+        %li.ac-nav-menu-list-icon
+          %a.ac-icon{:href => "#", :title => "GitHub repository"}
+            %span.ac-icon.ac-icon-github

@@ -171,8 +171,19 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
 
     # Change the User-Agent header to isolate calls from this plugin
     def set_user_agent_header
-      version = AlgoliaSearchJekyllVersion.to_s
-      Algolia.set_extra_header('User-Agent', "Algolia for Jekyll #{version}")
+      plugin_version = AlgoliaSearchJekyllVersion.to_s
+      client_version = AlgoliaSearchJekyllVersion.client
+      ruby_version = AlgoliaSearchJekyllVersion.ruby
+      jekyll_version = AlgoliaSearchJekyllVersion.jekyll
+
+      user_agent = [
+        "Jekyll Integration (#{plugin_version})",
+        "Algolia for Ruby (#{client_version})",
+        "Ruby (#{ruby_version})",
+        "Jekyll (#{jekyll_version})"
+      ].join('; ')
+
+      Algolia.set_extra_header('User-Agent', user_agent)
     end
 
     # Create an index to push our data

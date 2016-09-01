@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'algoliasearch', '~> 1.4'
+gem 'algoliasearch', '1.11'
 gem 'appraisal', '~> 2.1.0'
 gem 'awesome_print', '~> 1.6'
 gem 'json', '~> 1.8'

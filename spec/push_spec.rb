@@ -304,7 +304,14 @@ describe(AlgoliaSearchJekyllPush) do
 
     it 'should set a User-Agent with the plugin name and version' do
       # Given
-      allow(AlgoliaSearchJekyllVersion).to receive(:to_s).and_return '99.42'
+      allow(AlgoliaSearchJekyllVersion).to receive(:to_s).and_return '1.0.7'
+      allow(AlgoliaSearchJekyllVersion).to receive(:client).and_return '1.11'
+      allow(AlgoliaSearchJekyllVersion).to receive(:ruby).and_return '2.2'
+      allow(AlgoliaSearchJekyllVersion).to receive(:jekyll).and_return '3.2'
+      expected = 'Jekyll Integration (1.0.7); '\
+                 'Algolia for Ruby (1.11); '\
+                 'Ruby (2.2); '\
+                 'Jekyll (3.2)'
 
       # When
       push.set_user_agent_header
@@ -312,7 +319,7 @@ describe(AlgoliaSearchJekyllPush) do
       # Then
       expect(Algolia).to have_received(:set_extra_header).with(
         'User-Agent',
-        /Jekyll(.*)99.42/
+        expected
       )
     end
   end

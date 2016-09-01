@@ -10,7 +10,7 @@ class AlgoliaSearchErrorHandler
     file = File.expand_path(File.join(File.dirname(__FILE__), '../txt', file))
     content = File.open(file).readlines.map(&:chomp)
     content.each_with_index do |line, index|
-      if index == 0
+      if index.zero?
         Jekyll.logger.error line
         next
       end

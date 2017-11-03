@@ -1,10 +1,10 @@
-# Algolia Jekyll Plugin 
+# Algolia Jekyll Plugin
 
 [![Gem Version][1]](http://badge.fury.io/rb/algoliasearch-jekyll)
 [![Build Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll)
 [![Coverage Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
 [![Code Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
-![Jekyll >= 2.5](https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg)
+![Jekyll >= 2.5][5]
 
 Jekyll plugin to automatically index your Jekyll posts and pages into an
 Algolia index by running `bundle exec jekyll algolia push`.
@@ -36,7 +36,7 @@ group :jekyll_plugins do
 end
 ```
 
-Once this is done, download all dependencies with `bundle install`. 
+Once this is done, download all dependencies with `bundle install`.
 
 Then, add `algoliasearch-jekyll` to your `_config.yml` file, under the `plugins`
 section, like this:
@@ -121,10 +121,10 @@ records not yet added for a couple of minutes).
 
 #### `settings`
 
-Here you can pass any specific [index settings][5] to your Algolia index. All
+Here you can pass any specific [index settings][6] to your Algolia index. All
 the settings supported by the API can be passed here.
 
-##### Examples 
+##### Examples
 
 If you want to activate `distinct` and some snippets for example, you would do:
 
@@ -208,34 +208,37 @@ end
 Here is the list of command line options you can pass to the `jekyll algolia
 push` command:
 
-| Flag                     | Description                                                           | 
-| ----                     | -----                                                                 | 
-| `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` | 
-| `--future`               | With this flag, the command will also index posts with a future date  | 
-| `--limit_posts 10`       | Limits the number of posts to parse and index                         | 
-| `--drafts`               | Index drafts in the `_drafts` folder as well                          | 
-| `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             | 
-| `--verbose`              | Display more information about what is going to be indexed            | 
+| Flag                     | Description                                                           |
+| ----                     | -----                                                                 |
+| `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` |
+| `--future`               | With this flag, the command will also index posts with a future date  |
+| `--limit_posts 10`       | Limits the number of posts to parse and index                         |
+| `--drafts`               | Index drafts in the `_drafts` folder as well                          |
+| `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             |
+| `--verbose`              | Display more information about what is going to be indexed            |
 
 ## Dependencies
 
 The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
 2.5, with a version of Ruby of at least 2.0. You also need
-[Bundler][6] to add the gem as a dependency to Jekyll.
+[Bundler][7] to add the gem as a dependency to Jekyll.
 
 ## Searching
 
 This plugin will index your data in your Algolia index. Building the front-end
-search is of the scope of this plugin, but you can follow [our tutorials][7] or
-use our forked version of the popular [Hyde theme][8].
+search is of the scope of this plugin, but you can follow [our tutorials][8] or
+use our forked version of the popular [Hyde theme][9].
 
 ## GitHub Pages
 
-GitHub does not allow custom plugins to be run on GitHub Pages. This means that
-you'll either have to run `bundle exec jekyll algolia push` manually, or
-configure TravisCI to do it for you.
+The initial goal of the plugin was to allow anyone to have access to great
+search, even on a static website hosted on GitHub pages.
 
-[Travis CI][9] is an hosted continuous integration
+Unfortunately, GitHub does not allow custom plugins to be run on GitHub Pages.
+This means that you'll either have to run `bundle exec jekyll algolia push`
+manually, or configure a CI environment (like [Travis][10] to do it for you.
+
+[Travis CI][11] is an hosted continuous integration
 service, and it's free for open-source projects. Properly configured, it can
 automatically reindex your data whenever you push to `gh-pages`.
 
@@ -252,7 +255,7 @@ cache: bundler
 branches:
   only:
     - gh-pages
-script: 
+script:
   - bundle exec jekyll algolia push
 rvm:
  - 2.2
@@ -278,18 +281,18 @@ exclude: [vendor]
 
 In order for Travis to be able to push data to your index on your behalf, you
 have to give it your write API Key. This is achieved by defining an
-`ALGOLIA_API_KEY` [environment variable][10] in Travis settings.
+`ALGOLIA_API_KEY` [environment variable][12] in Travis settings.
 
 You should also uncheck the "Build pull requests" option, otherwise any pull
 request targeting `gh-pages` will trigger the reindexing.
 
-![Travis Configuration][11]
+![Travis Configuration][13]
 
 ### Done
 
 Commit all the changes to the files, and then push to `gh-pages`. Travis will
 catch the event and trigger your indexing for you. You can follow the Travis job
-execution directly on [their website][12].
+execution directly on [their website][14].
 
 ## FAQS
 
@@ -300,13 +303,13 @@ By default, the plugin will index every HTML node that matches the
 that it will index all the paragraphs.
 
 You can use a [negation
-selector](https://developer.mozilla.org/en/docs/Web/CSS/:not) to be even more
+selector][15] to be even more
 explicit. For example the value `p:not(.do-not-index)` will index all `<p>`
 paragraphs, *except* those that have the class `do-not-index`.
 
 If you need a finer granularity on your indexing that cannot be expressed
-through CSS selectors, you'll have to use the [hook mechanism](#hooks). The
-`custom_hook_each` method takes a [Nokogiri](http://www.nokogiri.org/) HTML node
+through CSS selectors, you'll have to use the [hook mechanism][16]. The
+`custom_hook_each` method takes a [Nokogiri][17] HTML node
 as a second argument and should let you write more complex filters.
 
 
@@ -314,11 +317,16 @@ as a second argument and should let you write more complex filters.
 [2]: https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master
 [3]: https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github
 [4]: https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg
-[5]: https://www.algolia.com/doc/ruby#indexing-parameters
-[6]: http://bundler.io/
-[7]: https://www.algolia.com/doc/javascript
-[8]: https://github.com/algolia/hyde
-[9]: https://travis-ci.org/
-[10]: http://docs.travis-ci.com/user/environment-variables/
-[11]: /docs/travis-settings.png
-[12]: https://travis-ci.org
+[5]: https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg
+[6]: https://www.algolia.com/doc/ruby#indexing-parameters
+[7]: http://bundler.io/
+[8]: https://www.algolia.com/doc/javascript
+[9]: https://github.com/algolia/hyde
+[10]: https://travis-ci.org/)
+[11]: https://travis-ci.org/
+[12]: http://docs.travis-ci.com/user/environment-variables/
+[13]: /docs/travis-settings.png
+[14]: https://travis-ci.org
+[15]: https://developer.mozilla.org/en/docs/Web/CSS/:not
+[16]: #hooks
+[17]: http://www.nokogiri.org/

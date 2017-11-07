@@ -1,4 +1,6 @@
 source 'http://rubygems.org'
+# TODO: Set minimum Ruby version
+#   gem.required_ruby_version = '~> 2.2.8'
 
 gem 'algolia_html_extractor', '~> 2.0'
 gem 'algoliasearch', '~> 1.18'

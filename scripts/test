@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-cd "$(dirname "$BASH_SOURCE")"
-
-./test_v2 && ./test_v3

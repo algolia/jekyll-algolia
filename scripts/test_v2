@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-cd "$(dirname "$BASH_SOURCE")"/..
-
-echo "Testing under Jekyll 2.5"
-COVERAGE=1 appraisal jekyll-v2 bundle exec rspec

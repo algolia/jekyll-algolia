@@ -5,7 +5,7 @@ Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll) [![Coverage
 Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
 [![Code
 Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
-![Jekyll >= 3.6.2][5] ![Ruby >= 2.4.0][6]
+![Jekyll >= 3.6.2][5] ![Ruby >= 2.2.8][6]
 
 Jekyll plugin to automatically index your content into Algolia. 
 

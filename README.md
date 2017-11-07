@@ -1,13 +1,13 @@
 # Algolia Jekyll Plugin
 
-[![Gem Version][1]](http://badge.fury.io/rb/algoliasearch-jekyll)
-[![Build Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll)
-[![Coverage Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
-[![Code Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
-![Jekyll >= 2.5][5]
+[![Gem Version][1]](http://badge.fury.io/rb/algoliasearch-jekyll) [![Build
+Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll) [![Coverage
+Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
+[![Code
+Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
+![Jekyll >= 3.6.2][5] ![Ruby >= 2.4.0][6]
 
-Jekyll plugin to automatically index your Jekyll posts and pages into an
-Algolia index by running `bundle exec jekyll algolia push`.
+Jekyll plugin to automatically index your content into Algolia. 
 
 ## Usage
 
@@ -15,7 +15,7 @@ Algolia index by running `bundle exec jekyll algolia push`.
 $ bundle exec jekyll algolia push
 ```
 
-This will push the content of your jekyll website to your Algolia index.
+This will push the content of your Jekyll website to your Algolia index.
 
 You can specify any option you would pass to `jekyll build`, like
 `--config`, `--source`, `--destination`, etc.
@@ -60,7 +60,7 @@ algolia:
   index_name:     'your_index_name'
 ```
 
-You write api key will be read from the `ALGOLIA_API_KEY` environment variable.
+Your write api key will be read from the `ALGOLIA_API_KEY` environment variable.
 You can define it on the same line as your command, allowing you to type
 `ALGOLIA_API_KEY='your_write_api_key' bundle exec jekyll algolia push`.
 
@@ -106,22 +106,25 @@ algolia:
 
 #### `lazy_update`
 
+Enabling this option can greatly reduce the number of operations consumed by the
+plugin but comes with some drawbacks mentioned above:
+
 `false`: The plugin will push all the records to a temporary index and once
-everything is pushed will override the current index with it. This is the most
-straightforward way and will ensure that all the changes happen in one move. You
-either search in the old data, or in the new data. This is the default value.
+everything is pushed will overwrite the current index with this new one. This is
+the most straightforward way to update records and will ensure that all the
+changes happen in one move. This is the default value.
 
 `true`: With `lazy_update` enabled, the plugin will try to reduce the number of
-calls done to the API, to consume less operations on your quota. It will get
-a list of all the records in your index and all the records ready to be pushed.
-It will compare both and push the new while deleting the old. In most cases it
-should consume less operations, but the changes won't be atomic (ie. you might
-have your index in an hybrid state, with old records not yet removed and/or new
-records not yet added for a couple of minutes).
+calls done to the API. It will get a list of all the records in your index and
+all the records ready to be pushed.  It will compare both and push the new while
+deleting the old. In most cases it should consume less operations, but the
+changes won't be atomic (ie. you might have your index in an hybrid state, with
+old records not yet removed and/or new records not yet added for a couple of
+minutes).
 
 #### `settings`
 
-Here you can pass any specific [index settings][6] to your Algolia index. All
+Here you can pass any specific [index settings][7] to your Algolia index. All
 the settings supported by the API can be passed here.
 
 ##### Examples
@@ -219,26 +222,28 @@ push` command:
 
 ## Dependencies
 
-The `algoliasearch-jekyll` plugin works for versions of Jekyll starting from
-2.5, with a version of Ruby of at least 2.0. You also need
-[Bundler][7] to add the gem as a dependency to Jekyll.
+This plugin is compatible with version of Jekyll >= 3.6.2 and version of Ruby >=
+2.4.0. Those are the versions [deployed on GitHub Pages][8] at the time of
+writing.
+
+You will also need [Bundler][9] to install the gem in your project.
 
 ## Searching
 
 This plugin will index your data in your Algolia index. Building the front-end
-search is of the scope of this plugin, but you can follow [our tutorials][8] or
-use our forked version of the popular [Hyde theme][9].
+search is of the scope of this plugin, but you can follow [our tutorials][10] or
+use our forked version of the popular [Hyde theme][11].
 
 ## GitHub Pages
 
 The initial goal of the plugin was to allow anyone to have access to great
 search, even on a static website hosted on GitHub pages.
 
-Unfortunately, GitHub does not allow custom plugins to be run on GitHub Pages.
+But GitHub does not allow custom plugins to be run on GitHub Pages.
 This means that you'll either have to run `bundle exec jekyll algolia push`
-manually, or configure a CI environment (like [Travis][10] to do it for you.
+manually, or configure a CI environment (like [Travis][12] to do it for you.
 
-[Travis CI][11] is an hosted continuous integration
+[Travis CI][13] is an hosted continuous integration
 service, and it's free for open-source projects. Properly configured, it can
 automatically reindex your data whenever you push to `gh-pages`.
 
@@ -281,18 +286,18 @@ exclude: [vendor]
 
 In order for Travis to be able to push data to your index on your behalf, you
 have to give it your write API Key. This is achieved by defining an
-`ALGOLIA_API_KEY` [environment variable][12] in Travis settings.
+`ALGOLIA_API_KEY` [environment variable][14] in Travis settings.
 
 You should also uncheck the "Build pull requests" option, otherwise any pull
 request targeting `gh-pages` will trigger the reindexing.
 
-![Travis Configuration][13]
+![Travis Configuration][15]
 
 ### Done
 
 Commit all the changes to the files, and then push to `gh-pages`. Travis will
 catch the event and trigger your indexing for you. You can follow the Travis job
-execution directly on [their website][14].
+execution directly on [their website][16].
 
 ## FAQS
 
@@ -303,13 +308,13 @@ By default, the plugin will index every HTML node that matches the
 that it will index all the paragraphs.
 
 You can use a [negation
-selector][15] to be even more
+selector][17] to be even more
 explicit. For example the value `p:not(.do-not-index)` will index all `<p>`
 paragraphs, *except* those that have the class `do-not-index`.
 
 If you need a finer granularity on your indexing that cannot be expressed
-through CSS selectors, you'll have to use the [hook mechanism][16]. The
-`custom_hook_each` method takes a [Nokogiri][17] HTML node
+through CSS selectors, you'll have to use the [hook mechanism][18]. The
+`custom_hook_each` method takes a [Nokogiri][19] HTML node
 as a second argument and should let you write more complex filters.
 
 
@@ -317,16 +322,18 @@ as a second argument and should let you write more complex filters.
 [2]: https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master
 [3]: https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github
 [4]: https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg
-[5]: https://img.shields.io/badge/jekyll-%3E%3D%202.5-green.svg
-[6]: https://www.algolia.com/doc/ruby#indexing-parameters
-[7]: http://bundler.io/
-[8]: https://www.algolia.com/doc/javascript
-[9]: https://github.com/algolia/hyde
-[10]: https://travis-ci.org/)
-[11]: https://travis-ci.org/
-[12]: http://docs.travis-ci.com/user/environment-variables/
-[13]: /docs/travis-settings.png
-[14]: https://travis-ci.org
-[15]: https://developer.mozilla.org/en/docs/Web/CSS/:not
-[16]: #hooks
-[17]: http://www.nokogiri.org/
+[5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.2-green.svg
+[6]: https://img.shields.io/badge/ruby-%3E%3D%202.4.0-green.svg
+[7]: https://www.algolia.com/doc/ruby#indexing-parameters
+[8]: https://pages.github.com/versions.json
+[9]: http://bundler.io/
+[10]: https://www.algolia.com/doc/javascript
+[11]: https://github.com/algolia/hyde
+[12]: https://travis-ci.org/)
+[13]: https://travis-ci.org/
+[14]: http://docs.travis-ci.com/user/environment-variables/
+[15]: /docs/travis-settings.png
+[16]: https://travis-ci.org
+[17]: https://developer.mozilla.org/en/docs/Web/CSS/:not
+[18]: #hooks
+[19]: http://www.nokogiri.org/

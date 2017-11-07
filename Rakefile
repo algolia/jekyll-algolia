@@ -23,4 +23,14 @@ RSpec::Core::RakeTask.new(:test_details) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
+# WATCH
+desc 'Watch for changes in files and reload tests'
+task :watch do
+  # We specifically watch for ./lib and ./spec and not the whole dir because:
+  # 1. It's the only directories we are interested in
+  # 2. Listening to the whole parent dir might throw Guard errors if we have
+  #    symlink
+  sh 'bundle exec guard --watchdir lib spec'
+end
+
 task default: :test

@@ -1,9 +1,8 @@
 require 'jekyll/commands/algolia'
 
 module Jekyll
-  # Main Algolia module
+  # Main Algolia module entrypoint
   module Algolia
-    attr_accessor :config
     require 'jekyll/algolia/version'
     require 'jekyll/algolia/extractor'
     require 'jekyll/algolia/configurator'
@@ -17,10 +16,7 @@ module Jekyll
     # Returns itself
     def self.init(config = {})
       @config = config
-      # @is_verbose = @config['verbose']
-      # @is_dry_run = @config['dry_run']
       # @checker = AlgoliaSearchCredentialChecker.new(@config)
-      # @is_lazy_update = lazy_update?
       self
     end
 
@@ -30,7 +26,7 @@ module Jekyll
     # monkey-patching its `write` method and building it.
     def self.run
       site = Jekyll::Site.new(@config)
-      monkey_patch_site_write(site)
+      monkey_patch_site(site)
       site.process
     end
 
@@ -49,7 +45,7 @@ module Jekyll
     #
     # We will change the behavior of the `write` method that should write files
     # to disk and have it create JSON records and push them to Algolia instead.
-    def self.monkey_patch_site_write(site)
+    def self.monkey_patch_site(site)
       def site.write
         records = []
         # is_verbose = config['verbose']

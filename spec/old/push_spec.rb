@@ -30,22 +30,6 @@ describe(AlgoliaSearchJekyllPush) do
     allow(Jekyll.logger).to receive(:error)
   end
 
-  describe 'init_options' do
-    it 'sets options and config' do
-      # Given
-      args = nil
-      options = { 'foo' => 'bar' }
-      config = { 'bar' => 'foo' }
-
-      # When
-      push.init_options(args, options, config)
-
-      # Then
-      expect(push.options).to include(options)
-      expect(push.config).to include(config)
-    end
-  end
-
   describe 'lazy_update?' do
     it 'should return false by default' do
       # Given
@@ -251,20 +235,6 @@ describe(AlgoliaSearchJekyllPush) do
     end
   end
 
-  describe 'jekyll_new' do
-    it 'should return a patched version of site with a custom write' do
-      # Given
-      normal_site = Jekyll::Site.new(Jekyll.configuration)
-      normal_method = normal_site.method(:write).source_location
-
-      patched_site = get_site({}, mock_write_method: false, process: false)
-      patched_method = patched_site.method(:write).source_location
-
-      # When
-      # Then
-      expect(patched_method).not_to eq normal_method
-    end
-  end
 
   describe 'process' do
     it 'should call the site write method' do

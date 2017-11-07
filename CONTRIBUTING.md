@@ -1,10 +1,10 @@
 Hi collaborator!
 
 If you have a fix or a new feature, please start by checking in the
-[issues](https://github.com/algolia/algoliasearch-jekyll/issues) if it is
+[issues](https://github.com/algolia/jekyll-algolia/issues) if it is
 already referenced. If not, feel free to open one.
 
-We use [pull requests](https://github.com/algolia/algoliasearch-jekyll/pulls)
+We use [pull requests](https://github.com/algolia/jekyll-algolia/pulls)
 for collaboration. The workflow is as follow:
 
 - Create a local branch, starting from `develop`
@@ -40,7 +40,7 @@ I suggest updating the website `Gemfile` to point to the correct local directory
 
 ```ruby
 group :jekyll_plugins do
-  gem "algoliasearch-jekyll", :path => "/path/to/local/gem/folder"
+  gem "jekyll-algolia", :path => "/path/to/local/gem/folder"
 end
 ```
 

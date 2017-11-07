@@ -1,13 +1,13 @@
-# Algolia Jekyll Plugin
+# Jekyll Algolia Plugin
 
-[![Gem Version][1]](http://badge.fury.io/rb/algoliasearch-jekyll) [![Build
-Status][2]](https://travis-ci.org/algolia/algoliasearch-jekyll) [![Coverage
-Status][3]](https://coveralls.io/github/algolia/algoliasearch-jekyll?branch=master)
+[![Gem Version][1]](http://badge.fury.io/rb/jekyll-algolia) [![Build
+Status][2]](https://travis-ci.org/algolia/jekyll-algolia) [![Coverage
+Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
 [![Code
-Climate][4]](https://codeclimate.com/github/algolia/algoliasearch-jekyll)
+Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
 ![Jekyll >= 3.6.2][5] ![Ruby >= 2.2.8][6]
 
-Jekyll plugin to automatically index your content into Algolia. 
+Jekyll plugin to automatically index your content into Algolia.
 
 ## Usage
 
@@ -22,7 +22,7 @@ You can specify any option you would pass to `jekyll build`, like
 
 ## Installation
 
-First, add the `algoliasearch-jekyll` gem to your `Gemfile`, in the
+First, add the `jekyll-algolia` gem to your `Gemfile`, in the
 `:jekyll_plugins` section. If you do not yet have a `Gemfile`, here is the
 minimal content to get your started.
 
@@ -32,18 +32,18 @@ source 'https://rubygems.org'
 gem 'jekyll', '~> 2.5.3'
 
 group :jekyll_plugins do
-  gem 'algoliasearch-jekyll', '~> 0.7.0'
+  gem 'jekyll-algolia', '~> 0.7.0'
 end
 ```
 
 Once this is done, download all dependencies with `bundle install`.
 
-Then, add `algoliasearch-jekyll` to your `_config.yml` file, under the `plugins`
+Then, add `jekyll-algolia` to your `_config.yml` file, under the `plugins`
 section, like this:
 
 ```yaml
 plugins:
-  - algoliasearch-jekyll
+  - jekyll-algolia
 ```
 
 If everything went well, you should be able to run `jekyll help` and see the
@@ -317,11 +317,16 @@ through CSS selectors, you'll have to use the [hook mechanism][18]. The
 `custom_hook_each` method takes a [Nokogiri][19] HTML node
 as a second argument and should let you write more complex filters.
 
+# Thanks
 
-[1]: https://badge.fury.io/rb/algoliasearch-jekyll.svg
-[2]: https://travis-ci.org/algolia/algoliasearch-jekyll.svg?branch=master
-[3]: https://coveralls.io/repos/algolia/algoliasearch-jekyll/badge.svg?branch=master&service=github
-[4]: https://codeclimate.com/github/algolia/algoliasearch-jekyll/badges/gpa.svg
+Thanks to [Anatoliy Yastreb][20] for a [great tutorial][21] on creating Jekyll
+plugins.
+
+
+[1]: https://badge.fury.io/rb/jekyll-algolia.svg
+[2]: https://travis-ci.org/algolia/jekyll-algolia.svg?branch=master
+[3]: https://coveralls.io/repos/algolia/jekyll-algolia/badge.svg?branch=master&service=github
+[4]: https://codeclimate.com/github/algolia/jekyll-algolia/badges/gpa.svg
 [5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.2-green.svg
 [6]: https://img.shields.io/badge/ruby-%3E%3D%202.4.0-green.svg
 [7]: https://www.algolia.com/doc/ruby#indexing-parameters
@@ -337,3 +342,5 @@ as a second argument and should let you write more complex filters.
 [17]: https://developer.mozilla.org/en/docs/Web/CSS/:not
 [18]: #hooks
 [19]: http://www.nokogiri.org/
+[20]: https://github.com/ayastreb/
+[21]: https://ayastreb.me/writing-a-jekyll-plugin/

@@ -16,4 +16,4 @@ Algolia Error: Record too big
   For example `p:not(.do-not-index)` will only index paragraphs that do not have
   the class `do-not-index`.
 
-  See https://github.com/algolia/algoliasearch-jekyll for more information
+  See https://github.com/algolia/jekyll-algolia for more information

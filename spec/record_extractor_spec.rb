@@ -116,20 +116,6 @@ describe(AlgoliaSearchRecordExtractor) do
   end
 
   describe 'slug' do
-    if restrict_jekyll_version(more_than: '3.0')
-      it 'should not throw a deprecation warning' do
-        # Given
-        input = fixture_post
-
-        # When
-        input.slug
-
-        # Then
-        expect(Jekyll.logger)
-          .to_not have_received(:warn).with('Deprecation:', any_args)
-      end
-    end
-
     it 'should get it for a page' do
       # Given
       input = fixture_page
@@ -162,20 +148,6 @@ describe(AlgoliaSearchRecordExtractor) do
   end
 
   describe 'tags' do
-    if restrict_jekyll_version(more_than: '3.0')
-      it 'should not throw a deprecation warning' do
-        # Given
-        input = fixture_post
-
-        # When
-        input.tags
-
-        # Then
-        expect(Jekyll.logger)
-          .to_not have_received(:warn).with('Deprecation:', any_args)
-      end
-    end
-
     it 'should get tags from page' do
       # Given
       input = fixture_page
@@ -213,13 +185,7 @@ describe(AlgoliaSearchRecordExtractor) do
         double('Extended Tag', to_s: 'extended another tag')
       ]
       input = fixture_post
-
-      # Overwrite string tags with more advanced ones
-      if restrict_jekyll_version(less_than: '3.0')
-        allow(input.file).to receive(:tags) { extended_tags }
-      else
-        input.file.data['tags'] = extended_tags
-      end
+      input.file.data['tags'] = extended_tags
 
       # When
       actual = input.tags

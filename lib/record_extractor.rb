@@ -2,7 +2,6 @@ require 'algoliasearch'
 require 'nokogiri'
 require 'json'
 require 'algolia_html_extractor'
-require_relative './utils'
 
 # Given an HTML file as input, will return an array of records to index
 class AlgoliaSearchRecordExtractor
@@ -35,10 +34,7 @@ class AlgoliaSearchRecordExtractor
     subclass = classname.split('::')[1]
     type = subclass.downcase
 
-    # In Jekyll v2, Page, Post and Document have their own class
-    return type if AlgoliaSearchUtils.restrict_jekyll_version(less_than: '3.0')
-
-    # In Jekyll v3, Post are actually a specific type of Documents
+    # Post are actually a specific type of Documents
     if type == 'document'
       collection_name = @file.collection.label
       return 'post' if collection_name == 'posts'
@@ -81,19 +77,10 @@ class AlgoliaSearchRecordExtractor
   def tags
     tags = []
 
-    is_v2 = AlgoliaSearchUtils.restrict_jekyll_version(less_than: '3.0')
-    is_v3 = AlgoliaSearchUtils.restrict_jekyll_version(more_than: '3.0')
-    has_tags_method = @file.respond_to?(:tags)
     has_tags_data = @file.data.key?('tags')
 
-    # Starting from Jekyll v3, all tags are in data['tags']
-    tags = @file.data['tags'] if is_v3 && has_tags_data
-
-    # In Jekyll v2, tags are in data['tags'], or in .tags
-    if is_v2
-      tags = @file.tags if has_tags_method
-      tags = @file.data['tags'] if tags.empty? && has_tags_data
-    end
+    # All tags are in data['tags']
+    tags = @file.data['tags'] if has_tags_data
 
     # Some extension extends the tags with custom classes, so we make sure we
     # cast them as strings

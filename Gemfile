@@ -2,10 +2,10 @@ source 'http://rubygems.org'
 
 gem 'algolia_html_extractor', '~> 2.0'
 gem 'algoliasearch', '~> 1.18'
-gem 'awesome_print', '~> 1.6'
-gem 'jekyll', '~> 3.0'
+gem 'awesome_print', '~> 1.8'
+gem 'jekyll', '~> 3.6'
 gem 'jekyll-paginate', '~> 1.1.0'
-gem 'json', '>= 1.8.6'
+gem 'json', '~> 2.0'
 gem 'nokogiri', '~> 1.6'
 gem 'verbal_expressions', '~> 0.1.5'
 

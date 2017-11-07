@@ -1,3 +1,4 @@
+# Load coverage when run through Travis
 if ENV['TRAVIS']
   require 'coveralls'
   Coveralls.wear!
@@ -7,7 +8,6 @@ require 'awesome_print'
 require 'jekyll'
 require_relative './spec_helper_simplecov.rb'
 require './lib/push.rb'
-require './lib/utils.rb'
 
 RSpec.configure do |config|
   config.filter_run(focus: true)
@@ -24,7 +24,7 @@ def get_site(config = {}, options = {})
   options = default_options.merge(options)
 
   config = config.merge(
-    'source' => fixture_path
+    'source' => './spec/fixtures',
   )
   config = Jekyll.configuration(config)
 
@@ -68,19 +68,4 @@ def mock_logger
   end
   allow(Jekyll.logger).to receive(:warn).and_call_original
   allow(Jekyll.logger).to receive(:error).and_call_original
-end
-
-# Return the fixture path, according to the current Jekyll version being tested
-def fixture_path
-  jekyll_version = Jekyll::VERSION[0]
-  fixture_path = "./spec/fixtures/jekyll_version_#{jekyll_version}"
-  File.expand_path(fixture_path)
-end
-
-# Check the current Jekyll version
-def restrict_jekyll_version(more_than: nil, less_than: nil)
-  AlgoliaSearchUtils.restrict_jekyll_version(
-    more_than: more_than,
-    less_than: less_than
-  )
 end

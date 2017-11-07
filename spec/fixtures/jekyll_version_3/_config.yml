@@ -12,6 +12,6 @@ algolia:
     - excluded.html
 
 # Jekyll 3.0 extracted the secondary features into their own plugins
-gems: 
+plugins: 
   - jekyll-paginate
 

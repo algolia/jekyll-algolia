@@ -5,7 +5,7 @@ markdown_ext: 'md,mkd'
 paginate: 1
 timezone: Europe/Paris
 
-gems: 
+plugins: 
   - jekyll-paginate
 
 algolia:

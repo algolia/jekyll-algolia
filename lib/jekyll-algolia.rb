@@ -1,54 +1,74 @@
-require 'rubygems'
-require 'bundler/setup'
-require 'awesome_print'
-require_relative './version'
-require_relative './push'
+require 'jekyll/commands/algolia'
 
-# Registering the `jekyll algolia push` command
-class AlgoliaSearchJekyll < Jekyll::Command
-  class << self
-    def init_with_program(prog)
-      prog.command(:algolia) do |command|
-        command.syntax 'algolia <command> [options]'
-        command.description 'Keep your content in sync with your Algolia index'
+module Jekyll
+  # Main Algolia module
+  module Algolia
+    attr_accessor :config
+    require 'jekyll/algolia/version'
+    require 'jekyll/algolia/extractor'
+    require 'jekyll/algolia/configurator'
+    require 'jekyll/algolia/indexer'
 
-        command.command(:push) do |subcommand|
-          subcommand.syntax 'push [options]'
-          subcommand.description 'Push your content to your index'
-
-          add_build_options(subcommand)
-
-          subcommand.action do |args, options|
-            default_options = {
-              'dry_run' => false,
-              'verbose' => false
-            }
-            options = default_options.merge(options)
-            @config = configuration_from_options(options)
-
-            AlgoliaSearchJekyllPush.init_options(args, options, @config)
-                                   .jekyll_new(@config)
-                                   .process
-          end
-        end
-      end
+    # Public: Init the Algolia module
+    #
+    # config - A hash of Jekyll config option (merge of _config.yml options and
+    # options passed on the command line)
+    #
+    # Returns itself
+    def self.init(config = {})
+      @config = config
+      # @is_verbose = @config['verbose']
+      # @is_dry_run = @config['dry_run']
+      # @checker = AlgoliaSearchCredentialChecker.new(@config)
+      # @is_lazy_update = lazy_update?
+      self
     end
 
-    # Allow a subset of the default `jekyll build` options
-    def add_build_options(command)
-      command.option 'config', '--config CONFIG_FILE[,CONFIG_FILE2,...]',
-                     Array, 'Custom configuration file'
-      command.option 'future', '--future', 'Index posts with a future date'
-      command.option 'limit_posts', '--limit_posts MAX_POSTS', Integer,
-                     'Limits the number of posts to parse and index'
-      command.option 'show_drafts', '-D', '--drafts',
-                     'Index posts in the _drafts folder'
-      command.option 'unpublished', '--unpublished',
-                     'Index posts that were marked as unpublished'
-      command.option 'dry_run', '--dry-run', '-n',
-                     'Do a dry run, do not push records'
-      command.option 'verbose', '--verbose',
-                     'Display more information on what is indexed'
+    # Public: Run the main Algolia module
+    #
+    # The gist of the plugin works by instanciating a Jekyll site,
+    # monkey-patching its `write` method and building it.
+    def self.run
+      site = Jekyll::Site.new(@config)
+      monkey_patch_site_write(site)
+      site.process
+    end
+
+    # Public: Get access to the Jekyll config
+    #
+    # All other classes will need access to this config, so we make it publicly
+    # accessible
+    def self.config
+      @config
+    end
+
+    # Public: Replace the main `write` method of the site to push records to
+    # Algolia instead of writing files to disk.
+    #
+    # site - The Jekyll site to monkey patch
+    #
+    # We will change the behavior of the `write` method that should write files
+    # to disk and have it create JSON records and push them to Algolia instead.
+    def self.monkey_patch_site_write(site)
+      def site.write
+        records = []
+        # is_verbose = config['verbose']
+        each_site_file do |file|
+          # # Skip files that should not be indexed
+          # next unless AlgoliaSearchJekyllPush.indexable?(file)
+          # Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
+          #
+          file_records = Jekyll::Algolia::Extractor.run(file)
+          # new_items = AlgoliaSearchRecordExtractor.new(file).extract
+          # next if new_items.nil?
+          # ap new_items if is_verbose
+          #
+          records += file_records
+        end
+
+        Jekyll::Algolia::Indexer.run(records)
+      end
     end
   end
 end
+

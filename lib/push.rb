@@ -14,21 +14,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     def init_with_program(_prog)
     end
 
-    # Init the command with options passed on the command line
-    # `jekyll algolia push ARG1 ARG2 --OPTION_NAME1 OPTION_VALUE1`
-    # config comes from _config.yml
-    def init_options(args = [], options = {}, config = {})
-      args = [] unless args
-      @args = args
-      @options = options
-      @config = config
-      @checker = AlgoliaSearchCredentialChecker.new(@config)
-      @is_verbose = @config['verbose']
-      @is_dry_run = @config['dry_run']
-      @is_lazy_update = lazy_update?
-
-      self
-    end
 
     # Check if the lazy update feature is enabled or not (default to false)
     def lazy_update?
@@ -93,32 +78,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
       false
     end
 
-    # Return a patched version of a Jekyll instance
-    def jekyll_new(config)
-      site = Jekyll::Site.new(config)
-
-      # Patched version of `write` that will push to Algolia instead of writing
-      # on disk
-      def site.write
-        items = []
-        is_verbose = config['verbose']
-        each_site_file do |file|
-          # Skip files that should not be indexed
-          next unless AlgoliaSearchJekyllPush.indexable?(file)
-          Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
-
-          new_items = AlgoliaSearchRecordExtractor.new(file).extract
-          next if new_items.nil?
-          ap new_items if is_verbose
-
-          items += new_items
-        end
-
-        AlgoliaSearchJekyllPush.push(items)
-      end
-
-      site
-    end
 
     # Get index settings
     def configure_index(index)

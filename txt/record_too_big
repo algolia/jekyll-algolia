@@ -9,7 +9,7 @@ Algolia Error: Record too big
   pages. If one of them contains a huge chunk of text it may trigger this error.
 
   You can configure the CSS selector used to create records through the
-  `record_css_selector` option. The default is `p` (meaning all `<p>`
+  `nodes_to_index` option. The default is `p` (meaning all `<p>`
   paragraphs). You can update this value to use a negation selector to exclude
   some parts.
 

@@ -14,9 +14,6 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/algolia/jekyll-algolia'
   gem.licenses = ['MIT']
 
-  # Optional attributes
-  gem.required_ruby_version = '~> 2.2.8'
-
   # Dependencies
   gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.0'
   gem.add_runtime_dependency 'algoliasearch', '~> 1.18'

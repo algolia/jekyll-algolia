@@ -11,7 +11,7 @@ class AlgoliaSearchRecordExtractor
     @file = file
     @config = file.site.config
     default_config = {
-      'record_css_selector' => 'p'
+      'nodes_to_index' => 'p'
     }
     @config = default_config.merge(file.site.config['algolia'])
   end
@@ -131,7 +131,7 @@ class AlgoliaSearchRecordExtractor
   # Get the list of all node data
   def hierarchy_nodes
     extractor_options = {
-      css_selector: @config['record_css_selector']
+      css_selector: @config['nodes_to_index']
     }
 
     AlgoliaHTMLExtractor.new(

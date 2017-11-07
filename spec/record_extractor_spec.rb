@@ -353,7 +353,7 @@ describe(AlgoliaSearchRecordExtractor) do
 
     it 'should allow overriding the node selector' do
       # Given
-      site = get_site(algolia: { 'record_css_selector' => 'div' })
+      site = get_site(algolia: { 'nodes_to_index' => 'div' })
       input = extractor.new(site.file_by_name('only-divs.md'))
 
       # When

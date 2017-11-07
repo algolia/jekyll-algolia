@@ -92,7 +92,7 @@ algolia:
     - 2015-01-01-post.md
 ```
 
-#### `record_css_selector`
+#### `nodes_to_index`
 
 All HTML nodes matching this CSS Selector will be indexed. Default value is `p`,
 meaning that all `<p>` paragraphs will be indexed.
@@ -101,7 +101,7 @@ If you would like to also index lists, you could set it like this:
 
 ```yml
 algolia:
-  record_css_selector: 'p,ul'
+  nodes_to_index: 'p,ul'
 ```
 
 #### `lazy_update`
@@ -304,7 +304,7 @@ execution directly on [their website][16].
 ### How can I exclude some HTML nodes from the indexing
 
 By default, the plugin will index every HTML node that matches the
-`record_css_selector` CSS selector option. The default value is `p`, meaning
+`nodes_to_index` CSS selector option. The default value is `p`, meaning
 that it will index all the paragraphs.
 
 You can use a [negation

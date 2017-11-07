@@ -1,7 +1,7 @@
 require 'algoliasearch'
 require 'nokogiri'
 require 'json'
-require 'html-hierarchy-extractor'
+require 'algolia_html_extractor'
 require_relative './utils'
 
 # Given an HTML file as input, will return an array of records to index
@@ -147,7 +147,7 @@ class AlgoliaSearchRecordExtractor
       css_selector: @config['record_css_selector']
     }
 
-    HTMLHierarchyExtractor.new(
+    AlgoliaHTMLExtractor.new(
       @file.content,
       options: extractor_options
     ).extract

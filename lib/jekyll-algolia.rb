@@ -13,6 +13,7 @@ module Jekyll
     # Push records to Algolia
     require 'jekyll/algolia/indexer'
 
+    @config = {}
 
     # Public: Init the Algolia module
     #

@@ -7,13 +7,10 @@ describe(Jekyll::Algolia::Configurator) do
   end
 
   describe '.get' do
-    # Given
     let(:config) { { 'foo' => 'bar' } }
 
-    # When
     subject { current.get('foo') }
 
-    # Then
     it { should eq 'bar' }
   end
 

@@ -1,83 +1,69 @@
 require 'spec_helper'
 
 describe(Jekyll::Algolia) do
-  let(:subject) { Jekyll::Algolia }
+  let(:current) { Jekyll::Algolia }
 
   # Suppress all Jekyll error messages during tests
-  before(:each) do
+  before do
     allow(Jekyll.logger).to receive(:info)
     allow(Jekyll.logger).to receive(:warn)
     allow(Jekyll.logger).to receive(:error)
   end
 
-  describe 'config' do
-    it 'should set the @config accessible from outside' do
-      # Given
-      input = { 'foo' => 'bar' }
+  describe '.config' do
+    # Given
+    let(:config) { { 'foo' => 'bar' } }
 
-      # When
-      subject.init(input)
+    # When
+    subject { current.init(config) }
 
-      # Then
-      expect(subject.config).to include(input)
+    # Then
+    it 'should make the config accessible from the outside' do
+      expect(subject.config).to include(config)
     end
   end
 
-  describe 'monkey_patch_site' do
-    it 'should change the site write method' do
-      # Given
-      site = Jekyll::Site.new(Jekyll.configuration)
-      initial_method = site.method(:write).source_location
+  describe '.monkey_patch_site' do
+    # Given
+    let(:site) { Jekyll::Site.new(Jekyll.configuration) }
+    let!(:initial_method) { site.method(:write).source_location }
 
-      # When
-      subject.monkey_patch_site(site)
+    # When
+    subject do
+      current.monkey_patch_site(site)
+      site.method(:write).source_location
+    end
 
-      # Then
-      actual = site.method(:write).source_location
-      expect(actual).not_to eq initial_method
+    # Then
+    it 'should change the initial .write method' do
+      expect(subject).to_not eq initial_method
     end
   end
 
   describe 'run' do
-    mock_site = nil
-    before(:each) do
-      # We mock Jekyll::Site.new so it always returns an object that answers to
-      # .process
-      mock_site = double('Jekyll::Site', process: nil)
-      allow(Jekyll::Site).to receive(:new).and_return(mock_site)
+    # Given
+    let(:configuration) { {} }
+    let(:jekyll_site) { double('Jekyll::Site', process: nil) }
+    before { allow(Jekyll::Site).to receive(:new).and_return(jekyll_site) }
+    before do
+      allow(current).to receive(:monkey_patch_site).and_return(jekyll_site)
     end
-    it 'should create a new site with the initialized config' do
-      # Given
-      input = Jekyll.configuration
 
-      # Then
-      expect(Jekyll::Site).to receive(:new).with(input)
-
-      # When
-      subject.init(input)
-      subject.run
+    # When
+    before do
+      current.init(configuration)
+      current.run
     end
-    it 'should monkey patch the created site' do
-      # Given
-      input = Jekyll.configuration
 
-      # Then
-      expect(Jekyll::Algolia).to receive(:monkey_patch_site).with(mock_site)
-
-      # When
-      subject.init(input)
-      subject.run
+    # Then
+    it 'should have created a new Jekyll::Site with the configuration' do
+      expect(Jekyll::Site).to have_received(:new).with(configuration)
     end
-    it 'should call process on the created site' do
-      # Given
-      input = Jekyll.configuration
-
-      # Then
-      expect(mock_site).to receive(:process)
-
-      # When
-      subject.init(input)
-      subject.run
+    it 'should monkey patch the Jekyll site' do
+      expect(current).to have_received(:monkey_patch_site).with(jekyll_site)
+    end
+    it 'should call .process on the Jekyll site' do
+      expect(jekyll_site).to have_received(:process)
     end
   end
 end

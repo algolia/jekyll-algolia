@@ -2,29 +2,45 @@ module AlgoliaPlugin
   def self.do_something(config)
     site = Jekyll::Site.new(config)
     site.process
+    42
   end
 end
 
-describe 'AlgoliaPlugin' do
-  it 'should create a new site with the config passed' do
-    # Given
-    config = { foo: 'bar' }
+describe AlgoliaPlugin do
+  describe '.do_something' do
+    let(:config) { {foo: 'bar'} }
+    let(:jekyll_site) { double('Jekyll::Site', process: nil) }
+    before { expect(Jekyll::Site).to receive(:new).with(config).and_return(jekyll_site) }
+    before { expect(jekyll_site).to receive(:process) }
 
-    # When
-    AlgoliaPlugin.do_something(config)
+    it { AlgoliaPlugin.do_something(config) }
 
-    # Then
-    # ??? 
-    # expect(Jekyll::Site).to receive(:new).with(input) <= Does not work because
-    # I haven't allowed listening to it
-    #
-    # mock_site = double('Jekyll::Site', process: nil)
-    # allow(Jekyll::Site).to receive(:new).and_return(mock_site) <= Ok, I can
-    # call the method without failing but the expect does not work
-    #
-    # Only thing that works is writing the full expect (including
-    # with/and_return) from the start, but that has me writing my expectation at
-    # the beginning...
-    # 
+  end
+  describe '.do_something' do
+    let(:config) { {foo: 'bar'} }
+    let(:jekyll_site) { double('Jekyll::Site', process: nil) }
+    before { allow(Jekyll::Site).to receive(:new).and_return(jekyll_site) }
+    before { allow(jekyll_site).to receive(:process) }
+
+    before { AlgoliaPlugin.do_something(config) }
+
+    it { expect(Jekyll::Site).to have_received(:new).with(config) }
+    it { expect(jekyll_site).to have_received(:process).with(config) }
+
+
+  end
+  describe '.do_something' do
+    let(:config) { {foo: 'bar'} }
+    let(:jekyll_site) { double('Jekyll::Site', process: nil) }
+    before { allow(Jekyll::Site).to receive(:new).and_return(jekyll_site) }
+    before { allow(jekyll_site).to receive(:process) }
+
+    subject { AlgoliaPlugin.do_something(config) }
+
+    context 'config is valid' do
+      let(:config) { false }
+      it { should eq 42 }
+      it { expect(subject).to eq 42 }
+    end
   end
 end

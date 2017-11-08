@@ -22,6 +22,10 @@ RSpec::Core::RakeTask.new(:test_details) do |spec|
   spec.rspec_opts = '--color --format documentation'
   spec.pattern = FileList['spec/*_spec.rb']
 end
+desc 'Run tests in all Ruby versions (with full details)'
+RSpec::Core::RakeTask.new(:test_all_ruby_versions) do
+  sh './scripts/test_all_ruby_versions'
+end
 
 # WATCH
 desc 'Watch for changes in files and reload tests'

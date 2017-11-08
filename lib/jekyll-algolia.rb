@@ -1,12 +1,18 @@
 require 'jekyll/commands/algolia'
 
 module Jekyll
-  # Main Algolia module entrypoint
+  # Requirable file, loading all dependencies. 
+  # Methods here are called by the main `jekyll algolia` command
   module Algolia
+    # Holds the current plugin version
     require 'jekyll/algolia/version'
+    # Extracts records from Jekyll files
     require 'jekyll/algolia/extractor'
+    # Read configuration options
     require 'jekyll/algolia/configurator'
+    # Push records to Algolia
     require 'jekyll/algolia/indexer'
+
 
     # Public: Init the Algolia module
     #
@@ -67,4 +73,3 @@ module Jekyll
     end
   end
 end
-

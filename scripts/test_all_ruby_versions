@@ -9,12 +9,12 @@ for version in "${versions[@]}"; do
   # Install this ruby version if not yet installed
   if [[ "$installed_version" != *"$version"* ]]; then
     echo "$version not found, installing it"
-    rvm install $version
+    rvm install "$version"
   fi
 
   echo "Updating dependencies"
-  rvm $version exec bundle install
+  rvm "$version" exec bundle install
 
   echo "Running tests"
-  rvm $version exec bundle exec rake test
+  rvm "$version" exec bundle exec rake test_details
 done

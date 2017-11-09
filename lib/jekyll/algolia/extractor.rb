@@ -16,7 +16,9 @@ module Jekyll
         # Getting all hierarchical nodes from the HTML input
         raw_records = extract_raw_records(file.content)
 
-        raw_records
+        raw_records.map do |record|
+          convert_to_json(record)
+        end
       end
 
       # Public: Extract raw records from the file, including content for each
@@ -30,6 +32,13 @@ module Jekyll
             css_selector: Configurator.algolia('nodes_to_index')
           }
         ).extract
+      end
+
+      def self.convert_to_json(raw_record)
+        # Remove the Nokogiri :node
+        raw_record.delete(:node)
+
+        raw_record
       end
     end
   end

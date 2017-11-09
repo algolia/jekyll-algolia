@@ -34,7 +34,7 @@ task :watch do
   # 1. It's the only directories we are interested in
   # 2. Listening to the whole parent dir might throw Guard errors if we have
   #    symlink
-  sh 'bundle exec guard --watchdir lib spec'
+  sh 'bundle exec guard --clear --watchdir lib spec'
 end
 
 task default: :test

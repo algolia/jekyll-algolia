@@ -32,7 +32,18 @@ describe(Jekyll::Algolia::Configurator) do
         let(:input) { 'nodes_to_index' }
         it { should eq 'p' }
       end
+      describe 'should get the default extensions_to_index' do
+        before(:each) do
+          allow(current)
+            .to receive(:default_extensions_to_index)
+            .and_return('foo')
+        end
+
+        let(:input) { 'extensions_to_index' }
+        it { should eq 'foo' }
+      end
     end
+
     context 'with no algolia config defined' do
       let(:config) { {} }
       let(:input) { 'foo' }
@@ -43,5 +54,22 @@ describe(Jekyll::Algolia::Configurator) do
         it { should eq 'p' }
       end
     end
+  end
+
+  describe '.default_extensions_to_index' do
+    let(:config) { {} }
+
+    subject { current.default_extensions_to_index }
+
+    before do
+      allow(current)
+        .to receive(:get)
+        .with('markdown_ext')
+        .and_return('foo,bar')
+    end
+
+    it { should include('html') }
+    it { should include('foo') }
+    it { should include('bar') }
   end
 end

@@ -3,16 +3,14 @@ require 'spec_helper'
 describe(Jekyll::Algolia) do
   let(:current) { Jekyll::Algolia }
 
-  # Suppress all Jekyll error messages during tests
+  # Suppress Jekyll log about not having a config file
   before do
-    allow(Jekyll.logger).to receive(:info)
     allow(Jekyll.logger).to receive(:warn)
-    allow(Jekyll.logger).to receive(:error)
   end
 
-  describe '.config' do
+  describe '.init' do
     # Given
-    let(:config) { { 'foo' => 'bar' } }
+    let(:config) { Jekyll.configuration }
 
     # When
     subject { current.init(config) }
@@ -20,6 +18,9 @@ describe(Jekyll::Algolia) do
     # Then
     it 'should make the config accessible from the outside' do
       expect(subject.config).to include(config)
+    end
+    it 'should make the site accessible from the outside' do
+      expect(subject.site.config).to include(config)
     end
   end
 

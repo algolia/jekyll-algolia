@@ -10,7 +10,7 @@ module Jekyll
       #
       # records - Records to push
       def self.run(records)
-        ap records
+        # ap records
         # checker = AlgoliaSearchCredentialChecker.new(@config)
         # checker.assert_valid
 

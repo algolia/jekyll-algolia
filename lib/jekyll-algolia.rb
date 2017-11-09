@@ -1,16 +1,14 @@
 require 'jekyll/commands/algolia'
 
 module Jekyll
-  # Requirable file, loading all dependencies. 
+  # Requirable file, loading all dependencies.
   # Methods here are called by the main `jekyll algolia` command
   module Algolia
-    # Holds the current plugin version
     require 'jekyll/algolia/version'
-    # Extracts records from Jekyll files
-    require 'jekyll/algolia/extractor'
-    # Read configuration options
+    require 'jekyll/algolia/user_hooks'
     require 'jekyll/algolia/configurator'
-    # Push records to Algolia
+    require 'jekyll/algolia/file_browser'
+    require 'jekyll/algolia/extractor'
     require 'jekyll/algolia/indexer'
 
     @config = {}
@@ -20,21 +18,26 @@ module Jekyll
     # config - A hash of Jekyll config option (merge of _config.yml options and
     # options passed on the command line)
     #
-    # Returns itself
+    # The gist of the plugin works by instanciating a Jekyll site,
+    # monkey-patching its `write` method and building it.
     def self.init(config = {})
       @config = config
+      @site = Jekyll::Site.new(@config)
+      monkey_patch_site(@site)
       # @checker = AlgoliaSearchCredentialChecker.new(@config)
       self
     end
 
     # Public: Run the main Algolia module
     #
-    # The gist of the plugin works by instanciating a Jekyll site,
-    # monkey-patching its `write` method and building it.
+    # Actually "process" the site, which will acts just like a regular `jekyll
+    # build` except that our monkey patched `write` method will be called
+    # instead.
+    #
+    # Note: The internal list of files to be processed will only be created when
+    # calling .process
     def self.run
-      site = Jekyll::Site.new(@config)
-      monkey_patch_site(site)
-      site.process
+      @site.process
     end
 
     # Public: Get access to the Jekyll config
@@ -43,6 +46,13 @@ module Jekyll
     # accessible
     def self.config
       @config
+    end
+
+    # Public: Get access to the Jekyll site
+    #
+    # Tests will need access to the inner Jekyll website so we expose it here
+    def self.site
+      @site
     end
 
     # Public: Replace the main `write` method of the site to push records to
@@ -57,8 +67,8 @@ module Jekyll
         records = []
         # is_verbose = config['verbose']
         each_site_file do |file|
-          # # Skip files that should not be indexed
-          # next unless AlgoliaSearchJekyllPush.indexable?(file)
+          # Skip files that should not be indexed
+          next unless Jekyll::Algolia::FileBrowser.indexable?(file)
           # Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
           #
           file_records = Jekyll::Algolia::Extractor.run(file)

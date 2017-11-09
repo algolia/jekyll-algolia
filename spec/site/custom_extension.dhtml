@@ -1,0 +1,7 @@
+---
+title: DHTML Page
+---
+
+<p>This is an (D)HTML page. It uses a custom extension to test that it can be
+excluded correctly.</p>
+

@@ -5,7 +5,7 @@ module Jekyll
       # Algolia default values
       ALGOLIA_DEFAULTS = {
         'extensions_to_index' => nil,
-        'files_to_exclude' => ['index.html'],
+        'files_to_exclude' => nil,
         'nodes_to_index' => 'p'
       }.freeze
 
@@ -28,8 +28,9 @@ module Jekyll
         config = get('algolia') || {}
         value = config[key] || ALGOLIA_DEFAULTS[key]
 
-        if !value && key == 'extensions_to_index'
-          value = default_extensions_to_index
+        # No value found but we have a method to define the default value
+        if value.nil? && respond_to?("default_#{key}")
+          value = send("default_#{key}")
         end
 
         value
@@ -40,9 +41,22 @@ module Jekyll
       # Markdown files can have many different extensions. We keep the one
       # defined in the Jekyll config
       def self.default_extensions_to_index
-        extensions = ['html']
-        extensions += get('markdown_ext').split(',')
-        extensions.join(',')
+        ['html'] + get('markdown_ext').split(',')
+      end
+
+      # Public: Setting a default value to ignore index.html/index.md files in
+      # the root
+      #
+      # Chances are high that the main page is not worthy of indexing (it can be
+      # the list of the most recent posts or some landing page without much
+      # content). We ignore it by default.
+      #
+      # User can still add it by manually specifying a `files_to_exclude` to an
+      # empty array
+      def self.default_files_to_exclude
+        algolia('extensions_to_index').map do |extension|
+          "index.#{extension}"
+        end
       end
     end
   end

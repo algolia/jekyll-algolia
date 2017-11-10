@@ -1,3 +1,6 @@
+AllCops:
+  DisplayCopNames: true
+
 Metrics/AbcSize:
   Max: 100
 

@@ -1,6 +1,6 @@
 ---
 title: Collection Item
-custom: Foo
+date: 04-05-1984
 tags:
   - tag
   - another tag

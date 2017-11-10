@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Extractor) do

@@ -53,7 +53,7 @@ module Jekyll
       # and raw HTML files but this list can be extended using the
       # `extensions_to_index` config option.
       def self.allowed_extension?(file)
-        extensions = Configurator.algolia('extensions_to_index').split(',')
+        extensions = Configurator.algolia('extensions_to_index')
         extname = File.extname(file.path)[1..-1]
         extensions.include?(extname)
       end
@@ -98,6 +98,141 @@ module Jekyll
         return false if excluded_by_user?(file)
 
         true
+      end
+
+      # TOTEST
+      def self.metadata(file)
+        raw_data = raw_data(file)
+        specific_data = {
+          collection: collection(file),
+          date: date(file),
+          excerpt_html: excerpt_html(file),
+          excerpt_text: excerpt_text(file),
+          original_path: file.path,
+          slug: slug(file),
+          type: type(file),
+          url: url(file)
+        }
+
+        metadata = raw_data.merge(specific_data).compact
+        ap metadata
+
+        metadata
+      end
+
+      # Public: Return a hash of all the raw data, as defined in the
+      # front-matter and including default values
+      #
+      # file - The Jekyll file
+      #
+      # Any custom data passed to the front-matter will be returned by this
+      # method. It ignores any key where we have a better, custom, getter.
+      def self.raw_data(file)
+        data = file.data.clone
+
+        # Remove all keys where we have a specific getter
+        data.each_key do |key|
+          data.delete(key) if respond_to?(key)
+        end
+
+        # Also delete keys we manually handle
+        data.delete('excerpt')
+
+        # Convert all keys to symbols
+        data = Utils.keys_to_symbols(data)
+
+        data
+      end
+
+      # Public: Get the type of the document (page, post, collection, etc)
+      #
+      # file - The Jekyll file
+      #
+      # Pages are simple html and markdown documents in the tree
+      # Elements from a collection are called Documents
+      # Posts are a custom kind of Documents
+      def self.type(file)
+        type = file.class.name.split('::')[-1].downcase
+
+        type = 'post' if type == 'document' && file.collection.label == 'posts'
+
+        type
+      end
+
+      # Public: Returns the url of the file, starting from the root
+      #
+      # file - The Jekyll file
+      def self.url(file)
+        file.url
+      end
+
+      # Public: Returns a timestamp of the file date
+      #
+      # file - The Jekyll file
+      #
+      # All collections have a date, either taken from the filename, or the
+      # `date` config set in the front-matter. Even if none is set, the current
+      # date is taken by default.
+      def self.date(file)
+        date = file.data['date']
+        return nil if date.nil?
+
+        date.to_i
+      end
+
+      # Public: Returns the HTML version of the excerpt
+      #
+      # file - The Jekyll file
+      #
+      # Only collections (including posts) have an excerpt. Pages don't.
+      def self.excerpt_html(file)
+        excerpt = file.data['excerpt']
+        return nil if excerpt.nil?
+        excerpt.to_s.tr("\n", ' ').strip
+      end
+
+      # Public: Returns the text version of the excerpt
+      #
+      # file - The Jekyll file
+      #
+      # Only collections (including posts) have an excerpt. Pages don't.
+      def self.excerpt_text(file)
+        html = excerpt_html(file)
+        return nil if html.nil?
+        Utils.html_to_text(html)
+      end
+
+      # Public: Returns the slug of the file
+      #
+      # file - The Jekyll file
+      #
+      # Slugs can be automatically extracted from collections, but for other
+      # files, we have to create them from the basename
+      def self.slug(file)
+        # We get the real slug from the file data if available
+        return file.data['slug'] if file.data.key?('slug')
+
+        # We create it ourselves from the filepath otherwise
+        File.basename(file.path, File.extname(file.path)).downcase
+      end
+
+      # Public: Returns the name of the collection
+      #
+      # file - The Jekyll file
+      #
+      # Only collection documents can have a collection name. Pages don't. Posts
+      # are purposefully excluded from it as well even if they are technically
+      # part of a collection
+      def self.collection(file)
+        return nil unless file.respond_to?(:collection)
+
+        collection_name = file.collection.label
+
+        # Posts are a special kind of collection, but it's an implementation
+        # detail from my POV, so I'll exclude them
+        return nil if collection_name == 'posts'
+
+        collection_name
       end
     end
   end

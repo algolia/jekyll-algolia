@@ -1,9 +1,7 @@
 ---
-title: About page
-custom: Foo
-tags:
-  - tag
-  - another tag
+title: About
+custom1: foo
+custom2: bar
 ---
 
 # Heading 1

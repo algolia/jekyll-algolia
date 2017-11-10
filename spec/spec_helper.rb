@@ -16,11 +16,13 @@ end
 
 # We will run all our tests with a real Jekyll instance, to make sure it works
 # with the real beast.
-def init_new_jekyll_site
+def init_new_jekyll_site(user_config = {})
   # We start a new Jekyll site, using our ./spec/site directory as its starting
   # point
   config = Jekyll.configuration(
-    source: File.expand_path('./spec/site')
+    user_config.merge(
+      source: File.expand_path('./spec/site')
+    )
   )
   algolia_command = Jekyll::Algolia.init(config)
   site = algolia_command.site
@@ -38,6 +40,7 @@ def init_new_jekyll_site
     each_site_file do |file|
       return file if file.path =~ /#{needle}$/
     end
+    nil
   end
 
   def site.__all_files
@@ -52,58 +55,6 @@ def init_new_jekyll_site
 
   site
 end
-#
-# def get_file(site)
-#
-# end
-#
-#
-#
-#   def site.file_by_name(file_name)
-#     files = {}
-#
-#     # We get the list of all classic files
-#     each_site_file do |file|
-#       files[file.path] = file
-#     end
-#
-#     # If we have an exact match, we use that one:
-#     return files[file_name] if files.key?(file_name)
-#
-#     # Otherwise we try to find a key that is loosely matching
-#     keys = files.keys
-#     values = files.values
-#
-#     keys.each_with_index do |key, index|
-#       return values[index] if key =~ /#{file_name}$/
-#     end
-#
-#     nil
-#   end
-# end
-
-# # Create a Jekyll::Site instance, patched with a `file_by_name` method
-# def get_site(config = {}, options = {})
-#   default_options = {
-#     mock_write_method: true,
-#     process: true
-#   }
-#   options = default_options.merge(options)
-#
-#   config = config.merge(
-#   )
-#   config = Jekyll.configuration(config)
-#
-#   site = AlgoliaSearchJekyllPush.init_options({}, options, config)
-#                                 .jekyll_new(config)
-#
-#
-#   allow(site).to receive(:write) if options[:mock_write_method]
-#
-#   site.process if options[:process]
-#   site
-# end
-#
 # def mock_logger
 #   # Spying on default logging method while still calling them
 #   allow(Jekyll.logger).to receive(:info).and_wrap_original do |method, *args|

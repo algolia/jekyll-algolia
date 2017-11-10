@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Configurator) do
@@ -71,5 +72,21 @@ describe(Jekyll::Algolia::Configurator) do
     it { should include('html') }
     it { should include('foo') }
     it { should include('bar') }
+  end
+
+  describe '.default_files_to_exclude' do
+    let(:config) { {} }
+
+    subject { current.default_files_to_exclude }
+
+    before do
+      allow(current)
+        .to receive(:algolia)
+        .with('extensions_to_index')
+        .and_return(%w[foo bar])
+    end
+
+    it { should include('index.foo') }
+    it { should include('index.bar') }
   end
 end

@@ -11,9 +11,6 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
   class << self
     attr_accessor :options, :config
 
-    def init_with_program(_prog)
-    end
-
 
     # Check if the lazy update feature is enabled or not (default to false)
     def lazy_update?

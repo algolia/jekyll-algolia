@@ -5,6 +5,7 @@ module Jekyll
   # Methods here are called by the main `jekyll algolia` command
   module Algolia
     require 'jekyll/algolia/version'
+    require 'jekyll/algolia/utils'
     require 'jekyll/algolia/user_hooks'
     require 'jekyll/algolia/configurator'
     require 'jekyll/algolia/file_browser'
@@ -72,7 +73,6 @@ module Jekyll
           # Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
           #
           file_records = Jekyll::Algolia::Extractor.run(file)
-          # new_items = AlgoliaSearchRecordExtractor.new(file).extract
           # next if new_items.nil?
           # ap new_items if is_verbose
           #

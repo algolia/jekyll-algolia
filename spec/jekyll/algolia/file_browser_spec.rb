@@ -302,10 +302,18 @@ describe(Jekyll::Algolia::FileBrowser) do
     context 'with a post' do
       let(:file) { site.__find_file('-test-post-again.md') }
       it { should include(title: 'Test post again') }
+      it { should include(categories: %w[foo bar]) }
+      it { should include(tags: %w[foo bar]) }
+      it { should include(draft: false) }
+      it { should include(ext: '.md') }
+    end
+    context 'with a collection item' do
+      let(:file) { site.__find_file('collection-item.html') }
+      it { should include(title: 'Collection Item') }
       it { should include(categories: []) }
       it { should include(tags: []) }
       it { should include(draft: false) }
-      it { should include(ext: '.md') }
+      it { should include(ext: '.html') }
     end
 
     describe 'should not have modified the inner data' do
@@ -323,6 +331,91 @@ describe(Jekyll::Algolia::FileBrowser) do
     describe 'should not contain some specific keys' do
       let(:file) { site.__find_file('html.html') }
       it { should_not include(:excerpt) }
+    end
+  end
+
+  describe '.metadata' do
+    subject { current.metadata(file) }
+
+    context 'with mocked data' do
+      let(:file) { nil }
+      before do
+        allow(current).to receive(:collection).and_return('collection')
+        allow(current).to receive(:date).and_return('date')
+        allow(current).to receive(:excerpt_html).and_return('excerpt_html')
+        allow(current).to receive(:excerpt_text).and_return('excerpt_text')
+        allow(current).to receive(:slug).and_return('slug')
+        allow(current).to receive(:type).and_return('type')
+        allow(current).to receive(:url).and_return('url')
+
+        allow(current).to receive(:raw_data).and_return(foo: 'foo', bar: 'bar')
+      end
+      describe 'should contain all custom data' do
+        it { should include(collection: 'collection') }
+        it { should include(date: 'date') }
+        it { should include(excerpt_html: 'excerpt_html') }
+        it { should include(excerpt_text: 'excerpt_text') }
+        it { should include(slug: 'slug') }
+        it { should include(type: 'type') }
+        it { should include(url: 'url') }
+      end
+      describe 'should contain custom metadata' do
+        it { should include(foo: 'foo') }
+        it { should include(bar: 'bar') }
+      end
+      context 'with nil keys' do
+        before do
+          allow(current).to receive(:url).and_return(nil)
+          allow(current).to receive(:raw_data).and_return(foo: nil, bar: 'bar')
+        end
+        it { should_not include(:url) }
+        it { should_not include(:foo) }
+      end
+      context 'with empty arrays' do
+        before do
+          allow(current)
+            .to receive(:raw_data)
+            .and_return(categories: [], tags: [])
+        end
+        it { should_not include(:categories) }
+        it { should_not include(:tags) }
+      end
+    end
+
+    context 'with real data' do
+      context 'with a page' do
+        let(:file) { site.__find_file('about.md') }
+        it { should_not include(:collection) }
+        it { should_not include(:date) }
+        it { should include(slug: 'about') }
+        it { should_not include(:tags) }
+        it { should include(type: 'page') }
+        it { should include(title: 'About') }
+        it { should include(url: '/about.html') }
+        it { should include(custom1: 'foo') }
+        it { should include(custom2: 'bar') }
+      end
+      context 'with a post' do
+        let(:file) { site.__find_file('-test-post.md') }
+        it { should_not include(:collection) }
+        it { should include(date: 1_435_788_000) }
+        it { should include(ext: '.md') }
+        it { should include(slug: 'test-post') }
+        it { should include(tags: ['tag', 'another tag']) }
+        it { should include(type: 'post') }
+        it { should include(title: 'Test post') }
+        it { should include(url: '/2015/07/02/test-post.html') }
+      end
+      context 'with a collection document' do
+        let(:file) { site.__find_file('collection-item.html') }
+        it { should include(collection: 'my-collection') }
+        it { should include(date: 452_469_600) }
+        it { should include(slug: 'collection-item') }
+        it { should_not include(:tags) }
+        it { should include(type: 'document') }
+        it { should include(title: 'Collection Item') }
+        it { should include(url: '/my-collection/collection-item.html') }
+      end
     end
   end
 end

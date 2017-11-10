@@ -100,7 +100,13 @@ module Jekyll
         true
       end
 
-      # TOTEST
+      # Public: Return a hash of all the file metadata
+      #
+      # file - The Jekyll file
+      #
+      # It contains both the raw metadata extracted from the front-matter, as
+      # well as more specific fields like the collection name, date timestamp,
+      # slug, type and url
       def self.metadata(file)
         raw_data = raw_data(file)
         specific_data = {
@@ -108,14 +114,12 @@ module Jekyll
           date: date(file),
           excerpt_html: excerpt_html(file),
           excerpt_text: excerpt_text(file),
-          original_path: file.path,
           slug: slug(file),
           type: type(file),
           url: url(file)
         }
 
-        metadata = raw_data.merge(specific_data).compact
-        ap metadata
+        metadata = Utils.compact_empty(raw_data.merge(specific_data))
 
         metadata
       end
@@ -127,6 +131,9 @@ module Jekyll
       #
       # Any custom data passed to the front-matter will be returned by this
       # method. It ignores any key where we have a better, custom, getter.
+
+      # Note that even if you define tags and categories in a collection item,
+      # it will not be included in the data. It's always an empty array.
       def self.raw_data(file)
         data = file.data.clone
 

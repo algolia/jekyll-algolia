@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Utils) do
@@ -47,6 +48,26 @@ describe(Jekyll::Algolia::Utils) do
       let(:hash) { { 'foo' => 'bar', bar: 'baz' } }
       it { should include(foo: 'bar') }
       it { should include(bar: 'baz') }
+    end
+  end
+
+  describe '.compact_empty' do
+    subject { current.compact_empty(input) }
+
+    context 'with nil keys' do
+      let(:input) { { foo: 'bar', bar: nil } }
+      let(:expected) { { foo: 'bar' } }
+      it { should eq expected }
+    end
+    context 'with empty arrays' do
+      let(:input) { { foo: 'bar', bar: [] } }
+      let(:expected) { { foo: 'bar' } }
+      it { should eq expected }
+    end
+    context 'with false values' do
+      let(:input) { { foo: 'bar', bar: false } }
+      let(:expected) { { foo: 'bar', bar: false } }
+      it { should eq expected }
     end
   end
 end

@@ -1,9 +1,5 @@
 ---
 title: "Test post again"
-categories: 
-  - foo
-  - bar
-tags: foo bar
 ---
 
 The goal of this post is simply to trigger pagination, and see that we do not

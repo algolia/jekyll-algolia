@@ -1,7 +1,11 @@
 ---
 title: About
+author: Myself
 custom1: foo
 custom2: bar
+customList:
+  - foo
+  - bar
 ---
 
 # Heading 1

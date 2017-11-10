@@ -183,8 +183,8 @@ describe(Jekyll::Algolia::FileBrowser) do
       it { should eq '/about.html' }
     end
     context 'with a post' do
-      let(:file) { site.__find_file('_posts/2015-07-02-test-post.md') }
-      it { should eq '/2015/07/02/test-post.html' }
+      let(:file) { site.__find_file('-test-post-again.md') }
+      it { should eq '/2015/07/03/test-post-again.html' }
     end
     context 'with a collection element' do
       let(:file) { site.__find_file('_my-collection/collection-item.html') }
@@ -295,25 +295,32 @@ describe(Jekyll::Algolia::FileBrowser) do
 
     context 'with a page' do
       let(:file) { site.__find_file('about.md') }
-      it { should include(title: 'About') }
-      it { should include(custom1: 'foo') }
-      it { should include(custom2: 'bar') }
+      it do
+        should include(title: 'About')
+        should include(custom1: 'foo')
+        should include(custom2: 'bar')
+        should include(customList: %w[foo bar])
+      end
     end
     context 'with a post' do
-      let(:file) { site.__find_file('-test-post-again.md') }
-      it { should include(title: 'Test post again') }
-      it { should include(categories: %w[foo bar]) }
-      it { should include(tags: %w[foo bar]) }
-      it { should include(draft: false) }
-      it { should include(ext: '.md') }
+      let(:file) { site.__find_file('-test-post.md') }
+      it do
+        should include(title: 'Test post')
+        should include(categories: %w[foo bar])
+        should include(tags: ['tag', 'another tag'])
+        should include(draft: false)
+        should include(ext: '.md')
+      end
     end
     context 'with a collection item' do
       let(:file) { site.__find_file('collection-item.html') }
-      it { should include(title: 'Collection Item') }
-      it { should include(categories: []) }
-      it { should include(tags: []) }
-      it { should include(draft: false) }
-      it { should include(ext: '.html') }
+      it do
+        should include(title: 'Collection Item')
+        should include(categories: [])
+        should include(tags: [])
+        should include(draft: false)
+        should include(ext: '.html')
+      end
     end
 
     describe 'should not have modified the inner data' do
@@ -323,10 +330,12 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
     describe 'should not contain keys where we have defined getters' do
       let(:file) { site.__find_file('html.html') }
-      it { should_not include(:slug) }
-      it { should_not include(:type) }
-      it { should_not include(:url) }
-      it { should_not include(:date) }
+      it do
+        should_not include(:slug)
+        should_not include(:type)
+        should_not include(:url)
+        should_not include(:date)
+      end
     end
     describe 'should not contain some specific keys' do
       let(:file) { site.__find_file('html.html') }
@@ -385,6 +394,7 @@ describe(Jekyll::Algolia::FileBrowser) do
     context 'with real data' do
       context 'with a page' do
         let(:file) { site.__find_file('about.md') }
+        it { should include(author: 'Myself') }
         it { should_not include(:collection) }
         it { should_not include(:date) }
         it { should include(slug: 'about') }
@@ -398,13 +408,14 @@ describe(Jekyll::Algolia::FileBrowser) do
       context 'with a post' do
         let(:file) { site.__find_file('-test-post.md') }
         it { should_not include(:collection) }
+        it { should include(categories: %w[foo bar]) }
         it { should include(date: 1_435_788_000) }
         it { should include(ext: '.md') }
         it { should include(slug: 'test-post') }
         it { should include(tags: ['tag', 'another tag']) }
         it { should include(type: 'post') }
         it { should include(title: 'Test post') }
-        it { should include(url: '/2015/07/02/test-post.html') }
+        it { should include(url: '/foo/bar/2015/07/02/test-post.html') }
       end
       context 'with a collection document' do
         let(:file) { site.__find_file('collection-item.html') }

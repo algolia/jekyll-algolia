@@ -25,7 +25,7 @@ module Jekyll
           record.delete(:node)
 
           # Merging each record info with file info
-          record = record.merge(shared_metadata).compact
+          record = Utils.compact_empty(record.merge(shared_metadata))
 
           # Apply custom user-defined hooks
           record = Jekyll::Algolia.hook_before_indexing_each(record, node)
@@ -52,10 +52,6 @@ module Jekyll
             css_selector: Configurator.algolia('nodes_to_index')
           }
         ).extract
-      end
-
-      def self.convert_to_json(raw_record)
-        raw_record
       end
     end
   end

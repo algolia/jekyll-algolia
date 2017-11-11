@@ -70,4 +70,18 @@ describe(Jekyll::Algolia::Utils) do
       it { should eq expected }
     end
   end
+
+  describe '.match?' do
+    subject { current.match?(string, regexp) }
+    let(:string) { 'foo-42-bar' }
+
+    context 'with a matching regexp' do
+      let(:regexp) { /^foo-([0-9]*)-bar$/ }
+      it { should eq true }
+    end
+    context 'with a non-matching regexp' do
+      let(:regexp) { /^foo-([0-9]*)-baz$/ }
+      it { should eq false }
+    end
+  end
 end

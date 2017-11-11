@@ -31,6 +31,22 @@ module Jekyll
         end
         new_hash
       end
+
+      # Public: Check if a string matches a regex
+      #
+      # string - The string to test
+      # regex - The regex to match against
+      #
+      # Newer versions of Ruby have easy ways to test this, but a wrapper is
+      # needed for older versions.
+      def self.match?(string, regex)
+        # Ruby 2.4 introduces .match?
+        return regex.match?(string) if regex.respond_to?(:match?)
+
+        # Older versions of Ruby have to deal with =~ returning nil if no match
+        # is found
+        !(string =~ regex).nil?
+      end
     end
   end
 end

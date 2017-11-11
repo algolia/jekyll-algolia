@@ -41,7 +41,7 @@ module Jekyll
       # `jekyll-paginate` automatically creates pages to paginate through posts.
       # We don't want to index those
       def self.pagination_page?(file)
-        %r{page([0-9]*)/index\.html$}.match?(file.path)
+        Utils.match(file.path, %r{page([0-9]*)/index\.html$})
       end
 
       # Public: Check if the file has one of the allowed extensions

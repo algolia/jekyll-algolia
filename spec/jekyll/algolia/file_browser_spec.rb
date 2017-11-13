@@ -6,8 +6,12 @@ describe(Jekyll::Algolia::FileBrowser) do
   let(:site) { init_new_jekyll_site }
 
   # Suppress Jekyll log about reading the config file
+  before { allow(Jekyll.logger).to receive(:info) }
+  # Do not exit on wrong Algolia configuration
   before do
-    allow(Jekyll.logger).to receive(:info)
+    allow(Jekyll::Algolia::Configurator)
+      .to receive(:assert_valid_credentials)
+      .and_return(true)
   end
 
   describe '.indexable?' do
@@ -216,7 +220,10 @@ describe(Jekyll::Algolia::FileBrowser) do
   end
 
   describe '.excerpt_html' do
-    let(:expected) { '<p>This is the first paragraph. It is especially long because we want it to wrap on two lines.</p>' }
+    let(:expected) do
+      '<p>This is the first paragraph. It is especially long because we '\
+      'want it to wrap on two lines.</p>'
+    end
 
     subject { current.excerpt_html(file) }
 

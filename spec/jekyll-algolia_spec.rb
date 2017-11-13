@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia) do
@@ -9,18 +10,34 @@ describe(Jekyll::Algolia) do
   end
 
   describe '.init' do
-    # Given
     let(:config) { Jekyll.configuration }
 
-    # When
-    subject { current.init(config) }
+    context 'with valid Algolia credentials' do
+      subject { current.init(config) }
 
-    # Then
-    it 'should make the config accessible from the outside' do
-      expect(subject.config).to include(config)
+      before do
+        allow(Jekyll::Algolia::Configurator)
+          .to receive(:assert_valid_credentials)
+          .and_return(true)
+      end
+
+      it 'should make the config accessible from the outside' do
+        expect(subject.config).to include(config)
+      end
+      it 'should make the site accessible from the outside' do
+        expect(subject.site.config).to include(config)
+      end
     end
-    it 'should make the site accessible from the outside' do
-      expect(subject.site.config).to include(config)
+
+    context 'with invalid Algolia credentials' do
+      subject { -> { current.init(config) } }
+      before do
+        allow(Jekyll::Algolia::Configurator)
+          .to receive(:assert_valid_credentials)
+          .and_return(false)
+      end
+
+      it { is_expected.to raise_error SystemExit }
     end
   end
 
@@ -42,29 +59,28 @@ describe(Jekyll::Algolia) do
   end
 
   describe 'run' do
-    # Given
-    let(:configuration) { {} }
+    # Prevent the whole process to stop if Algolia config is not available
+    before do
+      allow(Jekyll::Algolia::Configurator)
+        .to receive(:assert_valid_credentials)
+        .and_return(true)
+    end
+
+    let(:configuration) { Jekyll.configuration }
     let(:jekyll_site) { double('Jekyll::Site', process: nil) }
-    before { allow(Jekyll::Site).to receive(:new).and_return(jekyll_site) }
     before do
-      allow(current).to receive(:monkey_patch_site).and_return(jekyll_site)
+      # Making sure all methods are called on the relevant objects
+      expect(Jekyll::Site)
+        .to receive(:new)
+        .with(configuration)
+        .and_return(jekyll_site)
+      expect(current)
+        .to receive(:monkey_patch_site)
+        .with(jekyll_site)
+      expect(jekyll_site)
+        .to receive(:process)
     end
 
-    # When
-    before do
-      current.init(configuration)
-      current.run
-    end
-
-    # Then
-    it 'should have created a new Jekyll::Site with the configuration' do
-      expect(Jekyll::Site).to have_received(:new).with(configuration)
-    end
-    it 'should monkey patch the Jekyll site' do
-      expect(current).to have_received(:monkey_patch_site).with(jekyll_site)
-    end
-    it 'should call .process on the Jekyll site' do
-      expect(jekyll_site).to have_received(:process)
-    end
+    it { current.init(configuration).run }
   end
 end

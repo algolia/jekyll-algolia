@@ -2,6 +2,8 @@ module Jekyll
   module Algolia
     # Single source of truth for access to configuration variables
     module Configurator
+      include Jekyll::Algolia
+
       # Algolia default values
       ALGOLIA_DEFAULTS = {
         'extensions_to_index' => nil,
@@ -72,7 +74,21 @@ module Jekyll
         ENV['ALGOLIA_INDEX_NAME'] || algolia('index_name')
       end
 
-      def self.assert_valid_credentials; end
+      # Public: Check that all credentials are set
+      #
+      # Returns true if everything is ok, false otherwise. Will display helpful
+      # error messages for each missing credential
+      def self.assert_valid_credentials
+        checks = %w[application_id index_name api_key]
+        checks.each do |check|
+          if send(check.to_sym).nil?
+            Logger.known_message("missing_#{check}")
+            return false
+          end
+        end
+
+        true
+      end
 
       # Public: Setting a default values to index only html and markdown files
       #

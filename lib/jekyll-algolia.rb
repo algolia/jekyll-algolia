@@ -27,8 +27,8 @@ module Jekyll
       @site = Jekyll::Site.new(@config)
       monkey_patch_site(@site)
 
-      Jekyll::Algolia::Configurator.assert_valid_credentials
-      # @checker = AlgoliaSearchCredentialChecker.new(@config)
+      exit 1 unless Configurator.assert_valid_credentials
+
       self
     end
 
@@ -72,17 +72,17 @@ module Jekyll
         # is_verbose = config['verbose']
         each_site_file do |file|
           # Skip files that should not be indexed
-          next unless Jekyll::Algolia::FileBrowser.indexable?(file)
+          next unless FileBrowser.indexable?(file)
           # Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
           #
-          file_records = Jekyll::Algolia::Extractor.run(file)
+          file_records = Extractor.run(file)
           # next if new_items.nil?
           # ap new_items if is_verbose
           #
           records += file_records
         end
 
-        Jekyll::Algolia::Indexer.run(records)
+        Indexer.run(records)
       end
     end
   end

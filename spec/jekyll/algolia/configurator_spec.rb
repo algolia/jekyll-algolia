@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Configurator) do
@@ -143,6 +144,57 @@ describe(Jekyll::Algolia::Configurator) do
       it { should eq 'APIKEY_FROM_FILE' }
     end
     describe 'should prefer the value in ENV rather than in the file' do
+    end
+  end
+
+  describe '.assert_valid_credentials' do
+    subject { current.assert_valid_credentials }
+
+    let(:application_id) { nil }
+    let(:index_name) { nil }
+    let(:api_key) { nil }
+    before do
+      allow(current).to receive(:application_id).and_return(application_id)
+      allow(current).to receive(:index_name).and_return(index_name)
+      allow(current).to receive(:api_key).and_return(api_key)
+    end
+
+    context 'with no application id' do
+      before do
+        expect(Jekyll::Algolia::Logger)
+          .to receive(:known_message)
+          .with('missing_application_id')
+      end
+      it { should eq false }
+    end
+
+    context 'with no index name' do
+      let(:application_id) { 'application_id' }
+      before do
+        expect(Jekyll::Algolia::Logger)
+          .to receive(:known_message)
+          .with('missing_index_name')
+      end
+      it { should eq false }
+    end
+
+    context 'with no API key' do
+      let(:application_id) { 'application_id' }
+      let(:index_name) { 'index_name' }
+      before do
+        expect(Jekyll::Algolia::Logger)
+          .to receive(:known_message)
+          .with('missing_api_key')
+      end
+      it { should eq false }
+    end
+
+    context 'with app id, index name and api key' do
+      let(:application_id) { 'application_id' }
+      let(:index_name) { 'index_name' }
+      let(:api_key) { 'api_key' }
+
+      it { should eq true }
     end
   end
 end

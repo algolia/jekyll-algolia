@@ -8,8 +8,12 @@ describe(Jekyll::Algolia::Extractor) do
   let(:site) { init_new_jekyll_site }
 
   # Suppress Jekyll log about reading the config file
+  before { allow(Jekyll.logger).to receive(:info) }
+  # Do not exit on wrong Algolia configuration
   before do
-    allow(Jekyll.logger).to receive(:info)
+    allow(Jekyll::Algolia::Configurator)
+      .to receive(:assert_valid_credentials)
+      .and_return(true)
   end
 
   describe '.extract_raw_records' do

@@ -9,18 +9,36 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
+# LINT
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new(:lint) do |task|
+  task.patterns = [
+    'lib/**/*.rb',
+    # Excluding ./spec/site
+    'spec/*.rb',
+    'spec/jekyll/**/*.rb'
+  ]
+  task.options = ['--display-cop-names']
+end
+
 # TEST
 require 'rspec/core'
 require 'rspec/core/rake_task'
 desc 'Run tests (with simple progress)'
-RSpec::Core::RakeTask.new(:test) do |spec|
-  spec.rspec_opts = '--color --format progress'
-  spec.pattern = FileList['spec/**/**_spec.rb']
+RSpec::Core::RakeTask.new(:test) do |task|
+  task.rspec_opts = '--color --format progress'
+  task.pattern = [
+    'spec/*.rb',
+    'spec/jekyll/**/*.rb'
+  ]
 end
 desc 'Run tests (with full details)'
-RSpec::Core::RakeTask.new(:test_details) do |spec|
-  spec.rspec_opts = '--color --format documentation'
-  spec.pattern = FileList['spec/**/**_spec.rb']
+RSpec::Core::RakeTask.new(:test_details) do |task|
+  task.rspec_opts = '--color --format documentation'
+  task.pattern = [
+    'spec/*.rb',
+    'spec/jekyll/**/*.rb'
+  ]
 end
 desc 'Run tests in all Ruby versions (with full details)'
 task :test_all_ruby_versions do

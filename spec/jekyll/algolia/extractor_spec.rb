@@ -42,7 +42,7 @@ describe(Jekyll::Algolia::Extractor) do
           .to have_received(:new)
           .with(content, anything)
       end
-      it 'should configure the extractor with the nodex_to_index config value' do
+      it 'should configure the extractor with the nodex_to_index value' do
         expect(AlgoliaHTMLExtractor)
           .to have_received(:new)
           .with(anything, options: { css_selector: 'foo' })

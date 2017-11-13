@@ -242,7 +242,10 @@ describe(Jekyll::Algolia::FileBrowser) do
   end
 
   describe '.excerpt_txt' do
-    let(:expected) { 'This is the first paragraph. It is especially long because we want it to wrap on two lines.' }
+    let(:expected) do
+      'This is the first paragraph. It is especially long because we want '\
+      'it to wrap on two lines.'
+    end
     subject { current.excerpt_text(file) }
 
     context 'with a page' do

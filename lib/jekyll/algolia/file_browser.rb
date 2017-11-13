@@ -28,11 +28,11 @@ module Jekyll
       # pages. We don't want to index those.
       # Source: https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
       #
-      # rubocop:disable Style/PredicateName
+      # rubocop:disable Naming/PredicateName
       def self.is_404?(file)
         File.basename(file.path, File.extname(file.path)) == '404'
       end
-      # rubocop:enable Style/PredicateName
+      # rubocop:enable Naming/PredicateName
 
       # Public: Check if the page is a pagination page
       #

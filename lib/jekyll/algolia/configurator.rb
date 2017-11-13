@@ -36,6 +36,44 @@ module Jekyll
         value
       end
 
+      # Public: Return the application id
+      #
+      # Will first try to read the ENV variable, and fallback to the one
+      # configured in Jekyll config
+      def self.application_id
+        ENV['ALGOLIA_APPLICATION_ID'] || algolia('application_id')
+      end
+
+      # Public: Return the api key
+      #
+      # Will first try to read the ENV variable. Will otherwise try to read the
+      # _algolia_api_key file in the Jekyll folder
+      def self.api_key
+        # Alway taking the ENV variable first
+        return ENV['ALGOLIA_API_KEY'] if ENV['ALGOLIA_API_KEY']
+
+        # Reading from file on disk otherwise
+        source_dir = get('source')
+        if source_dir
+          api_key_file = File.join(source_dir, '_algolia_api_key')
+          if File.exist?(api_key_file) && File.size(api_key_file) > 0
+            return File.open(api_key_file).read.strip
+          end
+        end
+
+        nil
+      end
+
+      # Public: Return the index name
+      #
+      # Will first try to read the ENV variable, and fallback to the one
+      # configured in Jekyll config
+      def self.index_name
+        ENV['ALGOLIA_INDEX_NAME'] || algolia('index_name')
+      end
+
+      def self.assert_valid_credentials; end
+
       # Public: Setting a default values to index only html and markdown files
       #
       # Markdown files can have many different extensions. We keep the one

@@ -8,6 +8,7 @@ module Jekyll
     require 'jekyll/algolia/utils'
     require 'jekyll/algolia/user_hooks'
     require 'jekyll/algolia/configurator'
+    require 'jekyll/algolia/logger'
     require 'jekyll/algolia/file_browser'
     require 'jekyll/algolia/extractor'
     require 'jekyll/algolia/indexer'
@@ -25,6 +26,8 @@ module Jekyll
       @config = config
       @site = Jekyll::Site.new(@config)
       monkey_patch_site(@site)
+
+      Jekyll::Algolia::Configurator.assert_valid_credentials
       # @checker = AlgoliaSearchCredentialChecker.new(@config)
       self
     end

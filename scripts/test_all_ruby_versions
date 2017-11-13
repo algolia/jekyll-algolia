@@ -13,8 +13,8 @@ for version in "${versions[@]}"; do
   fi
 
   echo "Updating dependencies"
-  rvm "$version" exec bundle install
+  rvm "$version" 'do' bundle install
 
   echo "Running tests"
-  rvm "$version" exec bundle exec rake test
+  rvm "$version" 'do' bundle exec rake test
 done

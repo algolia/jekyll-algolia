@@ -165,4 +165,61 @@ describe(Jekyll::Algolia::Indexer) do
       expect(index).to have_received(:set_settings).with(settings)
     end
   end
+
+  describe '.remote_settings' do
+    subject { current.remote_settings(index) }
+
+    let(:index) { double('Algolia::Index').as_null_object }
+    before do
+      expect(index)
+        .to receive(:get_settings)
+        .and_return('custom_settings')
+    end
+
+    it { should eq 'custom_settings' }
+  end
+
+  describe '.run_atomic_mode' do
+    let(:records) do
+      [
+        { 'objectID' => 'foo' },
+        { 'objectID' => 'bar' }
+      ]
+    end
+    let(:remote_settings) { { 'foo' => 'bar', 'bar' => 'baz' } }
+    let(:local_settings) { { 'foo' => 'new_bar', 'baz' => 'deadbeef' } }
+    let(:index_name) { 'my_index' }
+    let(:index) { '::my_index' }
+    let(:index_tmp_name) { 'my_index_tmp' }
+    let(:index_tmp) { '::my_index_tmp' }
+
+    before do
+      allow(configurator).to receive(:index_name).and_return(index_name)
+      allow(configurator).to receive(:settings).and_return(local_settings)
+      allow(current).to receive(:index)
+        .with(index_name).and_return(index)
+      allow(current).to receive(:index)
+        .with(index_tmp_name).and_return(index_tmp)
+      allow(current).to receive(:remote_settings).and_return(remote_settings)
+      allow(current).to receive(:update_records)
+      allow(current).to receive(:update_settings)
+      allow(::Algolia).to receive(:move_index)
+    end
+
+    before { current.run_atomic_mode(records) }
+
+    it do
+      expect(current)
+        .to have_received(:update_records)
+        .with(index_tmp, records)
+      expect(current)
+        .to have_received(:update_settings)
+        .with(index_tmp, 'foo' => 'new_bar',
+                         'bar' => 'baz',
+                         'baz' => 'deadbeef')
+      expect(::Algolia)
+        .to have_received(:move_index)
+        .with(index_tmp_name, index_name)
+    end
+  end
 end

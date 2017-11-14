@@ -72,15 +72,23 @@ module Jekyll
         records.map { |record| record[:objectID] }.sort
       end
 
-      # Public: Index content following the "diff" indexing mode
+      # Public: Update settings of the index
+      #
+      # index - The Algolia Index
+      # settings - The hash of settings to pass to the index
+      def self.update_settings(index, settings)
+        index.set_settings(settings)
+      end
+
+      # Public: Index content following the `diff` indexing mode
       #
       # records - Array of local records
       #
-      # The "diff" indexing mode will only push new content to the index and
+      # The `diff` indexing mode will only push new content to the index and
       # remove old content from it. It won't touch records that haven't been
       # updated. It will be a bit slower as it will first need to get the list
       # of all records in the index, but it will consume less operations than
-      # the "atomic" indexing mode.
+      # the `atomic` indexing mode.
       def self.run_diff_mode(records)
         index = index(Configurator.index_name)
         # Getting list of objectID in remote and locally
@@ -101,12 +109,39 @@ module Jekyll
         update_settings(index, Configurator.settings)
       end
 
-      # Public: Update settings of the index
+      # Public: Get the settings of the remote index
       #
       # index - The Algolia Index
-      # settings - The hash of settings to pass to the index
-      def self.update_settings(index, settings)
-        index.set_settings(settings)
+      def self.remote_settings(index)
+        index.get_settings
+      end
+
+      # Public: Index content following the `atomic` indexing mode
+      #
+      # records - Array of records to push
+      #
+      # The `atomic` indexing mode will push all records to a brand new index,
+      # configure it, and then overwrite the previous index with this new one.
+      # For the end-user, it will make all the changes in one go, making sure
+      # people are always searching into a fully configured index. It will
+      # consume more operations, but will never leave the index in a transient
+      # state.
+      def self.run_atomic_mode(records)
+        index_name = Configurator.index_name
+        index = index(index_name)
+        index_tmp_name = "#{Configurator.index_name}_tmp"
+        index_tmp = index(index_tmp_name)
+
+        # Pushing everthing to a brand new index
+        update_records(index_tmp, records)
+
+        # Copying original settings to the new index
+        remote_settings = remote_settings(index)
+        new_settings = remote_settings.merge(Configurator.settings)
+        update_settings(index_tmp, new_settings)
+
+        # Renaming the new index in place of the old
+        ::Algolia.move_index(index_tmp_name, index_name)
       end
 
       # Public: Push all records to Algolia and configure the index
@@ -115,14 +150,13 @@ module Jekyll
       def self.run(records)
         init
 
-        run_diff_mode(records)
-
-        # checker = AlgoliaSearchCredentialChecker.new(@config)
-        # checker.assert_valid
-
-        # Jekyll.logger.info '=== DRY RUN ===' if @is_dry_run
-
-        # @is_lazy_update ? lazy_update(items) : greedy_update(items)
+        # Index run a different indexing mode based on the configured value
+        case Configurator.indexing_mode
+        when 'diff'
+          run_diff_mode(records)
+        when 'atomic'
+          run_atomic_mode(records)
+        end
       end
     end
   end

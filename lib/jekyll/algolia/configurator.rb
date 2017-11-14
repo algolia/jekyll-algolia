@@ -9,6 +9,7 @@ module Jekyll
         'extensions_to_index' => nil,
         'files_to_exclude' => nil,
         'nodes_to_index' => 'p',
+        'indexing_batch_size' => 1000,
         'settings' => {
           'distinct' => true,
           'attributeForDistinct' => 'url',

@@ -1,3 +1,6 @@
+require:
+  - rubocop/rspec/focused
+
 AllCops:
   DisplayCopNames: true
 
@@ -27,3 +30,6 @@ Naming/FileName:
 
 Layout/MultilineOperationIndentation:
   Enabled: false
+
+RSpec/Focused:
+  Enabled: true

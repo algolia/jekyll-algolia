@@ -5,12 +5,5 @@ if ! git status --short | grep -q '\.rb$'; then
   exit 0
 fi
 
-# Do not commit any focused or excluded tests
-if grep --color -r 'spec' -E -e '^( |\t)*(fit|fdescribe|fcontext|xit|xdescribe|xcontext)'; then
-  echo '✘ You have focused and/or skipped tests'
-  exit 1
-fi
-
 # Match style guide
 rake lint || exit 1
-

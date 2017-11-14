@@ -236,37 +236,6 @@ describe(AlgoliaSearchJekyllPush) do
   end
 
 
-  describe 'process' do
-    it 'should call the site write method' do
-      # Given
-      site = get_site({}, process: false)
-
-      # When
-      site.process
-
-      # Then
-      expect(site).to have_received(:write)
-    end
-
-    it 'should push items to Algolia' do
-      # Given
-      site = get_site({}, mock_write_method: false, process: false)
-      # Keep only page_file
-      allow(AlgoliaSearchJekyllPush).to receive(:indexable?) do |file|
-        file.path == page_file.path
-      end
-      allow(AlgoliaSearchJekyllPush).to receive(:push)
-
-      # When
-      site.process
-
-      # Then
-      expect(AlgoliaSearchJekyllPush).to have_received(:push) do |arg|
-        expect(arg.size).to eq 6
-      end
-    end
-  end
-
   describe 'set_user_agent_header' do
     before(:each) do
       allow(Algolia).to receive(:set_extra_header)

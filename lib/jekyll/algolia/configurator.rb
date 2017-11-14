@@ -8,7 +8,30 @@ module Jekyll
       ALGOLIA_DEFAULTS = {
         'extensions_to_index' => nil,
         'files_to_exclude' => nil,
-        'nodes_to_index' => 'p'
+        'nodes_to_index' => 'p',
+        'settings' => {
+          'distinct' => true,
+          'attributeForDistinct' => 'url',
+          'attributesForFaceting' => %w[tags type title],
+          'customRanking' => [
+            'desc(date)',
+            'desc(weight.heading)',
+            'asc(weight.position)'
+          ],
+          'highlightPreTag' => '<em class="ais-Highlight">',
+          'highlightPostTag' => '</em>',
+          'searchableAttributes' => %w[
+            title
+            hierarchy.lvl0
+            hierarchy.lvl1
+            hierarchy.lvl2
+            hierarchy.lvl3
+            hierarchy.lvl4
+            hierarchy.lvl5
+            unordered(text)
+            collection,unordered(categories),unordered(tags)
+          ]
+        }
       }.freeze
 
       # Public: Get the value of a specific Jekyll configuration option
@@ -72,6 +95,11 @@ module Jekyll
       # configured in Jekyll config
       def self.index_name
         ENV['ALGOLIA_INDEX_NAME'] || algolia('index_name')
+      end
+
+      def self.settings
+        user_settings = algolia('settings') || {}
+        ALGOLIA_DEFAULTS['settings'].merge(user_settings)
       end
 
       # Public: Check that all credentials are set

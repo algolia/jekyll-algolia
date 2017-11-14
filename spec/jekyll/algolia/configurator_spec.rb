@@ -197,4 +197,63 @@ describe(Jekyll::Algolia::Configurator) do
       it { should eq true }
     end
   end
+
+  describe '.settings' do
+    subject { current.settings }
+
+    context 'with no custom settings' do
+      it { should include('distinct' => true) }
+      it { should include('attributeForDistinct' => 'url') }
+      it {
+        should include('customRanking' => [
+                         'desc(date)',
+                         'desc(weight.heading)',
+                         'asc(weight.position)'
+                       ])
+      }
+    end
+    context 'with custom settings' do
+      before do
+        allow(current)
+          .to receive(:algolia)
+          .with('settings')
+          .and_return('foo' => 'bar',
+                      'attributeForDistinct' => 'title',
+                      'customRanking' => ['asc(foo)', 'desc(bar)'])
+      end
+
+      it { should include('foo' => 'bar') }
+      it { should include('distinct' => true) }
+      it { should include('attributeForDistinct' => 'title') }
+      it { should include('customRanking' => ['asc(foo)', 'desc(bar)']) }
+    end
+  end
+
+  describe 'indexing_mode' do
+    subject { current.indexing_mode }
+
+    before do
+      allow(current)
+        .to receive(:algolia)
+        .with('indexing_mode')
+        .and_return(indexing_mode)
+    end
+
+    context 'with default values' do
+      let(:indexing_mode) { nil }
+      it { should eq 'diff' }
+    end
+    context 'with diff selected' do
+      let(:indexing_mode) { 'diff' }
+      it { should eq 'diff' }
+    end
+    context 'with atomic selected' do
+      let(:indexing_mode) { 'atomic' }
+      it { should eq 'atomic' }
+    end
+    context 'with an invalid mode selected' do
+      let(:indexing_mode) { 'chunky_bacon' }
+      it { should eq 'diff' }
+    end
+  end
 end

@@ -10,6 +10,7 @@ module Jekyll
         'files_to_exclude' => nil,
         'nodes_to_index' => 'p',
         'indexing_batch_size' => 1000,
+        'indexing_mode' => 'diff',
         'settings' => {
           'distinct' => true,
           'attributeForDistinct' => 'url',
@@ -98,9 +99,25 @@ module Jekyll
         ENV['ALGOLIA_INDEX_NAME'] || algolia('index_name')
       end
 
+      # Public: Get the index settings
+      #
+      # This will be a merge of default settings and the one defined in the
+      # _config.yml file
       def self.settings
         user_settings = algolia('settings') || {}
         ALGOLIA_DEFAULTS['settings'].merge(user_settings)
+      end
+
+      # Public: Return the current indexing mode
+      #
+      # Default mode is `diff`, but users can configure their own by updating
+      # the `indexing_mode` config in _config.yml. The only other authorized
+      # value is `atomic`. If an unrecognized mode is defined, it defaults to
+      # `diff`.
+      def self.indexing_mode
+        mode = algolia('indexing_mode') || ALGOLIA_DEFAULTS['indexing_mode']
+        return 'diff' unless %w[diff atomic].include?(mode)
+        mode
       end
 
       # Public: Check that all credentials are set

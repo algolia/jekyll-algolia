@@ -5,7 +5,7 @@ describe(Jekyll::Algolia::Indexer) do
   let(:current) { Jekyll::Algolia::Indexer }
   let(:configurator) { Jekyll::Algolia::Configurator }
 
-  context '.init' do
+  describe '.init' do
     before do
       allow(configurator).to receive(:application_id).and_return('app_id')
       allow(configurator).to receive(:api_key).and_return('api_key')
@@ -28,7 +28,7 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  context '.index' do
+  describe '.index' do
     subject { current.index(input) }
 
     let(:input) { 'index_name' }
@@ -42,7 +42,7 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq 'custom_index' }
   end
 
-  context 'update_records' do
+  describe 'update_records' do
     let(:index) { double('Algolia::Index', add_objects!: nil) }
 
     context 'with a small number of records' do
@@ -81,7 +81,7 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  context 'delete_records_by_id' do
+  describe '.delete_records_by_id' do
     let(:index) { double('Algolia::Index', delete_objects!: nil) }
     let(:ids) { %w[foo bar baz] }
     before { current.delete_records_by_id(index, ids) }
@@ -92,7 +92,7 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  context '.remote_object_ids' do
+  describe '.remote_object_ids' do
     subject { current.remote_object_ids(index) }
 
     let(:index) { double('Algolia::Index').as_null_object }
@@ -111,7 +111,7 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq %w[bar foo] }
   end
 
-  context '.local_object_ids' do
+  describe '.local_object_ids' do
     subject { current.local_object_ids(records) }
 
     let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
@@ -122,7 +122,7 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq %w[bar foo] }
   end
 
-  context '.run_diff_mode' do
+  describe '.run_diff_mode' do
     let(:local_records) do
       [
         { objectID: 'foo' },
@@ -156,7 +156,7 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  context '.update_settings' do
+  describe '.update_settings' do
     let(:index) { double('Algolia::Index', set_settings: nil) }
     let(:settings) { { 'foo' => 'bar' } }
     before { current.update_settings(index, settings) }

@@ -101,6 +101,10 @@ module Jekyll
         update_settings(index, Configurator.settings)
       end
 
+      # Public: Update settings of the index
+      #
+      # index - The Algolia Index
+      # settings - The hash of settings to pass to the index
       def self.update_settings(index, settings)
         index.set_settings(settings)
       end

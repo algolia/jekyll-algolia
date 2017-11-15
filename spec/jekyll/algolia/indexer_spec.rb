@@ -32,6 +32,32 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
+  describe '.set_user_agent' do
+    let(:user_agent) do
+      'Jekyll Integration (vIntegration); '\
+      'Algolia for Ruby (vAlgolia); '\
+      'Jekyll (vJekyll); '\
+      'Ruby (vRuby)'
+    end
+
+    before do
+      stub_const('Jekyll::Algolia::VERSION', 'vIntegration')
+      stub_const('::Algolia::VERSION', 'vAlgolia')
+      stub_const('::Jekyll::VERSION', 'vJekyll')
+      stub_const('RUBY_VERSION', 'vRuby')
+
+      allow(::Algolia).to receive(:set_extra_header)
+    end
+
+    before { current.set_user_agent }
+
+    it do
+      expect(::Algolia)
+        .to have_received(:set_extra_header)
+        .with('User-Agent', user_agent)
+    end
+  end
+
   describe '.index' do
     subject { current.index(input) }
 

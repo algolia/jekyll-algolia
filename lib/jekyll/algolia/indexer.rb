@@ -19,7 +19,22 @@ module Jekyll
         set_user_agent
       end
 
-      def self.set_user_agent; end
+      # Public: Set the User-Agent to send to the API
+      #
+      # Every integrations should follow the "YYY Integration" pattern, and
+      # every API client should follow the "Algolia for YYY" pattern. Even if
+      # each integration version is pinned to a specific API client version, we
+      # are explicit in defining it to help debug from the dashboard.
+      def self.set_user_agent
+        user_agent = [
+          "Jekyll Integration (#{VERSION})",
+          "Algolia for Ruby (#{::Algolia::VERSION})",
+          "Jekyll (#{::Jekyll::VERSION})",
+          "Ruby (#{RUBY_VERSION})"
+        ].join('; ')
+
+        ::Algolia.set_extra_header('User-Agent', user_agent)
+      end
 
       # Public: Returns an Algolia Index object from an index name
       #

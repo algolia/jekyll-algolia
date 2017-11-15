@@ -36,10 +36,12 @@ module Jekyll
       # New records will be automatically added. Technically existing records
       # should be updated but this case should never happen as changing a record
       # content will change its objectID as well.
+      #
+      # Does nothing in dry run mode
       def self.update_records(index, records)
         batch_size = Configurator.algolia('indexing_batch_size')
         records.each_slice(batch_size) do |batch|
-          index.add_objects!(batch)
+          index.add_objects!(batch) unless Configurator.dry_run?
         end
       end
 
@@ -47,7 +49,10 @@ module Jekyll
       #
       # index - Algolia Index to target
       # ids - Array of objectIDs to delete
+      #
+      # Does nothing in dry run mode
       def self.delete_records_by_id(index, ids)
+        return if Configurator.dry_run?
         index.delete_objects!(ids)
       end
 
@@ -76,7 +81,10 @@ module Jekyll
       #
       # index - The Algolia Index
       # settings - The hash of settings to pass to the index
+      #
+      # Does nothing in dry run mode
       def self.update_settings(index, settings)
+        return if Configurator.dry_run?
         index.set_settings(settings)
       end
 
@@ -116,6 +124,17 @@ module Jekyll
         index.get_settings
       end
 
+      # Public: Rename an index
+      #
+      # old_name - Current name of the index
+      # new_name - New name of the index
+      #
+      # Does nothing in dry run mode
+      def self.rename_index(old_name, new_name)
+        return if Configurator.dry_run?
+        ::Algolia.move_index(old_name, new_name)
+      end
+
       # Public: Index content following the `atomic` indexing mode
       #
       # records - Array of records to push
@@ -141,7 +160,7 @@ module Jekyll
         update_settings(index_tmp, new_settings)
 
         # Renaming the new index in place of the old
-        ::Algolia.move_index(index_tmp_name, index_name)
+        move_index(index_tmp_name, index_name)
       end
 
       # Public: Push all records to Algolia and configure the index

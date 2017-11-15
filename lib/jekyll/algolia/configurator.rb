@@ -158,6 +158,24 @@ module Jekyll
           "index.#{extension}"
         end
       end
+
+      # Public: Returns true if the command is run in verbose mode
+      #
+      # When set to true, more logs will be displayed
+      def self.verbose?
+        value = get('verbose')
+        return true if value == true
+        false
+      end
+
+      # Public: Returns true if the command is run in verbose mode
+      #
+      # When set to true, no indexing operations will be sent to the API
+      def self.dry_run?
+        value = get('dry_run')
+        return true if value == true
+        false
+      end
     end
   end
 end

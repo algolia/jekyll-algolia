@@ -36,14 +36,7 @@ module Jekyll
                            '--verbose',
                            'Display more information on what is indexed'
 
-            default_options = {
-              'dry_run' => false,
-              'verbose' => false
-            }
             command.action do |_, options|
-              # Merge default options, CLI options and _config.yml
-              # options into one configuration hash
-              options = default_options.merge(options)
               configuration = configuration_from_options(options)
 
               Jekyll::Algolia.init(configuration).run

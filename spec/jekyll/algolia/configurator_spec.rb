@@ -256,4 +256,50 @@ describe(Jekyll::Algolia::Configurator) do
       it { should eq 'diff' }
     end
   end
+
+  describe 'dry_run?' do
+    subject { current.dry_run? }
+
+    before { allow(current).to receive(:get).with('dry_run').and_return(value) }
+
+    context 'when no value passed' do
+      let(:value) { nil }
+      it { should eq false }
+    end
+    context 'when passed true' do
+      let(:value) { true }
+      it { should eq true }
+    end
+    context 'when passed false' do
+      let(:value) { false }
+      it { should eq false }
+    end
+    context 'when passed invalid value' do
+      let(:value) { 'chunky bacon' }
+      it { should eq false }
+    end
+  end
+
+  describe 'verbose?' do
+    subject { current.verbose? }
+
+    before { allow(current).to receive(:get).with('verbose').and_return(value) }
+
+    context 'when no value passed' do
+      let(:value) { nil }
+      it { should eq false }
+    end
+    context 'when passed true' do
+      let(:value) { true }
+      it { should eq true }
+    end
+    context 'when passed false' do
+      let(:value) { false }
+      it { should eq false }
+    end
+    context 'when passed invalid value' do
+      let(:value) { 'chunky bacon' }
+      it { should eq false }
+    end
+  end
 end

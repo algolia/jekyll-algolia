@@ -4,6 +4,8 @@ require 'spec_helper'
 describe(Jekyll::Algolia::Indexer) do
   let(:current) { Jekyll::Algolia::Indexer }
   let(:configurator) { Jekyll::Algolia::Configurator }
+  let(:dry_run) { false }
+  before { allow(configurator).to receive(:dry_run?).and_return(dry_run) }
 
   describe '.init' do
     before do
@@ -79,16 +81,39 @@ describe(Jekyll::Algolia::Indexer) do
           .exactly(5).times
       end
     end
+
+    context 'when running a dry run' do
+      let(:dry_run) { true }
+      let(:records) { Array.new(10, foo: 'bar') }
+
+      it do
+        expect(index)
+          .to_not have_received(:add_objects!)
+          .with(records)
+      end
+    end
   end
 
   describe '.delete_records_by_id' do
     let(:index) { double('Algolia::Index', delete_objects!: nil) }
     let(:ids) { %w[foo bar baz] }
+
     before { current.delete_records_by_id(index, ids) }
+
     it do
       expect(index)
         .to have_received(:delete_objects!)
         .with(ids)
+    end
+
+    context 'when running a dry run' do
+      let(:dry_run) { true }
+
+      it do
+        expect(index)
+          .to_not have_received(:delete_objects!)
+          .with(ids)
+      end
     end
   end
 
@@ -156,6 +181,24 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
+  describe '.rename_index' do
+    before { allow(::Algolia).to receive(:move_index) }
+    before { current.rename_index('foo', 'bar') }
+
+    it do
+      expect(::Algolia).to have_received(:move_index).with('foo', 'bar')
+    end
+
+    context 'when running a dry run' do
+      let(:dry_run) { true }
+
+      it do
+        expect(::Algolia)
+          .to_not have_received(:move_index)
+      end
+    end
+  end
+
   describe '.update_settings' do
     let(:index) { double('Algolia::Index', set_settings: nil) }
     let(:settings) { { 'foo' => 'bar' } }
@@ -163,6 +206,15 @@ describe(Jekyll::Algolia::Indexer) do
 
     it do
       expect(index).to have_received(:set_settings).with(settings)
+    end
+
+    context 'when running a dry run' do
+      let(:dry_run) { true }
+
+      it do
+        expect(index)
+          .to_not have_received(:set_settings)
+      end
     end
   end
 
@@ -203,7 +255,7 @@ describe(Jekyll::Algolia::Indexer) do
       allow(current).to receive(:remote_settings).and_return(remote_settings)
       allow(current).to receive(:update_records)
       allow(current).to receive(:update_settings)
-      allow(::Algolia).to receive(:move_index)
+      allow(current).to receive(:move_index)
     end
 
     before { current.run_atomic_mode(records) }
@@ -217,7 +269,7 @@ describe(Jekyll::Algolia::Indexer) do
         .with(index_tmp, 'foo' => 'new_bar',
                          'bar' => 'baz',
                          'baz' => 'deadbeef')
-      expect(::Algolia)
+      expect(current)
         .to have_received(:move_index)
         .with(index_tmp_name, index_name)
     end

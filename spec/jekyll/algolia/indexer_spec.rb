@@ -4,8 +4,10 @@ require 'spec_helper'
 describe(Jekyll::Algolia::Indexer) do
   let(:current) { Jekyll::Algolia::Indexer }
   let(:configurator) { Jekyll::Algolia::Configurator }
+  let(:logger) { Jekyll::Algolia::Logger }
   let(:dry_run) { false }
   before { allow(configurator).to receive(:dry_run?).and_return(dry_run) }
+  before { allow(logger).to receive(:log) }
 
   describe '.init' do
     before do
@@ -255,7 +257,7 @@ describe(Jekyll::Algolia::Indexer) do
       allow(current).to receive(:remote_settings).and_return(remote_settings)
       allow(current).to receive(:update_records)
       allow(current).to receive(:update_settings)
-      allow(current).to receive(:move_index)
+      allow(current).to receive(:rename_index)
     end
 
     before { current.run_atomic_mode(records) }
@@ -270,7 +272,7 @@ describe(Jekyll::Algolia::Indexer) do
                          'bar' => 'baz',
                          'baz' => 'deadbeef')
       expect(current)
-        .to have_received(:move_index)
+        .to have_received(:rename_index)
         .with(index_tmp_name, index_name)
     end
   end

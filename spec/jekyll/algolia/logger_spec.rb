@@ -3,6 +3,7 @@ require 'spec_helper'
 
 describe(Jekyll::Algolia::Logger) do
   let(:current) { Jekyll::Algolia::Logger }
+  let(:configurator) { Jekyll::Algolia::Configurator }
   describe '.known_message' do
     let(:io) { double('IO', readlines: lines) }
     let(:lines) do
@@ -62,6 +63,31 @@ describe(Jekyll::Algolia::Logger) do
           .with(/^.{80,80}$/)
       end
       it { current.log(input) }
+    end
+  end
+
+  describe '.verbose' do
+    before do
+      allow(configurator).to receive(:verbose?).and_return(is_verbose)
+    end
+    before { allow(current).to receive(:log) }
+    before { current.verbose('foo') }
+
+    context 'when verbose is disabled' do
+      let(:is_verbose) { false }
+      it do
+        expect(current)
+          .to_not have_received(:log)
+          .with('foo')
+      end
+    end
+    context 'when verbose is enabled' do
+      let(:is_verbose) { true }
+      it do
+        expect(current)
+          .to have_received(:log)
+          .with('foo')
+      end
     end
   end
 end

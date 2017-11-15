@@ -22,6 +22,14 @@ module Jekyll
         Jekyll.logger.send(logger_mapping[type], content)
       end
 
+      # Public: Only display a log line if verbose mode is enabled
+      #
+      # line - The line to display, following the same format as .log
+      def self.verbose(line)
+        return unless Configurator.verbose?
+        log(line)
+      end
+
       # Public: Displays a helpful error message for one of the knows errors
       #
       # message_id: A string identifying a know message

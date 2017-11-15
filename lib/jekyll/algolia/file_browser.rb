@@ -84,6 +84,18 @@ module Jekyll
         Jekyll::Algolia.hook_should_be_excluded?(file.path)
       end
 
+      # Public: Return the path to the original file, relative from the Jekyll
+      # source
+      #
+      # file - The Jekyll file
+      #
+      # Pages have their .path property relative to the source, but collections
+      # (including posts) have an absolute file path.
+      def self.path_from_root(file)
+        source = Configurator.get('source')
+        file.path.gsub(%r{^#{source}/}, '')
+      end
+
       # Public: Check if the file should be indexed
       #
       # file - The Jekyll file

@@ -439,4 +439,21 @@ describe(Jekyll::Algolia::FileBrowser) do
       end
     end
   end
+
+  describe '.path_from_root' do
+    subject { current.path_from_root(file) }
+
+    context 'with a page' do
+      let(:file) { site.__find_file('about.md') }
+      it { should eq 'about.md' }
+    end
+    context 'with a post' do
+      let(:file) { site.__find_file('_posts/2015-07-03-test-post-again.md') }
+      it { should eq '_posts/2015-07-03-test-post-again.md' }
+    end
+    context 'with a collection element' do
+      let(:file) { site.__find_file('_my-collection/collection-item.html') }
+      it { should eq '_my-collection/collection-item.html' }
+    end
+  end
 end

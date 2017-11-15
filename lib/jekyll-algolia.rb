@@ -68,19 +68,31 @@ module Jekyll
     # to disk and have it create JSON records and push them to Algolia instead.
     def self.monkey_patch_site(site)
       def site.write
+        if Configurator.dry_run?
+          Logger.log('W:==== THIS IS A DRY RUN ====')
+          Logger.log('W:  - No records will be pushed to your index')
+          Logger.log('W:  - No settings will be updated on your index')
+        end
+
         records = []
-        # is_verbose = config['verbose']
+        files = []
         each_site_file do |file|
           # Skip files that should not be indexed
-          next unless FileBrowser.indexable?(file)
-          # Jekyll.logger.info "Extracting data from #{file.path}" if is_verbose
-          #
+          is_indexable = FileBrowser.indexable?(file)
+          unless is_indexable
+            Logger.verbose("W:Skipping #{file.path}")
+            next
+          end
+
+          path = FileBrowser.path_from_root(file)
+          Logger.verbose("I:Extracting records from #{path}")
           file_records = Extractor.run(file)
-          # next if new_items.nil?
-          # ap new_items if is_verbose
-          #
+
+          files << file
           records += file_records
         end
+
+        Logger.verbose("I:Found #{files.length} files")
 
         Indexer.run(records)
       end

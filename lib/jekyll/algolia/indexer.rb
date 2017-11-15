@@ -41,7 +41,9 @@ module Jekyll
       def self.update_records(index, records)
         batch_size = Configurator.algolia('indexing_batch_size')
         records.each_slice(batch_size) do |batch|
-          index.add_objects!(batch) unless Configurator.dry_run?
+          Logger.log("I:Pushing #{batch.size} records")
+          next if Configurator.dry_run?
+          index.add_objects!(batch)
         end
       end
 
@@ -52,6 +54,7 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.delete_records_by_id(index, ids)
+        Logger.log("I:Deleting #{ids.length} records")
         return if Configurator.dry_run?
         index.delete_objects!(ids)
       end
@@ -84,6 +87,7 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.update_settings(index, settings)
+        Logger.verbose('I:Updating settings')
         return if Configurator.dry_run?
         index.set_settings(settings)
       end
@@ -131,6 +135,7 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.rename_index(old_name, new_name)
+        Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
         return if Configurator.dry_run?
         ::Algolia.move_index(old_name, new_name)
       end
@@ -151,6 +156,8 @@ module Jekyll
         index_tmp_name = "#{Configurator.index_name}_tmp"
         index_tmp = index(index_tmp_name)
 
+        Logger.verbose("I:Using `#{index_tmp_name}` as temporary index")
+
         # Pushing everthing to a brand new index
         update_records(index_tmp, records)
 
@@ -160,7 +167,7 @@ module Jekyll
         update_settings(index_tmp, new_settings)
 
         # Renaming the new index in place of the old
-        move_index(index_tmp_name, index_name)
+        rename_index(index_tmp_name, index_name)
       end
 
       # Public: Push all records to Algolia and configure the index
@@ -169,13 +176,18 @@ module Jekyll
       def self.run(records)
         init
 
-        # Index run a different indexing mode based on the configured value
-        case Configurator.indexing_mode
+        Logger.verbose("I:Extracted #{records.length} records")
+
+        indexing_mode = Configurator.indexing_mode
+        Logger.verbose("I:Indexing mode: #{indexing_mode}")
+        case indexing_mode
         when 'diff'
           run_diff_mode(records)
         when 'atomic'
           run_atomic_mode(records)
         end
+
+        Logger.log('I:✔ Indexing complete')
       end
     end
   end

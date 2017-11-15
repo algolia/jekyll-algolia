@@ -42,7 +42,7 @@ RSpec::Core::RakeTask.new(:test_details) do |task|
 end
 desc 'Run tests in all Ruby versions (with full details)'
 task :test_all_ruby_versions do
-  sh './scripts/test_all_ruby_versions'
+  puts 'Please, run ./scripts/test_all_ruby_versions manually'
 end
 
 # WATCH

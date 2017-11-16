@@ -47,6 +47,20 @@ module Jekyll
         # is found
         !(string =~ regex).nil?
       end
+
+      # Public: Find an item from an array based on the value of one of its key
+      #
+      # items - The array of hashes to search
+      # key - The key to search for
+      # value - The value of the key to filter
+      #
+      # It is basically a wrapper around [].find, handling more edge-cases
+      def self.find_by_key(items, key, value)
+        return nil if items.nil?
+        items.find do |item|
+          item[key] == value
+        end
+      end
     end
   end
 end

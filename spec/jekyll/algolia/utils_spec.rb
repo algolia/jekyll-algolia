@@ -84,4 +84,25 @@ describe(Jekyll::Algolia::Utils) do
       it { should eq false }
     end
   end
+
+  describe '.find_by_key' do
+    subject { current.find_by_key(items, 'key', 'value') }
+
+    context 'with an empty array' do
+      let(:items) { [] }
+      it { should eq nil }
+    end
+    context 'with a nil value' do
+      let(:items) { nil }
+      it { should eq nil }
+    end
+    context 'with a non-existing value' do
+      let(:items) { [{ 'key' => 'foo' }] }
+      it { should eq nil }
+    end
+    context 'with an existing value' do
+      let(:items) { [{ 'key' => 'value' }] }
+      it { should include('key' => 'value') }
+    end
+  end
 end

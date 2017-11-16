@@ -9,6 +9,7 @@ module Jekyll
     require 'jekyll/algolia/user_hooks'
     require 'jekyll/algolia/configurator'
     require 'jekyll/algolia/logger'
+    require 'jekyll/algolia/error_handler'
     require 'jekyll/algolia/file_browser'
     require 'jekyll/algolia/extractor'
     require 'jekyll/algolia/indexer'

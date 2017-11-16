@@ -58,7 +58,11 @@ module Jekyll
         records.each_slice(batch_size) do |batch|
           Logger.log("I:Pushing #{batch.size} records")
           next if Configurator.dry_run?
-          index.add_objects!(batch)
+          begin
+            index.add_objects!(batch)
+          rescue StandardError => error
+            ErrorHandler.stop(error, records: records)
+          end
         end
       end
 

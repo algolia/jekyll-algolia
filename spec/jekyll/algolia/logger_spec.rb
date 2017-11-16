@@ -5,25 +5,26 @@ describe(Jekyll::Algolia::Logger) do
   let(:current) { Jekyll::Algolia::Logger }
   let(:configurator) { Jekyll::Algolia::Configurator }
   describe '.known_message' do
-    let(:io) { double('IO', readlines: lines) }
-    let(:lines) do
-      [
-        'I: Info line',
-        'W: Warning line',
-        'E: Error line'
-      ]
-    end
+    let(:io) { double('IO', read: content) }
+    let(:content) { "I: Info line {index_name}\nW: Warning line" }
+    let(:metadata) { { 'index_name' => 'my_index' } }
+
     before do
-      expect(File)
+      allow(File)
         .to receive(:open)
-        .with(/custom_message\.txt$/)
         .and_return(io)
-      expect(current).to receive(:log).with('I: Info line')
-      expect(current).to receive(:log).with('W: Warning line')
-      expect(current).to receive(:log).with('E: Error line')
+      allow(current).to receive(:log)
     end
 
-    it { current.known_message('custom_message') }
+    before { current.known_message('custom_message', metadata) }
+
+    it do
+      expect(File)
+        .to have_received(:open)
+        .with(/custom_message\.txt$/)
+      expect(current).to have_received(:log).with('I: Info line my_index')
+      expect(current).to have_received(:log).with('W: Warning line')
+    end
   end
 
   describe '.log' do

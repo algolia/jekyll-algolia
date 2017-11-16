@@ -9,12 +9,16 @@ module Jekyll
       include Jekyll::Algolia
 
       def self.stop(error, context = {})
-        error_details = identify(error, context)
+        identified_error = identify(error, context)
 
-        if error_details == false
+        if identified_error == false
+          Logger.log('E:[jekyll-algolia] Error:')
           Logger.log("E:#{error}")
         else
-          Logger.log("E:#{error_details}")
+          Logger.known_error(
+            identified_error[:name],
+            identified_error[:details]
+          )
         end
 
         exit 1

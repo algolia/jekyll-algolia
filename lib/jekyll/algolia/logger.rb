@@ -33,18 +33,25 @@ module Jekyll
       # Public: Displays a helpful error message for one of the knows errors
       #
       # message_id: A string identifying a know message
+      # metadata: Hash of variables that can be used in the final text
       #
       # It will read files in ./errors/*.txt with the matching error and
       # display them using Jekyll internal logger.
-      def self.known_message(message_id)
+      def self.known_message(message_id, metadata = {})
         file = File.expand_path(
           File.join(
             File.dirname(__FILE__), '../../..', 'errors', "#{message_id}.txt"
           )
         )
 
+        # Convert all variables
+        content = File.open(file).read
+        metadata.each do |key, value|
+          content.gsub!("{#{key}}", value)
+        end
+
         # Display each line differently
-        lines = File.open(file).readlines.map(&:chomp)
+        lines = content.each_line.map(&:chomp)
         lines.each do |line|
           log(line)
         end

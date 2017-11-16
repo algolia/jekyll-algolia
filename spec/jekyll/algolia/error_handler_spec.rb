@@ -5,6 +5,63 @@ describe(Jekyll::Algolia::ErrorHandler) do
   let(:current) { Jekyll::Algolia::ErrorHandler }
   let(:configurator) { Jekyll::Algolia::Configurator }
 
+  describe '.error_hash' do
+    subject { current.error_hash(message) }
+
+    context 'with a regular error message' do
+      let(:message) do
+        'Cannot POST to '\
+        'https://MY_APP_ID.algolia.net/1/section/index_name/action: '\
+        '{"message":"Custom message","status":403}'\
+        "\n (403)"
+      end
+
+      it do
+        should include('verb' => 'POST')
+        should include('scheme' => 'https')
+        should include('application_id' => 'MY_APP_ID')
+        should include('api_version' => 1)
+        should include('api_section' => 'section')
+        should include('index_name' => 'index_name')
+        should include('api_action' => 'action')
+        should include('message' => 'Custom message')
+        should include('status' => 403)
+      end
+    end
+
+    context 'with a message with query parameters' do
+      let(:message) do
+        'Cannot POST to '\
+        'https://MY_APP_ID.algolia.net/1/section/index_name/action?foo=bar: '\
+        '{"message":"Custom message","status":403}'\
+        "\n (403)"
+      end
+
+      it do
+        should include('foo' => 'bar')
+      end
+    end
+
+    context 'with an error message with weird characaters' do
+      let(:message) do
+        'Cannot POST to '\
+        'https://MY_APP_ID.algolia.net/1/section/index_name$`!</action: '\
+        '{"message":"Custom message","status":403}'\
+        "\n (403)"
+      end
+
+      it do
+        should include('index_name' => 'index_name$`!<')
+      end
+    end
+
+    context 'with a malformed error message' do
+      let(:message) { 'Unable to even parse this' }
+
+      it { should eq false }
+    end
+  end
+
   describe '.identify' do
     subject { current.identify(error, context) }
 
@@ -72,7 +129,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
     context 'with a record too big' do
       let(:message) do
         '400: Cannot POST to '\
-        'https://MXM0JWJNIW.algolia.net/1/indexes/my_index/batch: '\
+        'https://MY_APP_ID.algolia.net/1/indexes/my_index/batch: '\
         '{"message":"Record at the position 3 '\
         'objectID=deadbeef is too big size=1091966 bytes. '\
         'Contact us if you need an extended quota","position":3,'\
@@ -100,6 +157,48 @@ describe(Jekyll::Algolia::ErrorHandler) do
         expect(details['object_hint']).to match(/.{0,100}/)
         expect(details).to include('size' => '1.04 MiB')
         expect(details).to include('size_limit' => '10 Kb')
+      end
+    end
+
+    context 'with an unknown setting' do
+      let(:message) do
+        '400: Cannot PUT to '\
+        'https://MY_APP_ID.algolia.net/1/indexes/my_index/settings: '\
+        '{"message":"Invalid object attributes: deadbeef near line:1 column:456",'\
+        '"status":400} (400)'
+      end
+      let(:context) do
+        { settings:
+          {
+            'searchableAttributes' => %w[foo bar],
+            'deadbeef' => 'foofoo'
+          } }
+      end
+
+      it { should include(name: 'unknown_settings') }
+      it do
+        details = subject[:details]
+        expect(details).to include('setting_name' => 'deadbeef')
+        expect(details).to include('setting_value' => 'foofoo')
+      end
+    end
+
+    context 'with an invalid index name' do
+      before do
+        allow(configurator)
+          .to receive(:index_name)
+          .and_return('invalid_index_name')
+      end
+      let(:message) do
+        '400: Cannot GET to '\
+        'https://MY_APP_ID-dsn.algolia.net/1/indexes/invalid_index_name/settings?getVersion=2: '\
+        '{"message":"indexName is not valid","status":400} (400)'
+      end
+
+      it { should include(name: 'invalid_index_name') }
+      it do
+        details = subject[:details]
+        expect(details).to include('index_name' => 'invalid_index_name')
       end
     end
   end

@@ -1,5 +1,6 @@
 require 'verbal_expressions'
 require 'filesize'
+require 'cgi'
 
 module Jekyll
   module Algolia
@@ -19,12 +20,23 @@ module Jekyll
         exit 1
       end
 
+      # Public: Will identify the error and return its internal name
+      #
+      # error - The caught error
+      # context - A hash of additional information that can be passed from the
+      # code intercepting the user
+      #
+      # It will parse in order all potential known issues until it finds one
+      # that matches. Returns false if no match, or a hash of :name and :details
+      # further identifying the issue.
       def self.identify(error, context = {})
         known_errors = %w[
           unknown_application_id
           invalid_credentials_for_tmp_index
           invalid_credentials
           record_too_big
+          unknown_settings
+          invalid_index_name
         ]
 
         # Checking the errors against our known list
@@ -39,6 +51,12 @@ module Jekyll
         false
       end
 
+      # Public: Parses an Algolia error message into a hash of its content
+      #
+      # message - The raw message as returned by the API
+      #
+      # Returns a hash of all parts of the message, to be more easily consumed
+      # by our error matchers
       def self.error_hash(message)
         message = message.delete("\n")
 
@@ -57,9 +75,17 @@ module Jekyll
           find '/'
           capture('api_section') { word }
           find '/'
-          capture('index_name') { word }
+          capture('index_name') do
+            anything_but('/')
+          end
           find '/'
-          capture('api_action') { word }
+          capture do
+            capture('api_action') { word }
+            maybe '?'
+            capture('query_parameters') do
+              anything_but(':')
+            end
+          end
           find ': '
           capture('json') do
             find '{'
@@ -82,10 +108,26 @@ module Jekyll
 
         hash['api_version'] = hash['api_version'].to_i
         hash['http_error'] = hash['http_error'].to_i
-        hash['json'] = JSON.parse(hash['json'])
+
+        # Merging the JSON key directly in the answer
+        hash = hash.merge(JSON.parse(hash['json']))
+        hash.delete('json')
+        # Merging the query parameters in the answer
+        CGI.parse(hash['query_parameters']).each do |key, values|
+          hash[key] = values[0]
+        end
+        hash.delete('query_parameters')
+
         hash
       end
 
+      # Public: Check if the application id is available
+      #
+      # _context - Not used
+      #
+      # If the call to the cluster fails, chances are that the application ID
+      # is invalid. As we cannot actually contact the server, the error is raw
+      # and does not follow our error spec
       def self.unknown_application_id?(error, _context = {})
         message = error.message
         return false if message !~ /^Cannot reach any host/
@@ -95,6 +137,13 @@ module Jekyll
         { 'application_id' => matches[1] }
       end
 
+      # Public: Check if credentials specifically can't access the _tmp index
+      #
+      # _context - Not used
+      #
+      # If the error happens on a _tmp folder, it might mean that the key does
+      # not have access to the _tmp indices and the error message will reflect
+      # that.
       def self.invalid_credentials_for_tmp_index?(error, _context = {})
         return false unless invalid_credentials?(error)
 
@@ -109,10 +158,15 @@ module Jekyll
         }
       end
 
+      # Public: Check if the credentials are working
+      #
+      # _context - Not used
+      #
+      # Application ID and API key submitted don't match any credentials known
       def self.invalid_credentials?(error, _context = {})
         details = error_hash(error.message)
 
-        if details['json']['message'] != 'Invalid Application-ID or API key'
+        if details['message'] != 'Invalid Application-ID or API key'
           return false
         end
 
@@ -122,16 +176,23 @@ module Jekyll
         }
       end
 
+      # Public: Check if the sent records are not too big
+      #
+      # context[:records] - list of records to push
+      #
+      # Records cannot weight more that 10Kb. If we're getting this error it
+      # means that one of the records is too big, so we'll try to give
+      # informations about it so the user can debug it.
       def self.record_too_big?(error, context = {})
         details = error_hash(error.message)
 
-        message = details['json']['message']
+        message = details['message']
         return false if message !~ /^Record .* is too big .*/
 
         # Getting the record size
         size, = /.*size=(.*) bytes.*/.match(message).captures
         size = Filesize.from("#{size} B").pretty
-        object_id = details['json']['objectID']
+        object_id = details['objectID']
 
         # Getting record details
         record = Utils.find_by_key(context[:records], :objectID, object_id)
@@ -143,6 +204,44 @@ module Jekyll
           'object_hint' => record[:text][0..100],
           'size' => size,
           'size_limit' => '10 Kb'
+        }
+      end
+
+      # Public: Check if one of the index settings is invalid
+      #
+      # context[:settings] - The settings passed to update the index
+      #
+      # The API will block any call that tries to update a setting value that is
+      # not available. We'll tell the user which one so they can fix their
+      # issue.
+      def self.unknown_settings?(error, context = {})
+        details = error_hash(error.message)
+
+        message = details['message']
+        return false if message !~ /^Invalid object attributes.*/
+
+        # Getting the unknown setting name
+        regex = /^Invalid object attributes: (.*) near line.*/
+        setting_name, = regex.match(message).captures
+        setting_value = context[:settings][setting_name]
+
+        {
+          'setting_name' => setting_name,
+          'setting_value' => setting_value
+        }
+      end
+
+      # Public: Check if the index name is invalid
+      #
+      # Some characters are forbidden in index names
+      def self.invalid_index_name?(error, _context = {})
+        details = error_hash(error.message)
+
+        message = details['message']
+        return false if message !~ /^indexName is not valid.*/
+
+        {
+          'index_name' => Configurator.index_name
         }
       end
     end

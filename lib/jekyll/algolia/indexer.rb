@@ -75,7 +75,12 @@ module Jekyll
       def self.delete_records_by_id(index, ids)
         Logger.log("I:Deleting #{ids.length} records")
         return if Configurator.dry_run?
-        index.delete_objects!(ids)
+
+        begin
+          index.delete_objects!(ids)
+        rescue StandardError => error
+          ErrorHandler.stop(error)
+        end
       end
 
       # Public: Returns an array of all the objectIDs in the index
@@ -108,7 +113,11 @@ module Jekyll
       def self.update_settings(index, settings)
         Logger.verbose('I:Updating settings')
         return if Configurator.dry_run?
-        index.set_settings(settings)
+        begin
+          index.set_settings(settings)
+        rescue StandardError => error
+          ErrorHandler.stop(error, settings: settings)
+        end
       end
 
       # Public: Index content following the `diff` indexing mode
@@ -118,10 +127,13 @@ module Jekyll
       # The `diff` indexing mode will only push new content to the index and
       # remove old content from it. It won't touch records that haven't been
       # updated. It will be a bit slower as it will first need to get the list
-      # of all records in the index, but it will consume less operations than
-      # the `atomic` indexing mode.
+      # of all records in the index, but it will consume less operations.
       def self.run_diff_mode(records)
         index = index(Configurator.index_name)
+
+        # Update settings
+        update_settings(index, Configurator.settings)
+
         # Getting list of objectID in remote and locally
         remote_ids = remote_object_ids(index)
         local_ids = local_object_ids(records)
@@ -135,9 +147,6 @@ module Jekyll
           new_records_ids.include?(record[:objectID])
         end
         update_records(index, new_records)
-
-        # Update settings
-        update_settings(index, Configurator.settings)
       end
 
       # Public: Get the settings of the remote index
@@ -145,6 +154,8 @@ module Jekyll
       # index - The Algolia Index
       def self.remote_settings(index)
         index.get_settings
+      rescue StandardError => error
+        ErrorHandler.stop(error)
       end
 
       # Public: Rename an index
@@ -156,7 +167,11 @@ module Jekyll
       def self.rename_index(old_name, new_name)
         Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
         return if Configurator.dry_run?
-        ::Algolia.move_index(old_name, new_name)
+        begin
+          ::Algolia.move_index(old_name, new_name)
+        rescue StandardError => error
+          ErrorHandler.stop(error, new_name: new_name)
+        end
       end
 
       # Public: Index content following the `atomic` indexing mode
@@ -177,13 +192,13 @@ module Jekyll
 
         Logger.verbose("I:Using `#{index_tmp_name}` as temporary index")
 
-        # Pushing everthing to a brand new index
-        update_records(index_tmp, records)
-
         # Copying original settings to the new index
         remote_settings = remote_settings(index)
         new_settings = remote_settings.merge(Configurator.settings)
         update_settings(index_tmp, new_settings)
+
+        # Pushing everthing to a brand new index
+        update_records(index_tmp, records)
 
         # Renaming the new index in place of the old
         rename_index(index_tmp_name, index_name)

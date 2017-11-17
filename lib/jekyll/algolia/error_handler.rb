@@ -15,7 +15,7 @@ module Jekyll
           Logger.log('E:[jekyll-algolia] Error:')
           Logger.log("E:#{error}")
         else
-          Logger.known_error(
+          Logger.known_message(
             identified_error[:name],
             identified_error[:details]
           )
@@ -136,7 +136,7 @@ module Jekyll
         message = error.message
         return false if message !~ /^Cannot reach any host/
 
-        matches = /.*\((.*)\.algolia.net.*/.match(message)
+        matches = /.*\((.*)-dsn\.algolia.net.*/.match(message)
 
         { 'application_id' => matches[1] }
       end
@@ -149,16 +149,18 @@ module Jekyll
       # not have access to the _tmp indices and the error message will reflect
       # that.
       def self.invalid_credentials_for_tmp_index?(error, _context = {})
-        return false unless invalid_credentials?(error)
-
         details = error_hash(error.message)
 
-        return false if details['index_name'] !~ /_tmp$/
+        index_name_tmp = details['index_name']
+        if details['message'] != 'Index not allowed with this API key' ||
+           index_name_tmp !~ /_tmp$/
+          return false
+        end
 
         {
-          'application_id' => details['application_id'],
+          'application_id' => Configurator.application_id,
           'index_name' => Configurator.index_name,
-          'index_name_tmp' => details['index_name']
+          'index_name_tmp' => index_name_tmp
         }
       end
 
@@ -175,8 +177,7 @@ module Jekyll
         end
 
         {
-          'application_id' => details['application_id'],
-          'index_name' => Configurator.index_name
+          'application_id' => details['application_id']
         }
       end
 
@@ -206,6 +207,7 @@ module Jekyll
           'object_title' => record[:title],
           'object_url' => record[:url],
           'object_hint' => record[:text][0..100],
+          'nodes_to_index' => Configurator.algolia('nodes_to_index'),
           'size' => size,
           'size_limit' => '10 Kb'
         }

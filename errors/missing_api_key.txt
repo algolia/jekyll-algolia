@@ -1,13 +1,17 @@
-
-E: [✗ Error] No application ID defined
+E: [✗ Error] Missing API key
 E:
-E: The jekyll-algolia plugin could not find your Algolia application ID.
+E: The jekyll-algolia plugin could not find your API key.
 W:
-W: Please, define it in your Jekyll _config.yml file like this:
+W: Please, define your API key either by:
 W:
-W:   algolia:
-W:    application_id: {your_application_id}
+W: 1/ Defining an ENV variable when calling `jekyll algolia`
+W:    $ ALGOLIA_API_KEY='{your_api_key}' jekyll algolia
+W:
+W: 2/ Save your API key in a named `_algolia_api_key` at the root of your Jekyll 
+W:    project (where your `_config.yml` file is). If you do this, we strongly
+W:    recommend you to NOT track this file in your versionning system.
 I:
-I: You can find your application ID along with all your credentials in your 
-I: Algolia dashboard here:
+I: You can find your API key in your Algolia dashboard here:
 I:    https://www.algolia.com/licensing
+I:
+I:

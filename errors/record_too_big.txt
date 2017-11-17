@@ -1,0 +1,25 @@
+E: [✗ Error] Record is too big
+E:
+E: The jekyll-algolia plugin could not push one of your records as it exceeds 
+E: the {size_limit} size limit.
+W:
+W: The plugin will create one record for each element matching your
+W: `nodes_to_index` value (currently set to "{nodes_to_index}"). Each record
+W: should not weight more than {size_limit}. One of your records weights {size} 
+W: and has been rejected.
+W:
+W: Here are more information about the rejected record:
+W: {
+W:   "objectID": "{object_id}",
+W:   "title": "{object_title}",
+W:   "url": "{object_url}",
+W:   "text": "{object_hint}…",
+W:   […]
+W: }
+W: 
+I: This issue is sometimes caused by malformed HTML preventing the parser to
+I: correctly grab the content of the nodes.
+I:
+I: If you're having trouble solving this issue, feel free to file a bug on
+I: GitHub, ideally with a link to a repository where we can reproduce the issue.
+I:    https://github.com/algolia/jekyll-algolia/issues

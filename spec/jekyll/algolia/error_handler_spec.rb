@@ -71,7 +71,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
     context 'with unknown application_id' do
       let(:message) do
         'Cannot reach any host: '\
-        'getaddrinfo: Name or service not known (MY_APP_ID.algolia.net:443), '\
+        'getaddrinfo: Name or service not known (MY_APP_ID-dsn.algolia.net:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-3.algolianet.com:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-1.algolianet.com:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-2.algolianet.com:443)'
@@ -86,20 +86,22 @@ describe(Jekyll::Algolia::ErrorHandler) do
         allow(configurator)
           .to receive(:index_name)
           .and_return('my_index')
+        allow(configurator)
+          .to receive(:application_id)
+          .and_return('MY_APP_ID')
       end
       let(:message) do
-        'Cannot POST to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/my_index_tmp/batch: '\
-        '{"message":"Invalid Application-ID or API key","status":403}'\
-        "\n (403)"
+        '403: Cannot PUT to '\
+        'https://My_APP_ID.algolia.net/1/indexes/my_index_tmp/settings: '\
+        '{"message":"Index not allowed with this API key","status":403} (403)'
       end
 
       it { should include(name: 'invalid_credentials_for_tmp_index') }
       it do
         should include(details: {
-                         'application_id' => 'MY_APP_ID',
                          'index_name' => 'my_index',
-                         'index_name_tmp' => 'my_index_tmp'
+                         'index_name_tmp' => 'my_index_tmp',
+                         'application_id' => 'MY_APP_ID'
                        })
       end
     end
@@ -120,8 +122,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
       it { should include(name: 'invalid_credentials') }
       it do
         should include(details: {
-                         'application_id' => 'MY_APP_ID',
-                         'index_name' => 'my_index'
+                         'application_id' => 'MY_APP_ID'
                        })
       end
     end
@@ -146,6 +147,12 @@ describe(Jekyll::Algolia::ErrorHandler) do
           { objectID: 'foo' }
         ] }
       end
+      before do
+        allow(configurator)
+          .to receive(:algolia)
+          .with('nodes_to_index')
+          .and_return('p,li,foo')
+      end
 
       it { should include(name: 'record_too_big') }
       it do
@@ -157,6 +164,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
         expect(details['object_hint']).to match(/.{0,100}/)
         expect(details).to include('size' => '1.04 MiB')
         expect(details).to include('size_limit' => '10 Kb')
+        expect(details).to include('nodes_to_index' => 'p,li,foo')
       end
     end
 

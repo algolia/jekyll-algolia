@@ -91,8 +91,14 @@ module Jekyll
       # processed, but makes debugging easier when comparing arrays is needed.
       def self.remote_object_ids(index)
         list = []
-        index.browse(attributesToRetrieve: 'objectID') do |hit|
-          list << hit['objectID']
+        begin
+          index.browse(attributesToRetrieve: 'objectID') do |hit|
+            list << hit['objectID']
+          end
+        rescue StandardError
+          # The index might not exist if it's the first time we use the plugin
+          # so we'll consider that it means there are no records there
+          return []
         end
         list.sort
       end
@@ -210,7 +216,19 @@ module Jekyll
       def self.run(records)
         init
 
-        Logger.verbose("I:Extracted #{records.length} records")
+        record_count = records.length
+        Logger.verbose("I:Extracted #{record_count} records")
+
+        # Indexing zero record is surely a misconfiguration
+        if record_count.zero?
+          files_to_exclude = Configurator.algolia('files_to_exclude').join(', ')
+          Logger.known_message(
+            'no_records_found',
+            'files_to_exclude' => files_to_exclude,
+            'nodes_to_index' => Configurator.algolia('nodes_to_index')
+          )
+          exit 1
+        end
 
         indexing_mode = Configurator.indexing_mode
         Logger.verbose("I:Indexing mode: #{indexing_mode}")

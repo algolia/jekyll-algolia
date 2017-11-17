@@ -8,6 +8,12 @@ module Jekyll
     module ErrorHandler
       include Jekyll::Algolia
 
+      # Public: Stop the execution of the plugin and display if possible
+      # a human-readable error message
+      #
+      # error - The caught error
+      # context - A hash of values that will be passed from where the error
+      # happened to the display
       def self.stop(error, context = {})
         identified_error = identify(error, context)
 

@@ -4,6 +4,36 @@ require 'spec_helper'
 describe(Jekyll::Algolia::ErrorHandler) do
   let(:current) { Jekyll::Algolia::ErrorHandler }
   let(:configurator) { Jekyll::Algolia::Configurator }
+  let(:logger) { Jekyll::Algolia::Logger }
+
+  describe '.stop' do
+    subject { -> { current.stop(error) } }
+
+    let(:error) { double('Error') }
+    let(:identified_error) { nil }
+    before do
+      allow(current).to receive(:identify).and_return(identified_error)
+      allow(logger).to receive(:log)
+    end
+
+    context 'with unknown error' do
+      let(:identified_error) { false }
+      before do
+        expect(logger).to receive(:log).with("E:#{error}")
+      end
+
+      it { is_expected.to raise_error SystemExit }
+    end
+
+    context 'with known error' do
+      let(:identified_error) { { name: 'foo', details: 'bar' } }
+      before do
+        expect(logger).to receive(:known_message).with('foo', 'bar')
+      end
+
+      it { is_expected.to raise_error SystemExit }
+    end
+  end
 
   describe '.error_hash' do
     subject { current.error_hash(message) }

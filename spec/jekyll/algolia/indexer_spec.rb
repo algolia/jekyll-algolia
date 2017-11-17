@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Indexer) do
@@ -300,6 +299,63 @@ describe(Jekyll::Algolia::Indexer) do
       expect(current)
         .to have_received(:rename_index)
         .with(index_tmp_name, index_name)
+    end
+  end
+
+  describe '.run' do
+    let(:indexing_mode) { 'diff' }
+    before do
+      allow(current).to receive(:init)
+      allow(current).to receive(:run_diff_mode)
+      allow(current).to receive(:run_atomic_mode)
+      allow(configurator).to receive(:indexing_mode).and_return(indexing_mode)
+    end
+
+    context 'with records' do
+      let(:records) { [{ 'objectID' => 'foo' }, { 'objectID' => 'bar' }] }
+
+      before { current.run(records) }
+
+      it { expect(current).to have_received(:init) }
+
+      context 'when in diff mode' do
+        let(:indexing_mode) { 'diff' }
+        it { expect(current).to have_received(:run_diff_mode) }
+        it { expect(current).to_not have_received(:run_atomic_mode) }
+      end
+      context 'when in atomic mode' do
+        let(:indexing_mode) { 'atomic' }
+        it { expect(current).to have_received(:run_atomic_mode) }
+        it { expect(current).to_not have_received(:run_diff_mode) }
+      end
+    end
+
+    context 'with empty results' do
+      subject { -> { current.run(records) } }
+
+      let(:records) { [] }
+
+      before do
+        expect(configurator)
+          .to receive(:algolia)
+          .with('files_to_exclude')
+          .and_return(%w[foo.html bar.md])
+        expect(configurator)
+          .to receive(:algolia)
+          .with('nodes_to_index')
+          .and_return('p,li')
+        expect(logger)
+          .to receive(:known_message)
+          .with(
+            'no_records_found',
+            hash_including(
+              'files_to_exclude' => 'foo.html, bar.md',
+              'nodes_to_index' => 'p,li'
+            )
+          )
+      end
+
+      it { is_expected.to raise_error SystemExit }
     end
   end
 end

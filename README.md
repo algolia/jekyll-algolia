@@ -17,9 +17,6 @@ $ jekyll algolia
 
 This will push the content of your Jekyll website to your Algolia index.
 
-You can specify any option you would pass to `jekyll build`, like
-`--config`, `--source`, `--destination`, etc.
-
 ## Installation
 
 The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
@@ -27,7 +24,9 @@ The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
 writing).
 
 First, add the `jekyll-algolia` gem to your `Gemfile`, in the `:jekyll_plugins`
-section. If you do not yet have a `Gemfile`, here is the minimal content to get
+section. 
+
+If you do not yet have a `Gemfile`, here is the minimal content to get
 your started. You will also need [Bundler][8] to be able to use the `Gemfile`.
 
 ```ruby
@@ -72,16 +71,16 @@ you to make sure the file is not tracked in your versioning system.
 
 ## How it works
 
-For the most part, the plugin will work exactly like a `jekyll build` run, but
-instead of writing `.html` files to disk, it will push content to Algolia.
+The plugin will work like a `jekyll build` run, but instead of writing `.html`
+files to disk, it will push content to Algolia.
 
 It will split each page of your website into small chunks (by default, one per
 `<p>` paragraph) and then push each chunk as a new record to Algolia. Splitting
-records that way yields a better relevance of results even on very long pages.
+records that way yields a better relevance of results even on long pages.
 
-The placement of each paragraph in regard to the overall page heading hierarchy
-(title, subtitles through `<h1>` to `<h6>`) is also taken into account to
-further improve relevance of results.
+The placement of each paragraph in the page heading hierarchy (title, subtitles
+through `<h1>` to `<h6>`) is also taken into account to further improve
+relevance of results.
 
 Each record will also contain metadata about the page it was extracted from
 (including `slug`, `url`, `tags`, `categories`, `collection`  and any custom
@@ -93,9 +92,9 @@ index.
 
 ## Advanced configuration
 
-The plugin should work out of the box for most websites, but there are a few
-options you can tweak if needed. All the options should be added under the
-`algolia` section of your `_config.yml` file.
+The plugin should work out of the box for most websites, but there are options
+you can tweak if needed. All the options should be added under the `algolia`
+section of your `_config.yml` file.
 
 ### `nodes_to_index`
 
@@ -103,7 +102,7 @@ By default, each page of your website will be split into chunks based on this
 CSS selector. The default value of `p` means that one record will be created for
 each `<p>` in your generated content.
 
-But maybe you would also like to index other elements, like `<blockquote>`,
+If you would like to index other elements, like `<blockquote>`,
 `<li>` or a custom `<div class="paragraph">`. If so, you should edit the value
 like this:
 
@@ -115,7 +114,7 @@ algolia:
 
 ### `extensions_to_index`
 
-By default, only HTML and Markdown files will be indexed. If you are using
+By default, HTML and Markdown files will be indexed. If you are using
 another markup language (such as [AsciiDoc][11]
 or [Textile][12], then you should overwrite this
 option.
@@ -145,8 +144,7 @@ algolia:
   files_to_exclude: []
 ```
 
-Additionally, if there are more files you would like to exclude from the
-indexing, you should add them to the array:
+If you want to exclude more files, you should add them to the array:
 
 ```
 algolia:
@@ -160,8 +158,8 @@ algolia:
 
 ### `settings`
 
-By default the plugin will configure your Algolia index with settings taylored
-to the the format of the extracted records. You are of course free to overwrite
+By default the plugin will configure your Algolia index with settings tailored
+to the format of the extracted records. You are of course free to overwrite
 them or configure them as best suits your needs. Every option passed to the
 `settings` entry will passed to a call to [set_settings][13].
 
@@ -202,7 +200,7 @@ By default, the plugin will try to be smart when pushing content to your index:
 it will only push new records and delete old ones insted of overwriting
 everything.
 
-To do so, we first need to grab the list of all records currently residing in
+To do so, we first need to grab the list of all records residing in
 your index, then comparing them with the one generated locally. We then delete
 the old records that no longer exists, and then add the newly created record.
 

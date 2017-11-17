@@ -70,11 +70,13 @@ describe(Jekyll::Algolia::ErrorHandler) do
 
     context 'with unknown application_id' do
       let(:message) do
+        # rubocop:disable Metrics/LineLength
         'Cannot reach any host: '\
         'getaddrinfo: Name or service not known (MY_APP_ID-dsn.algolia.net:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-3.algolianet.com:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-1.algolianet.com:443), '\
         'getaddrinfo: No address associated with hostname (MY_APP_ID-2.algolianet.com:443)'
+        # rubocop:enable Metrics/LineLength
       end
 
       it { should include(name: 'unknown_application_id') }
@@ -142,7 +144,9 @@ describe(Jekyll::Algolia::ErrorHandler) do
             objectID: 'deadbeef',
             title: 'Page title',
             url: '/path/to/file.ext',
+            # rubocop:disable Metrics/LineLength
             text: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as wel so we will cut it at 100 characters.'
+            # rubocop:enable Metrics/LineLength
           },
           { objectID: 'foo' }
         ] }
@@ -170,10 +174,12 @@ describe(Jekyll::Algolia::ErrorHandler) do
 
     context 'with an unknown setting' do
       let(:message) do
+        # rubocop:disable Metrics/LineLength
         '400: Cannot PUT to '\
         'https://MY_APP_ID.algolia.net/1/indexes/my_index/settings: '\
         '{"message":"Invalid object attributes: deadbeef near line:1 column:456",'\
         '"status":400} (400)'
+        # rubocop:enable Metrics/LineLength
       end
       let(:context) do
         { settings:
@@ -198,9 +204,11 @@ describe(Jekyll::Algolia::ErrorHandler) do
           .and_return('invalid_index_name')
       end
       let(:message) do
+        # rubocop:disable Metrics/LineLength
         '400: Cannot GET to '\
         'https://MY_APP_ID-dsn.algolia.net/1/indexes/invalid_index_name/settings?getVersion=2: '\
         '{"message":"indexName is not valid","status":400} (400)'
+        # rubocop:enable Metrics/LineLength
       end
 
       it { should include(name: 'invalid_index_name') }

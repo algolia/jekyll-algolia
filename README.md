@@ -12,7 +12,7 @@ Jekyll plugin to automatically index your content into Algolia.
 ## Usage
 
 ```shell
-$ bundle exec jekyll algolia push
+$ jekyll algolia
 ```
 
 This will push the content of your Jekyll website to your Algolia index.
@@ -22,37 +22,33 @@ You can specify any option you would pass to `jekyll build`, like
 
 ## Installation
 
-First, add the `jekyll-algolia` gem to your `Gemfile`, in the
-`:jekyll_plugins` section. If you do not yet have a `Gemfile`, here is the
-minimal content to get your started.
+The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
+2.2.8 (which are the current versions [deployed on GitHub Pages][7] at the time of
+writing).
+
+First, add the `jekyll-algolia` gem to your `Gemfile`, in the `:jekyll_plugins`
+section. If you do not yet have a `Gemfile`, here is the minimal content to get
+your started. You will also need [Bundler][8] to be able to use the `Gemfile`.
 
 ```ruby
 source 'https://rubygems.org'
 
-gem 'jekyll', '~> 2.5.3'
+gem 'jekyll', '~> 3.6'
 
 group :jekyll_plugins do
-  gem 'jekyll-algolia', '~> 0.7.0'
+  gem 'jekyll-algolia'
 end
 ```
 
 Once this is done, download all dependencies with `bundle install`.
 
-Then, add `jekyll-algolia` to your `_config.yml` file, under the `plugins`
-section, like this:
-
-```yaml
-plugins:
-  - jekyll-algolia
-```
-
 If everything went well, you should be able to run `jekyll help` and see the
 `algolia` subcommand listed.
 
-## Configuration
+## Basic configuration
 
-Add information about your Algolia configuration into the `_config.yml` file,
-under the `algolia` section, like this:
+Add your Algolia credentials under the `algolia` section of your
+`_config.yml` file like this:
 
 ```yaml
 algolia:
@@ -60,266 +56,280 @@ algolia:
   index_name:     'your_index_name'
 ```
 
-Your write api key will be read from the `ALGOLIA_API_KEY` environment variable.
-You can define it on the same line as your command, allowing you to type
-`ALGOLIA_API_KEY='your_write_api_key' bundle exec jekyll algolia push`.
+_If you don't yet have an Algolia account, you can open a free [Community plan
+here][9]. If you already have an account, you can get your credentials from
+[your dashboard][10]._
 
-Note that your API key should have write access to both the `index_name` and
-`_tmp` suffixed version of it (eg. `your_index_name` and `your_index_name_tmp`)
-in the previous example). This is due to the way we do atomic pushes by pushing
-to a temporary index and then renaming it.
+Your API key will be read from the `ALGOLIA_API_KEY` environment variable.
+You can define it on the same line as your command, allowing you to type
+`ALGOLIA_API_KEY='your_api_key' jekyll algolia`.
 
 ### ⚠ Other, unsecure, method ⚠
 
-You can also store your write api key in a file named `_algolia_api_key`, in
+You can also store your API key in a file named `_algolia_api_key`, in
 your source directory. If you do this we __very, very, very strongly__ encourage
 you to make sure the file is not tracked in your versioning system.
 
-### Options
+## How it works
 
-The plugin uses sensible defaults, but you may want to override some of its
-configuration. Here are the options you can add to your `_config.yml`
-file, under the `algolia` section:
+For the most part, the plugin will work exactly like a `jekyll build` run, but
+instead of writing `.html` files to disk, it will push content to Algolia.
 
-#### `excluded_files`
+It will split each page of your website into small chunks (by default, one per
+`<p>` paragraph) and then push each chunk as a new record to Algolia. Splitting
+records that way yields a better relevance of results even on very long pages.
 
-Defines which files should not be indexed for search.
+The placement of each paragraph in regard to the overall page heading hierarchy
+(title, subtitles through `<h1>` to `<h6>`) is also taken into account to
+further improve relevance of results.
+
+Each record will also contain metadata about the page it was extracted from
+(including `slug`, `url`, `tags`, `categories`, `collection`  and any custom
+field added to the front-matter).
+
+Every time you run `jekyll algolia`, a full build of the website is run locally,
+but only records that were changed since your last build will be updated in your
+index.
+
+## Advanced configuration
+
+The plugin should work out of the box for most websites, but there are a few
+options you can tweak if needed. All the options should be added under the
+`algolia` section of your `_config.yml` file.
+
+### `nodes_to_index`
+
+By default, each page of your website will be split into chunks based on this
+CSS selector. The default value of `p` means that one record will be created for
+each `<p>` in your generated content.
+
+But maybe you would also like to index other elements, like `<blockquote>`,
+`<li>` or a custom `<div class="paragraph">`. If so, you should edit the value
+like this:
 
 ```yml
 algolia:
-  excluded_files:
+  # Also index quotes, list items and custom paragraphs
+  nodes_to_index: 'p,blockquote,li,div.paragraph'
+```
+
+### `extensions_to_index`
+
+By default, only HTML and Markdown files will be indexed. If you are using
+another markup language (such as [AsciiDoc][11]
+or [Textile][12], then you should overwrite this
+option.
+
+```yml
+algolia:
+  # Also index AsciiDoc and Textile files
+  extensions_to_index: 'html,md,adoc,textile'
+```
+
+### `files_to_exclude`
+
+The plugin will try to be smart in the pages it should __not__ index. Some files
+will always be excluded from the indexing (static assets, custom 404 and
+pagination pages). Others are handled by the `files_to_exclude` option.
+
+By default it will exclude all the `index.html` and `index.md` files. Those
+files are usually not containing much text (landing pages) or containing
+redundant text (latest blog articles) so we decided to exclude them by default.
+
+If you actually want to index those files, you should set the value to an empty
+array.
+
+```
+algolia:
+  # Actually index the index.html/index.md pages
+  files_to_exclude: []
+```
+
+Additionally, if there are more files you would like to exclude from the
+indexing, you should add them to the array:
+
+```
+algolia:
+  # Exclude more files from indexing
+  files_to_exclude:
     - index.html
-    - 2015-01-01-post.md
+    - index.md
+    - excluded-file.html
+    - /_posts/2017-01-20-date-to-forget.md
 ```
 
-#### `nodes_to_index`
+### `settings`
 
-All HTML nodes matching this CSS Selector will be indexed. Default value is `p`,
-meaning that all `<p>` paragraphs will be indexed.
+By default the plugin will configure your Algolia index with settings taylored
+to the the format of the extracted records. You are of course free to overwrite
+them or configure them as best suits your needs. Every option passed to the
+`settings` entry will passed to a call to [set_settings][13].
 
-If you would like to also index lists, you could set it like this:
+For example if you want to change the HTML tag used for the highlighting, you
+can overwrite it like this:
 
-```yml
-algolia:
-  nodes_to_index: 'p,ul'
 ```
-
-#### `lazy_update`
-
-Enabling this option can greatly reduce the number of operations consumed by the
-plugin but comes with some drawbacks mentioned above:
-
-`false`: The plugin will push all the records to a temporary index and once
-everything is pushed will overwrite the current index with this new one. This is
-the most straightforward way to update records and will ensure that all the
-changes happen in one move. This is the default value.
-
-`true`: With `lazy_update` enabled, the plugin will try to reduce the number of
-calls done to the API. It will get a list of all the records in your index and
-all the records ready to be pushed.  It will compare both and push the new while
-deleting the old. In most cases it should consume less operations, but the
-changes won't be atomic (ie. you might have your index in an hybrid state, with
-old records not yet removed and/or new records not yet added for a couple of
-minutes).
-
-#### `settings`
-
-Here you can pass any specific [index settings][7] to your Algolia index. All
-the settings supported by the API can be passed here.
-
-##### Examples
-
-If you want to activate `distinct` and some snippets for example, you would do:
-
-```yml
 algolia:
   settings:
-    attributeForDistinct: 'hierarchy'
-    distinct: true
-    attributesToSnippet: ['text:20']
+    highlightPreTag: '<em class="custom_highlight">
+    highlightPostTag: '</em>'
 ```
 
-If you want to search in other fields than the default ones, you'll have to edit
-the `attributesToIndex` (default is `%w(title h1 h2 h3 h4 h5 h6 unordered(text)
-unordered(tags))`
+### `indexing_batch_size`
 
-```yml
+The Algolia API allows you to send batches of changes to add or update several
+records at once, instead of doing one HTTP call per record. The plugin will
+batch updates by groups of 1000 records.
+
+If you are on an unstable internet connection, you might want to decrease the
+value. You will send more batches, but each will be smaller in size.
+
+```
 algolia:
-  settings:
-    attributesToIndex:
-      - title
-      - h1
-      - h2
-      - h3
-      - h4
-      - h5
-      - h6
-      - unordered(text)
-      - unordered(tags)
-      - your_custom_attribute_1
-      - your_custom_attribute_2
-      - ...
+  # Send fewer records per batch
+  indexing_batch_size: 500
 ```
 
-### Hooks
+### `indexing_mode`
 
-The `AlgoliaSearchRecordExtractor` contains two methods (`custom_hook_each` and
-`custom_hook_all`) that are here so you can overwrite them to add your custom
-logic. By default, they do nothing except returning the argument they take as
-input, and are placeholder for you to override.
+Synchronizing your local data with your Algolia index can be done in different
+ways. By default, the plugin will use the `diff` indexing mode but you might
+also be interested in the `atomic` mode.
 
-The best way to override them is to create a `./_plugins/search.rb` file, with
-the following content:
+### `diff` (default)
 
-```ruby
-class AlgoliaSearchRecordExtractor
-  # Hook to modify a record after extracting
-  def custom_hook_each(item, node)
-    # `node` is a Nokogiri HTML node, so you can access its type through `node.name`
-    # or its classname through `node.attr('class')` for example
+By default, the plugin will try to be smart when pushing content to your index:
+it will only push new records and delete old ones insted of overwriting
+everything.
 
-    # Just return `nil` instead of `item` if you want to discard this record
-    item
-  end
+To do so, we first need to grab the list of all records currently residing in
+your index, then comparing them with the one generated locally. We then delete
+the old records that no longer exists, and then add the newly created record.
 
-  # Hook to modify all records after extracting
-  def custom_hook_all(items)
-    items
-  end
-end
-```
+The main advantage is that it will consume very few operations in your Algolia
+quota. The drawback is that it will put your index into an inconsistent state
+for a few seconds (records were deleted, but new one were not yet added). Users
+doing a search on your website at that time might have incomplete results.
 
-The `AlgoliaSearchJekyllPush` class also lets user define the
-`custom_hook_excluded_file?` method. This method is called on every file that
-the plugin thinks it should parse and index. If it returns `true`, the file is
-not indexed. You can add here your custom logic to exclude some files.
+### `atomic`
 
-```ruby
-class AlgoliaSearchJekyllPush < Jekyll::Command
-  class << self
-    # Hook to exclude some files from indexing
-    def custom_hook_excluded_file?(file)
-      return true if filepath =~ %r{^/excluded_dir/}
-      false
-    end
-  end
-end
-```
+Using the `atomic` indexing mode, your users will never search into an
+inconsistent index. They will either be searching into the index containing the
+old data, or the one containing the new data, but never in an intermediate
+state.
 
-## Command line
+To do so, the plugin will actually push all data to a temporary index first.
+Once everything is copied and configured, it will then overwrite the old index
+with the temporary one.
 
-Here is the list of command line options you can pass to the `jekyll algolia
-push` command:
+The main advantage is that it will be completly transparent for your users. The
+drawback is that it will consume much more operations as you will have to push
+all your records to a new index each time.
 
-| Flag                     | Description                                                           |
-| ----                     | -----                                                                 |
-| `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` |
-| `--future`               | With this flag, the command will also index posts with a future date  |
-| `--limit_posts 10`       | Limits the number of posts to parse and index                         |
-| `--drafts`               | Index drafts in the `_drafts` folder as well                          |
-| `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             |
-| `--verbose`              | Display more information about what is going to be indexed            |
 
-## Dependencies
 
-This plugin is compatible with version of Jekyll >= 3.6.2 and version of Ruby >=
-2.4.0. Those are the versions [deployed on GitHub Pages][8] at the time of
-writing.
 
-You will also need [Bundler][9] to install the gem in your project.
 
-## Searching
 
-This plugin will index your data in your Algolia index. Building the front-end
-search is of the scope of this plugin, but you can follow [our tutorials][10] or
-use our forked version of the popular [Hyde theme][11].
 
-## GitHub Pages
+<!-- ## Custom hooks -->
+<!--  -->
+<!--  -->
+<!--     def self.hook_should_be_excluded?(_filepath) -->
+<!--     def self.hook_before_indexing_each(record, _node) -->
+<!--     def self.hook_before_indexing_all(records) -->
 
-The initial goal of the plugin was to allow anyone to have access to great
-search, even on a static website hosted on GitHub pages.
+<!-- ## Command line -->
+<!--  -->
+<!-- Here is the list of command line options you can pass to the `jekyll algolia -->
+<!-- push` command: -->
+<!--  -->
+<!-- | Flag                     | Description                                                           | -->
+<!-- | ----                     | -----                                                                 | -->
+<!-- | `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` | -->
+<!-- | `--future`               | With this flag, the command will also index posts with a future date  | -->
+<!-- | `--limit_posts 10`       | Limits the number of posts to parse and index                         | -->
+<!-- | `--drafts`               | Index drafts in the `_drafts` folder as well                          | -->
+<!-- | `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             | -->
+<!-- | `--verbose`              | Display more information about what is going to be indexed            | -->
 
-But GitHub does not allow custom plugins to be run on GitHub Pages.
-This means that you'll either have to run `bundle exec jekyll algolia push`
-manually, or configure a CI environment (like [Travis][12] to do it for you.
 
-[Travis CI][13] is an hosted continuous integration
-service, and it's free for open-source projects. Properly configured, it can
-automatically reindex your data whenever you push to `gh-pages`.
-
-For it to work, you'll have 3 steps to perform.
-
-### 1. Create a `.travis.yml` file
-
-Create a file named `.travis.yml` at the root of your project, with the
-following content:
-
-```yml
-language: ruby
-cache: bundler
-branches:
-  only:
-    - gh-pages
-script:
-  - bundle exec jekyll algolia push
-rvm:
- - 2.2
-```
-
-This file will be read by Travis and instruct it to fetch all dependencies
-defined in the `Gemfile`, then run `jekyll algolia push`. This will be
-triggered when data is pushed to the `gh-pages` branch.
-
-### 2. Update your `_config.yml` file to exclude `vendor`
-
-Travis will download all you `Gemfile` dependencies into a directory named
-`vendor`. You have to tell Jekyll to ignore this directory, otherwise Jekyll
-will try to parse it (and fail).
-
-Doing so is easy, add the following line to your `_config.yml` file:
-
-```yml
-exclude: [vendor]
-```
-
-### 3. Configure Travis
-
-In order for Travis to be able to push data to your index on your behalf, you
-have to give it your write API Key. This is achieved by defining an
-`ALGOLIA_API_KEY` [environment variable][14] in Travis settings.
-
-You should also uncheck the "Build pull requests" option, otherwise any pull
-request targeting `gh-pages` will trigger the reindexing.
-
-![Travis Configuration][15]
-
-### Done
-
-Commit all the changes to the files, and then push to `gh-pages`. Travis will
-catch the event and trigger your indexing for you. You can follow the Travis job
-execution directly on [their website][16].
-
-## FAQS
-
-### How can I exclude some HTML nodes from the indexing
-
-By default, the plugin will index every HTML node that matches the
-`nodes_to_index` CSS selector option. The default value is `p`, meaning
-that it will index all the paragraphs.
-
-You can use a [negation
-selector][17] to be even more
-explicit. For example the value `p:not(.do-not-index)` will index all `<p>`
-paragraphs, *except* those that have the class `do-not-index`.
-
-If you need a finer granularity on your indexing that cannot be expressed
-through CSS selectors, you'll have to use the [hook mechanism][18]. The
-`custom_hook_each` method takes a [Nokogiri][19] HTML node
-as a second argument and should let you write more complex filters.
+<!-- ## Searching -->
+<!--  -->
+<!-- This plugin will index your data in your Algolia index. Building the front-end -->
+<!-- search is of the scope of this plugin, but you can follow [our tutorials][14] or -->
+<!-- use our forked version of the popular [Hyde theme][15]. -->
+<!--  -->
+<!-- ## GitHub Pages -->
+<!--  -->
+<!-- The initial goal of the plugin was to allow anyone to have access to great -->
+<!-- search, even on a static website hosted on GitHub pages. -->
+<!--  -->
+<!-- But GitHub does not allow custom plugins to be run on GitHub Pages. -->
+<!-- This means that you'll either have to run `bundle exec jekyll algolia push` -->
+<!-- manually, or configure a CI environment (like [Travis][16] to do it for you. -->
+<!--  -->
+<!-- [Travis CI][17] is an hosted continuous integration -->
+<!-- service, and it's free for open-source projects. Properly configured, it can -->
+<!-- automatically reindex your data whenever you push to `gh-pages`. -->
+<!--  -->
+<!-- For it to work, you'll have 3 steps to perform. -->
+<!--  -->
+<!-- ### 1. Create a `.travis.yml` file -->
+<!--  -->
+<!-- Create a file named `.travis.yml` at the root of your project, with the -->
+<!-- following content: -->
+<!--  -->
+<!-- ```yml -->
+<!-- language: ruby -->
+<!-- cache: bundler -->
+<!-- branches: -->
+<!--   only: -->
+<!--     - gh-pages -->
+<!-- script: -->
+<!--   - bundle exec jekyll algolia push -->
+<!-- rvm: -->
+<!--  - 2.2 -->
+<!-- ``` -->
+<!--  -->
+<!-- This file will be read by Travis and instruct it to fetch all dependencies -->
+<!-- defined in the `Gemfile`, then run `jekyll algolia push`. This will be -->
+<!-- triggered when data is pushed to the `gh-pages` branch. -->
+<!--  -->
+<!-- ### 2. Update your `_config.yml` file to exclude `vendor` -->
+<!--  -->
+<!-- Travis will download all you `Gemfile` dependencies into a directory named -->
+<!-- `vendor`. You have to tell Jekyll to ignore this directory, otherwise Jekyll -->
+<!-- will try to parse it (and fail). -->
+<!--  -->
+<!-- Doing so is easy, add the following line to your `_config.yml` file: -->
+<!--  -->
+<!-- ```yml -->
+<!-- exclude: [vendor] -->
+<!-- ``` -->
+<!--  -->
+<!-- ### 3. Configure Travis -->
+<!--  -->
+<!-- In order for Travis to be able to push data to your index on your behalf, you -->
+<!-- have to give it your write API Key. This is achieved by defining an -->
+<!-- `ALGOLIA_API_KEY` [environment variable][18] in Travis settings. -->
+<!--  -->
+<!-- You should also uncheck the "Build pull requests" option, otherwise any pull -->
+<!-- request targeting `gh-pages` will trigger the reindexing. -->
+<!--  -->
+<!-- ![Travis Configuration][19] -->
+<!--  -->
+<!-- ### Done -->
+<!--  -->
+<!-- Commit all the changes to the files, and then push to `gh-pages`. Travis will -->
+<!-- catch the event and trigger your indexing for you. You can follow the Travis job -->
+<!-- execution directly on [their website][20]. -->
+<!--  -->
+<!-- ## FAQS -->
 
 # Thanks
 
-Thanks to [Anatoliy Yastreb][20] for a [great tutorial][21] on creating Jekyll
+Thanks to [Anatoliy Yastreb][21] for a [great tutorial][22] on creating Jekyll
 plugins.
 
 
@@ -329,18 +339,19 @@ plugins.
 [4]: https://codeclimate.com/github/algolia/jekyll-algolia/badges/gpa.svg
 [5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.2-green.svg
 [6]: https://img.shields.io/badge/ruby-%3E%3D%202.4.0-green.svg
-[7]: https://www.algolia.com/doc/ruby#indexing-parameters
-[8]: https://pages.github.com/versions.json
-[9]: http://bundler.io/
-[10]: https://www.algolia.com/doc/javascript
-[11]: https://github.com/algolia/hyde
-[12]: https://travis-ci.org/)
-[13]: https://travis-ci.org/
-[14]: http://docs.travis-ci.com/user/environment-variables/
-[15]: /docs/travis-settings.png
-[16]: https://travis-ci.org
-[17]: https://developer.mozilla.org/en/docs/Web/CSS/:not
-[18]: #hooks
-[19]: http://www.nokogiri.org/
-[20]: https://github.com/ayastreb/
-[21]: https://ayastreb.me/writing-a-jekyll-plugin/
+[7]: https://pages.github.com/versions.json
+[8]: http://bundler.io/
+[9]: https://www.algolia.com/users/sign_up/hacker
+[10]: https://www.algolia.com/licensing
+[11]: http://www.methods.co.nz/asciidoc/
+[12]: https://github.com/textile)
+[13]: https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings
+[14]: https://www.algolia.com/doc/javascript
+[15]: https://github.com/algolia/hyde
+[16]: https://travis-ci.org/)
+[17]: https://travis-ci.org/
+[18]: http://docs.travis-ci.com/user/environment-variables/
+[19]: /docs/travis-settings.png
+[20]: https://travis-ci.org
+[21]: https://github.com/ayastreb/
+[22]: https://ayastreb.me/writing-a-jekyll-plugin/

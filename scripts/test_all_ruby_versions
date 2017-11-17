@@ -2,7 +2,7 @@
 # Run tests in all supported Ruby versions
 set -e
 
-versions=("ruby-2.4.2" "ruby-2.3.5" "ruby-2.2.8")
+versions=("ruby-2.4.2" "ruby-2.3.5")
 installed_version="$(rvm list strings)"
 for version in "${versions[@]}"; do
   echo "Testing $version"

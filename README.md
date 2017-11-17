@@ -3,8 +3,7 @@
 [![Gem Version][1]](http://badge.fury.io/rb/jekyll-algolia) [![Build
 Status][2]](https://travis-ci.org/algolia/jekyll-algolia) [![Coverage
 Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
-[![Code
-Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
+[![Code Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
 ![Jekyll >= 3.6.2][5] ![Ruby >= 2.2.8][6]
 
 Jekyll plugin to automatically index your content into Algolia.
@@ -24,7 +23,7 @@ The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
 writing).
 
 First, add the `jekyll-algolia` gem to your `Gemfile`, in the `:jekyll_plugins`
-section. 
+section.
 
 If you do not yet have a `Gemfile`, here is the minimal content to get
 your started. You will also need [Bundler][8] to be able to use the `Gemfile`.
@@ -169,7 +168,7 @@ can overwrite it like this:
 ```yml
 algolia:
   settings:
-    highlightPreTag: '<em class="custom_highlight">
+    highlightPreTag: '<em class="custom_highlight">'
     highlightPostTag: '</em>'
 ```
 
@@ -194,7 +193,7 @@ Synchronizing your local data with your Algolia index can be done in different
 ways. By default, the plugin will use the `diff` indexing mode but you might
 also be interested in the `atomic` mode.
 
-### `diff` (default)
+#### `diff` (default)
 
 By default, the plugin will try to be smart when pushing content to your index:
 it will only push new records and delete old ones insted of overwriting
@@ -209,7 +208,7 @@ quota. The drawback is that it will put your index into an inconsistent state
 for a few seconds (records were deleted, but new one were not yet added). Users
 doing a search on your website at that time might have incomplete results.
 
-### `atomic`
+#### `atomic`
 
 Using the `atomic` indexing mode, your users will never search into an
 inconsistent index. They will either be searching into the index containing the
@@ -342,11 +341,11 @@ plugins.
 [9]: https://www.algolia.com/users/sign_up/hacker
 [10]: https://www.algolia.com/licensing
 [11]: http://www.methods.co.nz/asciidoc/
-[12]: https://github.com/textile)
+[12]: https://github.com/textile
 [13]: https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings
 [14]: https://www.algolia.com/doc/javascript
 [15]: https://github.com/algolia/hyde
-[16]: https://travis-ci.org/)
+[16]: https://travis-ci.org/
 [17]: https://travis-ci.org/
 [18]: http://docs.travis-ci.com/user/environment-variables/
 [19]: /docs/travis-settings.png

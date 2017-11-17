@@ -1,9 +1,0 @@
-Algolia Error: API key cannot write to `{index_name}_tmp` index
-  In order to do atomic pushes to your Algolia index, the plugin first pushes to
-  a temporary index (suffixed with `_tmp`), then renames it.
-
-  You see this error because the plugin wasn't able to push to that 
-  `{index_name}_tmp` index, with the API key you provided.
-
-  Make sure the API key you're using has rights to write on both your index and
-  its `{index_name}_tmp` suffixed version.

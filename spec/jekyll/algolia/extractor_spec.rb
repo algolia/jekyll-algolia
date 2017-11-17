@@ -78,10 +78,6 @@ describe(Jekyll::Algolia::Extractor) do
       let!(:file) { site.__find_file('html.html') }
       before do
         allow(Jekyll::Algolia)
-          .to receive(:hook_before_indexing_all)
-            .with(anything) { |input| input }
-
-        allow(Jekyll::Algolia)
           .to receive(:hook_before_indexing_each)
             .with(anything, anything) { |input| input }
 
@@ -142,15 +138,6 @@ describe(Jekyll::Algolia::Extractor) do
           it { should be_empty }
         end
       end
-
-      context 'with a custom hook on all' do
-        before do
-          allow(Jekyll::Algolia)
-            .to receive(:hook_before_indexing_all)
-            .and_return(%w[foo bar baz])
-        end
-        it { should eq %w[foo bar baz] }
-      end
     end
 
     context 'with real data' do
@@ -162,11 +149,6 @@ describe(Jekyll::Algolia::Extractor) do
           expect(subject[1]).to include(added_through_each: true)
           expect(subject[2]).to include(added_through_each: true)
         end
-      end
-
-      describe 'should add new record at the end' do
-        let(:expected) { { name: 'Last one' } }
-        it { expect(subject[-1]).to eq expected }
       end
     end
   end

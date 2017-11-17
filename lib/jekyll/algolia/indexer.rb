@@ -107,7 +107,7 @@ module Jekyll
       #
       # records - Array of all local records
       def self.local_object_ids(records)
-        records.map { |record| record[:objectID] }.sort
+        records.map { |record| record[:objectID] }.compact.sort
       end
 
       # Public: Update settings of the index
@@ -217,7 +217,6 @@ module Jekyll
         init
 
         record_count = records.length
-        Logger.verbose("I:Extracted #{record_count} records")
 
         # Indexing zero record is surely a misconfiguration
         if record_count.zero?

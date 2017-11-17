@@ -172,6 +172,18 @@ describe(Jekyll::Algolia::Indexer) do
     it { should include('bar') }
     # Should be ordered
     it { should eq %w[bar foo] }
+
+    context 'with records missing their objectID' do
+      let(:records) do
+        [
+          { objectID: 'foo' },
+          { foo: 'foo' },
+          { objectID: 'bar' },
+          { bar: 'bar' }
+        ]
+      end
+      it { should eq %w[bar foo] }
+    end
   end
 
   describe '.run_diff_mode' do

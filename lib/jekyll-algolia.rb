@@ -93,6 +93,9 @@ module Jekyll
           records += file_records
         end
 
+        # Applying the user hook on the whole list of records
+        records = Jekyll::Algolia.hook_before_indexing_all(records)
+
         Logger.verbose("I:Found #{files.length} files")
 
         Indexer.run(records)

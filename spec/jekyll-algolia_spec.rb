@@ -3,6 +3,7 @@ require 'spec_helper'
 
 describe(Jekyll::Algolia) do
   let(:current) { Jekyll::Algolia }
+  let(:indexer) { Jekyll::Algolia::Indexer }
 
   # Suppress Jekyll log about not having a config file
   before do
@@ -58,7 +59,7 @@ describe(Jekyll::Algolia) do
     end
   end
 
-  describe 'run' do
+  describe '.run (mocked build)' do
     # Prevent the whole process to stop if Algolia config is not available
     before do
       allow(Jekyll::Algolia::Configurator)
@@ -79,6 +80,28 @@ describe(Jekyll::Algolia) do
         .with(jekyll_site)
       expect(jekyll_site)
         .to receive(:process)
+    end
+
+    it { current.init(configuration).run }
+  end
+
+  describe '.run (real build)' do
+    let(:configuration) do
+      Jekyll.configuration(
+        source: File.expand_path('./spec/site')
+      )
+    end
+    # The actual indexing should be done on the list of records + one added
+    # through the custom hook
+    RSpec::Matchers.define :a_custom_record_added_at_the_end do
+      match do |actual|
+        actual[-1][:name] == 'Last one'
+      end
+    end
+
+    before do
+      allow(Jekyll.logger).to receive(:info)
+      expect(indexer).to receive(:run).with(a_custom_record_added_at_the_end)
     end
 
     it { current.init(configuration).run }

@@ -37,8 +37,7 @@ module Jekyll
           records << record
         end
 
-        # Applying the user hook on the whole list of records
-        Jekyll::Algolia.hook_before_indexing_all(records)
+        records
       end
 
       # Public: Extract raw records from the file, including content for each

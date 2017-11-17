@@ -156,7 +156,8 @@ algolia:
   files_to_exclude: []
 ```
 
-If you want to exclude more files, you should add them to the array:
+If you want to exclude more files, you should add them to the array. Note that
+you can use glob patterns to exclude several files at once.
 
 ```yml
 algolia:
@@ -165,7 +166,8 @@ algolia:
     - index.html
     - index.md
     - excluded-file.html
-    - /_posts/2017-01-20-date-to-forget.md
+    - _posts/2017-01-20-date-to-forget.md
+    - subdirectory/*.html
 ```
 
 ### `settings`

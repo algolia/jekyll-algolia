@@ -10,6 +10,7 @@ algolia:
   files_to_exclude:
     - index.html
     - excluded.html
+    - excluded_dir/*.html
 
 # Jekyll 3.0 extracted the secondary features into their own plugins
 plugins: 

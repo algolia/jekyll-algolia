@@ -151,6 +151,16 @@ describe(Jekyll::Algolia::FileBrowser) do
     context 'when testing a file excluded from config' do
       let(:file) { site.__find_file('excluded.html') }
       it { should eq true }
+      context 'when using a glob' do
+        context 'with a matching file' do
+          let(:file) { site.__find_file('excluded_dir/file.html') }
+          it { should eq true }
+        end
+        context 'with a non-matching file' do
+          let(:file) { site.__find_file('excluded_dir/file.md') }
+          it { should eq false }
+        end
+      end
     end
     context 'when testing a file excluded from a custom hook' do
       let(:file) { site.__find_file('excluded-from-hook.html') }

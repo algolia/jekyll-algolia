@@ -72,7 +72,16 @@ module Jekyll
       #
       # file - The Jekyll file
       def self.excluded_from_config?(file)
-        excluded_files = Configurator.algolia('files_to_exclude')
+        excluded_patterns = Configurator.algolia('files_to_exclude')
+        excluded_files = []
+
+        # Transform the glob patterns into a real list of files
+        Dir.chdir(Configurator.get('source')) do
+          excluded_patterns.each do |pattern|
+            excluded_files += Dir.glob(pattern)
+          end
+        end
+
         excluded_files.include?(file.path)
       end
 

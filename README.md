@@ -10,8 +10,15 @@ Jekyll plugin to automatically index your content into Algolia.
 
 ## ⚠ Unreleased beta version
 
-This plugin is not **yet** released on Rubygems. If you want to try it, you
-should clone the repository and then update your `Gemfile` to point to the path
+This plugin is not **yet** released on Rubygems. If you want to try it either point to the develop branch of this repo:
+
+```yml
+group :jekyll_plugins do
+    gem "jekyll-algolia", git: "https://github.com/algolia/jekyll-algolia", branch: "develop"
+end
+```
+
+or clone the repository and then update your `Gemfile` to point to the path
 on disk like this:
 
 ```yml
@@ -25,7 +32,7 @@ Feedback very welcome!
 ## Usage
 
 ```shell
-$ jekyll algolia
+$ bundle exec jekyll algolia
 ```
 
 This will push the content of your Jekyll website to your Algolia index.

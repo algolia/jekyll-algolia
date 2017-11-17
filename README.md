@@ -8,6 +8,20 @@ Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
 
 Jekyll plugin to automatically index your content into Algolia.
 
+## ⚠ Unreleased beta version
+
+This plugin is not **yet** released on Rubygems. If you want to try it, you
+should clone the repository and then update your `Gemfile` to point to the path
+on disk like this:
+
+```yml
+group :jekyll_plugins do
+  gem "jekyll-algolia", :path => "/path/to/the/cloned/repo"
+end
+```
+
+Feedback very welcome!
+
 ## Usage
 
 ```shell

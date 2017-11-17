@@ -138,7 +138,7 @@ redundant text (latest blog articles) so we decided to exclude them by default.
 If you actually want to index those files, you should set the value to an empty
 array.
 
-```
+```yml
 algolia:
   # Actually index the index.html/index.md pages
   files_to_exclude: []
@@ -146,7 +146,7 @@ algolia:
 
 If you want to exclude more files, you should add them to the array:
 
-```
+```yml
 algolia:
   # Exclude more files from indexing
   files_to_exclude:
@@ -166,7 +166,7 @@ them or configure them as best suits your needs. Every option passed to the
 For example if you want to change the HTML tag used for the highlighting, you
 can overwrite it like this:
 
-```
+```yml
 algolia:
   settings:
     highlightPreTag: '<em class="custom_highlight">
@@ -182,7 +182,7 @@ batch updates by groups of 1000 records.
 If you are on an unstable internet connection, you might want to decrease the
 value. You will send more batches, but each will be smaller in size.
 
-```
+```yml
 algolia:
   # Send fewer records per batch
   indexing_batch_size: 500

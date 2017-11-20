@@ -133,10 +133,12 @@ algolia:
 
 ### `extensions_to_index`
 
-By default, HTML and Markdown files will be indexed. If you are using
-another markup language (such as [AsciiDoc][11]
-or [Textile][12], then you should overwrite this
-option.
+By default, pages for which the source are HTML or Markdown files will be indexed.
+If you are using another markup language (such as [AsciiDoc][11]
+or [Textile][12], then you should overwrite this option.
+
+For example, the `md` extension here means that `*.md` source files will be computed
+to generate their HTML version, which will be indexed.
 
 ```yml
 algolia:

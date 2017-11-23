@@ -4,7 +4,7 @@
 Status][2]](https://travis-ci.org/algolia/jekyll-algolia) [![Coverage
 Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
 [![Code Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
-![Jekyll >= 3.6.2][5] ![Ruby >= 2.3.5][6]
+![Jekyll >= 3.6.0][5] ![Ruby >= 2.3.0][6]
 
 Jekyll plugin to automatically index your content into Algolia.
 
@@ -39,8 +39,8 @@ This will push the content of your Jekyll website to your Algolia index.
 
 ## Installation
 
-The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
-2.3.5.
+The plugin requires a minimum version of Jekyll 3.6.0 and a minimum Ruby
+version of 2.3.0.
 
 First, add the `jekyll-algolia` gem to your `Gemfile`, in the `:jekyll_plugins`
 section.
@@ -358,8 +358,8 @@ plugins.
 [2]: https://travis-ci.org/algolia/jekyll-algolia.svg?branch=master
 [3]: https://coveralls.io/repos/algolia/jekyll-algolia/badge.svg?branch=master&service=github
 [4]: https://codeclimate.com/github/algolia/jekyll-algolia/badges/gpa.svg
-[5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.2-green.svg
-[6]: https://img.shields.io/badge/ruby-%3E%3D%202.3.5-green.svg
+[5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.0-green.svg
+[6]: https://img.shields.io/badge/ruby-%3E%3D%202.3.0-green.svg
 [7]: https://pages.github.com/versions.json
 [8]: http://bundler.io/
 [9]: https://www.algolia.com/users/sign_up/hacker

@@ -92,8 +92,6 @@ ALGOLIA_APPLICATION_ID | `your_application_id`
 ALGOLIA_API_KEY        | `your_api_key`
 ALGOLIA_INDEX_NAME     | `your_index_name`
 
-### ⚠ Other, unsecure, method ⚠
-
 As a fallback measure, the plugin also checks if `application_id` and
 `index_name` are available under `algolia` key in your `_config.yml`
 file like this:
@@ -105,6 +103,8 @@ algolia:
   application_id: 'your_application_id'
   index_name:     'your_index_name'
 ```
+
+### ⚠ Other, unsecure, method ⚠
 
 You can also store your confidential API key in a file named `_algolia_api_key`,
 in your source directory. If you do this we __very, very, very strongly__

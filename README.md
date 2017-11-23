@@ -6,22 +6,23 @@ Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
 [![Code Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
 ![Jekyll >= 3.6.2][5] ![Ruby >= 2.3.5][6]
 
-Jekyll plugin to automatically index your content into Algolia.
+Jekyll plugin to automatically index your content on Algolia.
 
 ## ⚠ Unreleased beta version
 
-This plugin is not **yet** released on Rubygems. If you want to try it either point to the develop branch of this repo:
+This plugin has not **yet** been released on Rubygems. If you wish to try it,
+simply point your `Gemfile` to the `develop` branch of this repo:
 
-```yml
+```ruby
 group :jekyll_plugins do
-    gem "jekyll-algolia", git: "https://github.com/algolia/jekyll-algolia", branch: "develop"
+  gem "jekyll-algolia", git: "https://github.com/algolia/jekyll-algolia", branch: "develop"
 end
 ```
 
-or clone the repository and then update your `Gemfile` to point to the path
-on disk like this:
+Alternatively, clone the repository first and then update your site's `Gemfile`
+to point to the path on disk like this:
 
-```yml
+```ruby
 group :jekyll_plugins do
   gem "jekyll-algolia", :path => "/path/to/the/cloned/repo"
 end
@@ -45,7 +46,7 @@ The plugin requires a minimum version of Jekyll of 3.6.2 and a Ruby version of
 First, add the `jekyll-algolia` gem to your `Gemfile`, in the `:jekyll_plugins`
 section.
 
-If you do not yet have a `Gemfile`, here is the minimal content to get
+If you do not have a `Gemfile` already, here is the minimal content to get
 your started. You will also need [Bundler][8] to be able to use the `Gemfile`.
 
 ```ruby
@@ -65,28 +66,49 @@ If everything went well, you should be able to run `jekyll help` and see the
 
 ## Basic configuration
 
-Add your Algolia credentials under the `algolia` section of your
-`_config.yml` file like this:
+You need to provide certain Algolia credentials for this plugin to successfully
+*index* your site.
+
+*If you don't yet have an Algolia account, you can open a free [Community plan
+here][9]. Once signed in, you can get your credentials from
+[your dashboard][10].*
+
+The plugin will try to fetch the credentials from your environment-variables
+hash and fallback to your Jekyll configuration if not found.
+
+To pass the credentials as ENV variables, you can do so at the same time when
+you run the `jekyll algolia` command
+
+```sh
+# for example
+
+ALGOLIA_APPLICATION_ID='your_application_id' jekyll algolia
+```
+The valid ENV variables are:
+
+key                    | value
+---------------------- | ----------------------
+ALGOLIA_APPLICATION_ID | `your_application_id`
+ALGOLIA_API_KEY        | `your_api_key`
+ALGOLIA_INDEX_NAME     | `your_index_name`
+
+As a fallback measure, the plugin also checks if `application_id` and
+`index_name` are available under `algolia` key in your `_config.yml`
+file like this:
 
 ```yaml
+# _config.yml
+
 algolia:
   application_id: 'your_application_id'
   index_name:     'your_index_name'
 ```
 
-_If you don't yet have an Algolia account, you can open a free [Community plan
-here][9]. If you already have an account, you can get your credentials from
-[your dashboard][10]._
-
-Your API key will be read from the `ALGOLIA_API_KEY` environment variable.
-You can define it on the same line as your command, allowing you to type
-`ALGOLIA_API_KEY='your_api_key' jekyll algolia`.
-
 ### ⚠ Other, unsecure, method ⚠
 
-You can also store your API key in a file named `_algolia_api_key`, in
-your source directory. If you do this we __very, very, very strongly__ encourage
-you to make sure the file is not tracked in your versioning system.
+You can also store your confidential API key in a file named `_algolia_api_key`,
+in your source directory. If you do this we __very, very, very strongly__
+encourage you to make sure the file is not tracked in your versioning system.
 
 ## How it works
 

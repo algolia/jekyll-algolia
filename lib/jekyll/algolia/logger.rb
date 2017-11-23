@@ -40,7 +40,7 @@ module Jekyll
       def self.known_message(message_id, metadata = {})
         file = File.expand_path(
           File.join(
-            File.dirname(__FILE__), '../../..', 'errors', "#{message_id}.txt"
+            __dir__, '../..', 'errors', "#{message_id}.txt"
           )
         )
 

@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'lib/jekyll/algolia/version.rb')
+require File.join(__dir__, 'lib/jekyll/algolia/version.rb')
 
 Gem::Specification.new do |gem|
   # Required attributes

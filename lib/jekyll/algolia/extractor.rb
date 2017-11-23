@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'algoliasearch'
 # require 'json'
 require 'algolia_html_extractor'

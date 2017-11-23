@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Launch tests whenever a file in ./lib or ./spec changes
 guard :rspec, cmd: 'bundle exec rspec --color --format progress' do
   watch(%r{^spec/.+_spec\.rb$})

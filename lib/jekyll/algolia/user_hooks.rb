@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jekyll
   # Hooks that can be safely overwritten by the user
   module Algolia

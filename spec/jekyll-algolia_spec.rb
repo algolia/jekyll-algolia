@@ -42,20 +42,17 @@ describe(Jekyll::Algolia) do
     end
   end
 
-  describe '.monkey_patch_site' do
+  describe 'overriding Jekyll::Site#write' do
     # Given
-    let(:site) { Jekyll::Site.new(Jekyll.configuration) }
-    let!(:initial_method) { site.method(:write).source_location }
-
-    # When
-    subject do
-      current.monkey_patch_site(site)
-      site.method(:write).source_location
-    end
+    let(:configuration) { Jekyll.configuration }
+    let(:jekyll_site) { Jekyll::Site.new(configuration) }
+    let(:algolia_site) { Jekyll::Algolia::Site.new(configuration) }
+    let!(:initial_method) { jekyll_site.method(:write).source_location }
+    let!(:overridden_method) { algolia_site.method(:write).source_location }
 
     # Then
     it 'should change the initial .write method' do
-      expect(subject).to_not eq initial_method
+      expect(overridden_method).to_not eq initial_method
     end
   end
 
@@ -68,17 +65,14 @@ describe(Jekyll::Algolia) do
     end
 
     let(:configuration) { Jekyll.configuration }
-    let(:jekyll_site) { double('Jekyll::Site', process: nil) }
+    let(:algolia_site) { double('Jekyll::Algolia::Site', process: nil) }
     before do
       # Making sure all methods are called on the relevant objects
-      expect(Jekyll::Site)
+      expect(Jekyll::Algolia::Site)
         .to receive(:new)
         .with(configuration)
-        .and_return(jekyll_site)
-      expect(current)
-        .to receive(:monkey_patch_site)
-        .with(jekyll_site)
-      expect(jekyll_site)
+        .and_return(algolia_site)
+      expect(algolia_site)
         .to receive(:process)
     end
 

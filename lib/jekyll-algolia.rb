@@ -27,8 +27,7 @@ module Jekyll
     # monkey-patching its `write` method and building it.
     def self.init(config = {})
       @config = config
-      @site = Jekyll::Site.new(@config)
-      monkey_patch_site(@site)
+      @site = Jekyll::Algolia::Site.new(@config)
 
       exit 1 unless Configurator.assert_valid_credentials
 
@@ -62,15 +61,13 @@ module Jekyll
       @site
     end
 
-    # Public: Replace the main `write` method of the site to push records to
-    # Algolia instead of writing files to disk.
     #
-    # site - The Jekyll site to monkey patch
-    #
-    # We will change the behavior of the `write` method that should write files
-    # to disk and have it create JSON records and push them to Algolia instead.
-    def self.monkey_patch_site(site)
-      def site.write
+
+    # A Jekyll::Site subclass that overrides #write from the parent class to
+    # create JSON records out of rendered documents and push those records
+    # to Algolia instead of writing files to disk.
+    class Site < Jekyll::Site
+      def write
         if Configurator.dry_run?
           Logger.log('W:==== THIS IS A DRY RUN ====')
           Logger.log('W:  - No records will be pushed to your index')

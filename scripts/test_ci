@@ -1,7 +1,2 @@
 #!/usr/bin/env bash
-# This script will be started by Travis, in the correct context (matrix of Ruby
-# version + Gemfile version), so it only needs to load the tests, without
-# worrying about appraisal
-cd "$(dirname "$BASH_SOURCE")"/..
-
-COVERAGE=1 bundle exec rspec
+bundle exec rake test

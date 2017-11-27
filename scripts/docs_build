@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-cd "$(dirname "$BASH_SOURCE")"/../docs
-
-middleman build

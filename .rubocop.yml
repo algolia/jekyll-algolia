@@ -3,6 +3,10 @@ require:
 
 AllCops:
   DisplayCopNames: true
+  Exclude:
+    - vendor/**/*
+    - spec/site/**/*
+  TargetRubyVersion: 2.3
 
 Metrics/AbcSize:
   Max: 100
@@ -18,6 +22,8 @@ Metrics/MethodLength:
 
 Metrics/BlockLength:
   Max: 50
+  Exclude:
+    - spec/jekyll/algolia/indexer_spec.rb
 
 Metrics/CyclomaticComplexity:
   Max: 10

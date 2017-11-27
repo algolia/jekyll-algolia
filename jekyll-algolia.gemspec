@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), 'lib/jekyll/algolia/version.rb')
 
 Gem::Specification.new do |gem|
@@ -15,8 +17,8 @@ Gem::Specification.new do |gem|
   gem.licenses = ['MIT']
 
   # Dependencies
-  gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.1'
+  gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'awesome_print', '~> 1.8'
   gem.add_runtime_dependency 'filesize', '~> 0.1'
   gem.add_runtime_dependency 'jekyll', '~> 3.6'
@@ -37,10 +39,10 @@ Gem::Specification.new do |gem|
 
   # Files
   gem.files = Dir[
-    'lib/**/*.rb',
-    'errors/*.txt',
-    'README.md',
     'CONTRIBUTING.md',
+    'errors/*.txt',
+    'lib/**/*.rb',
     'LICENSE.txt',
+    'README.md',
   ]
 end

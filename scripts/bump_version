@@ -1,17 +1,20 @@
 #!/usr/bin/env ruby
-require_relative '../lib/version.rb'
+# frozen_string_literal: true
 
+require_relative '../lib/jekyll/algolia/version.rb'
+
+# Bump Version
 class BumpVersion
   def initialize(*args)
     @type = args[0]
-    if !valid_type?(@type)
+    unless valid_type?(@type)
       puts "Invalid bump type: #{@type}"
       exit 1
     end
   end
 
   def valid_type?(type)
-    %w(major minor patch).include?(type)
+    %w[major minor patch].include?(type)
   end
 
   def bump(current_version, type)
@@ -33,8 +36,7 @@ class BumpVersion
     old_version = AlgoliaSearchJekyllVersion.to_s
     new_version = bump(old_version, @type)
 
-    script_dir = File.expand_path(File.dirname(__FILE__))
-    file = File.join(script_dir, '../lib/version.rb')
+    file = File.join(__dir__, '../lib/version.rb')
     old_content = File.read(file)
     new_content = old_content.gsub(old_version, new_version)
     File.write(file, new_content)
@@ -42,6 +44,5 @@ class BumpVersion
     `git add #{file}`
     `git commit -m "chore(bump): Version bump to #{new_version}"`
   end
-
 end
 BumpVersion.new(*ARGV).run

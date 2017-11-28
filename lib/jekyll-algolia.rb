@@ -61,8 +61,6 @@ module Jekyll
       @site
     end
 
-    #
-
     # A Jekyll::Site subclass that overrides #write from the parent class to
     # create JSON records out of rendered documents and push those records
     # to Algolia instead of writing files to disk.

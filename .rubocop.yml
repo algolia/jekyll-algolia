@@ -3,9 +3,11 @@ require:
 
 AllCops:
   DisplayCopNames: true
+  TargetRubyVersion: 2.3
   Exclude:
     - spec/site/**/*
-  TargetRubyVersion: 2.3
+    # Travis stores its cache in ./vendor so we need to exclude it
+    - vendor/**/* 
 
 Metrics/AbcSize:
   Max: 100

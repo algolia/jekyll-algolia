@@ -14,9 +14,12 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:lint) do |task|
   task.patterns = [
     'lib/**/*.rb',
-    'spec/**/*.rb',
+    'spec/**/*.rb'
   ]
-  task.options = ['--display-cop-names']
+  task.options = [
+    '--display-cop-names',
+    '--force-exclusion' # Some files are excluded in .rubocop.yml
+  ]
 end
 
 # TEST

@@ -29,7 +29,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'flay', '~> 2.6'
   gem.add_development_dependency 'flog', '~> 4.3'
   gem.add_development_dependency 'guard-rspec', '~> 4.6'
-  gem.add_development_dependency 'jeweler', '~> 2.0'
   gem.add_development_dependency 'rspec', '~> 3.0'
   gem.add_development_dependency 'rubocop', '~> 0.51'
   gem.add_development_dependency 'rubocop-rspec-focused', '~> 0.1.0'

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Generate coverage when run locally with rake coverage
+require_relative './spec_helper_simplecov.rb' if ENV['COVERAGE']
 # Load coverage when run through Travis
 if ENV['TRAVIS']
   require 'coveralls'
@@ -8,7 +10,6 @@ end
 
 require 'jekyll'
 require 'jekyll-algolia'
-# require_relative './spec_helper_simplecov.rb'
 
 RSpec.configure do |config|
   config.filter_run(focus: true)

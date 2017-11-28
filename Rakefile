@@ -46,6 +46,13 @@ task :test_all_ruby_versions do
   puts 'Please, run ./scripts/test_all_ruby_versions manually'
 end
 
+# COVERAGE
+desc 'Generate locally browsable coverage files'
+task :coverage do
+  ENV['COVERAGE'] = 'true'
+  Rake::Task['test'].execute
+end
+
 # WATCH
 desc 'Watch for changes in files and reload tests'
 task :watch do

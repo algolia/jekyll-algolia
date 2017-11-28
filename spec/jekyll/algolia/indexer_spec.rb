@@ -1,3 +1,6 @@
+# rubocop:disable Metrics/BlockLength
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe(Jekyll::Algolia::Indexer) do

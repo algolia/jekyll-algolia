@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 MAX_SCORE = 45
 
@@ -21,7 +22,7 @@ flay_lines.each_with_index do |line, index|
   }
 end
 
-exit 0 if errors.size == 0
+exit 0 if errors.empty?
 
 puts 'Flay test failed:'
 errors.sort_by { |a| a[:score] }.each do |error|

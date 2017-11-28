@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'algolia_html_extractor'
 
 module Jekyll

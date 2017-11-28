@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Load coverage when run through Travis
 if ENV['TRAVIS']
   require 'coveralls'

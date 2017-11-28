@@ -14,9 +14,7 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:lint) do |task|
   task.patterns = [
     'lib/**/*.rb',
-    # Excluding ./spec/site
-    'spec/*.rb',
-    'spec/jekyll/**/*.rb'
+    'spec/**/*.rb',
   ]
   task.options = ['--display-cop-names']
 end

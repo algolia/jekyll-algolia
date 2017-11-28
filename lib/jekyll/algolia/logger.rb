@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jekyll
   module Algolia
     # Display helpful error messages
@@ -47,7 +49,7 @@ module Jekyll
         # Convert all variables
         content = File.open(file).read
         metadata.each do |key, value|
-          content.gsub!("{#{key}}", value)
+          content = content.gsub("{#{key}}", value)
         end
 
         # Display each line differently

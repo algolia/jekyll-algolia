@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jekyll
   module Algolia
     # Single source of truth for access to configuration variables
@@ -83,7 +85,7 @@ module Jekyll
         source_dir = get('source')
         if source_dir
           api_key_file = File.join(source_dir, '_algolia_api_key')
-          if File.exist?(api_key_file) && File.size(api_key_file) > 0
+          if File.exist?(api_key_file) && File.size(api_key_file).positive?
             return File.open(api_key_file).read.strip
           end
         end

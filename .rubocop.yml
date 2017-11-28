@@ -3,6 +3,9 @@ require:
 
 AllCops:
   DisplayCopNames: true
+  Exclude:
+    - spec/site/**/*
+  TargetRubyVersion: 2.3
 
 Metrics/AbcSize:
   Max: 100

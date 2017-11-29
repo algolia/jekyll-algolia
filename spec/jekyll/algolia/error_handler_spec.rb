@@ -115,6 +115,21 @@ describe(Jekyll::Algolia::ErrorHandler) do
       it { should include(details: { 'application_id' => 'MY_APP_ID' }) }
     end
 
+    context 'with unknown application_id and no DSN' do
+      let(:message) do
+        # rubocop:disable Metrics/LineLength
+        'Cannot reach any host: '\
+        'getaddrinfo: Name or service not known (MY_APP_ID.algolia.net:443), '\
+        'getaddrinfo: No address associated with hostname (MY_APP_ID-3.algolianet.com:443), '\
+        'getaddrinfo: No address associated with hostname (MY_APP_ID-1.algolianet.com:443), '\
+        'getaddrinfo: No address associated with hostname (MY_APP_ID-2.algolianet.com:443)'
+        # rubocop:enable Metrics/LineLength
+      end
+
+      it { should include(name: 'unknown_application_id') }
+      it { should include(details: { 'application_id' => 'MY_APP_ID' }) }
+    end
+
     context 'with no access to the _tmp index' do
       before do
         allow(configurator)

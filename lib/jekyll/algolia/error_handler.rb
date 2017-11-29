@@ -144,9 +144,13 @@ module Jekyll
         message = error.message
         return false if message !~ /^Cannot reach any host/
 
-        matches = /.*\((.*)-dsn\.algolia.net.*/.match(message)
+        matches = /.*\((.*)\.algolia.net.*/.match(message)
 
-        { 'application_id' => matches[1] }
+        # The API will browse on APP_ID-dsn, but push/delete on APP_ID only
+        # We need to catch both potential errors
+        app_id = matches[1].gsub(/-dsn$/, '')
+
+        { 'application_id' => app_id }
       end
 
       # Public: Check if credentials specifically can't access the _tmp index

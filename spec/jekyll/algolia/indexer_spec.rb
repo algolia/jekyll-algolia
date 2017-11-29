@@ -233,7 +233,7 @@ describe(Jekyll::Algolia::Indexer) do
         .with(anything, 'my_settings')
     end
 
-    fcontext 'nothing changed since last update' do
+    context 'nothing changed since last update' do
       let(:local_records) do
         [
           { objectID: 'foo' },

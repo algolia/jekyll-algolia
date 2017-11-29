@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'awesome_print'
-
 module Jekyll
   module Commands
     # Registering the `jekyll algolia` command

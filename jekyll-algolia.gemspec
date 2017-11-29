@@ -20,7 +20,6 @@ Gem::Specification.new do |gem|
   # Dependencies
   gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.1'
-  gem.add_runtime_dependency 'awesome_print', '~> 1.8'
   gem.add_runtime_dependency 'filesize', '~> 0.1'
   gem.add_runtime_dependency 'jekyll', '~> 3.6'
   gem.add_runtime_dependency 'jekyll-paginate', '~> 1.1'

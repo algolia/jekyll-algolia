@@ -75,6 +75,7 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.delete_records_by_id(index, ids)
+        return if ids.empty?
         Logger.log("I:Deleting #{ids.length} records")
         return if Configurator.dry_run?
 

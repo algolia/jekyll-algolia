@@ -145,6 +145,17 @@ describe(Jekyll::Algolia::Indexer) do
           .with(ids)
       end
     end
+
+    context 'when deleting zero records' do
+      let(:ids) { [] }
+      before do
+        allow(logger).to receive(:log)
+      end
+      it do
+        expect(logger).to_not have_received(:log)
+        expect(index).to_not have_received(:delete_objects!)
+      end
+    end
   end
 
   describe '.remote_object_ids' do

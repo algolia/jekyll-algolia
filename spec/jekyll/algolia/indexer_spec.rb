@@ -232,6 +232,23 @@ describe(Jekyll::Algolia::Indexer) do
         .to have_received(:update_settings)
         .with(anything, 'my_settings')
     end
+
+    fcontext 'nothing changed since last update' do
+      let(:local_records) do
+        [
+          { objectID: 'foo' },
+          { objectID: 'bar' }
+        ]
+      end
+      let(:remote_ids) { %w[foo bar] }
+
+      before do
+        allow(logger).to receive(:log)
+      end
+      it do
+        expect(logger).to have_received(:log).with(/Nothing to index/)
+      end
+    end
   end
 
   describe '.rename_index' do

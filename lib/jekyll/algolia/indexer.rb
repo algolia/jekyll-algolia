@@ -147,15 +147,23 @@ module Jekyll
         remote_ids = remote_object_ids(index)
         local_ids = local_object_ids(records)
 
+        old_records_ids = remote_ids - local_ids
+        new_records_ids = local_ids - remote_ids
+        if old_records_ids.empty? && new_records_ids.empty?
+          Logger.log('I:Nothing to index. Your content is already up to date.')
+          return
+        end
+
         # Delete remote records that are no longer available locally
-        delete_records_by_id(index, remote_ids - local_ids)
+        delete_records_by_id(index, old_records_ids)
 
         # Add only records that are not yet already in the remote
-        new_records_ids = local_ids - remote_ids
         new_records = records.select do |record|
           new_records_ids.include?(record[:objectID])
         end
         update_records(index, new_records)
+
+        Logger.log('I:✔ Indexing complete')
       end
 
       # Public: Get the settings of the remote index
@@ -211,6 +219,8 @@ module Jekyll
 
         # Renaming the new index in place of the old
         rename_index(index_tmp_name, index_name)
+
+        Logger.log('I:✔ Indexing complete')
       end
 
       # Public: Push all records to Algolia and configure the index
@@ -240,8 +250,6 @@ module Jekyll
         when 'atomic'
           run_atomic_mode(records)
         end
-
-        Logger.log('I:✔ Indexing complete')
       end
     end
   end

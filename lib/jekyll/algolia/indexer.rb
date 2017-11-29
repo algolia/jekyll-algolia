@@ -154,6 +154,8 @@ module Jekyll
           return
         end
 
+        Logger.log('I:Pushing records to Algolia...')
+
         # Delete remote records that are no longer available locally
         delete_records_by_id(index, old_records_ids)
 

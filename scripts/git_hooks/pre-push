@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
+set -e
 rake test
+rake lint

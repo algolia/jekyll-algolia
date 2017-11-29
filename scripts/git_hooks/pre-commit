@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Succeed fast if we did not change any ruby file
 if ! git status --short | grep -q '\.rb$'; then

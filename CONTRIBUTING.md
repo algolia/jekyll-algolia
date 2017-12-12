@@ -63,6 +63,32 @@ If you need to release a new version of the gem, run `rake release` from the
 `develop` branch. It will ask you for the new version and automatically create
 the git tags, create the gem and push it to Rubygems.
 
+# Documentation
+
+## Requirements
+
+To run this project, you will need:
+
+- Node.js >= v9.2.0, use nvm - [install instructions](https://github.com/creationix/nvm#install-script)
+- Yarn >= v1.3.2 - [install instructions](https://yarnpkg.com/en/docs/install#alternatives-tab)
+
+## Development
+
+```sh
+yarn
+yarn start
+```
+
+Go to <http://localhost:3000>.
+
+## Update docs
+
+```sh
+yarn docs:update
+git push
+```
+
+
 # Project owner
 
 [@pixelastic](https://github.com/pixelastic)

@@ -3,8 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "NODE_ENV=development node src/jekyll-algolia-docgen/start.js",
-    "docs:build": "NODE_ENV=production node src/jekyll-algolia-docgen/build.js",
+    "start": "NODE_ENV=development node src/start.js",
+    "docs:build": "NODE_ENV=production node src/build.js",
     "docs:update": "ROOT_PATH=/jekyll-algolia/ yarn docs:build && doctoc --maxlevel 2 README.md CONTRIBUTING.md",
     "docs:test-build": "ROOT_PATH=/ yarn docs:build && http-server docs/",
     "lint": "eslint .",

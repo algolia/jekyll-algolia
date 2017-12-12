@@ -79,14 +79,14 @@ yarn docs:test-build
 ## Changes to be done before going live
 
 - Rename any folder and replace any occurence of `jekyll-algolia` to `my-project`.
-- Remove `meta(name='ROBOTS', content='NOINDEX, NOFOLLOW')` from [src/jekyll-algolia-docgen/layouts/common/meta.pug](./src/jekyll-algolia-docgen/layouts/common/meta.pug).
+- Remove `meta(name='ROBOTS', content='NOINDEX, NOFOLLOW')` from [src/layouts/common/meta.pug](./src/layouts/common/meta.pug).
 
 ## Project structure
 
-- Pages (index, about..) are in [src/jekyll-algolia-docgen/src](./src/jekyll-algolia-docgen/src)
-- Layouts are in [src/jekyll-algolia-docgen/layouts](./src/jekyll-algolia-docgen/layouts)
-- JS and images are in [src/jekyll-algolia-docgen/assets](./src/jekyll-algolia-docgen/assets)
-- Stylesheets are in [src/jekyll-algolia-docgen/src/stylesheets](./src/jekyll-algolia-docgen/src/stylesheets)
+- Pages (index, about..) are in [src/src](./src/src)
+- Layouts are in [src/layouts](./src/layouts)
+- JS and images are in [src/assets](./src/assets)
+- Stylesheets are in [src/src/stylesheets](./src/src/stylesheets)
 
 ## Assets and links references
 

@@ -3,7 +3,6 @@
 const metalsmith = require('metalsmith');
 const config = require('../config.js');
 const path = require('path');
-console.info(config.docsDist);
 
 module.exports = function builder({ clean = true, middlewares }, cb) {
   console.time('metalsmith build');

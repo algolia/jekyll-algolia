@@ -49,7 +49,10 @@ module.exports = {
     webpackEntryMetadata(webpackStartConfig),
     ...common,
     onlyChanged,
-    layouts('pug'),
+    layouts({
+      engine: 'pug',
+      directory: 'src/layouts'
+    }),
   ],
   build: [
     msWebpack({

@@ -18,8 +18,7 @@ builder({ middlewares }, err => {
 chokidar
   .watch(
     [
-      path.join(__dirname, 'src/**/*'),
-      path.join(__dirname, 'layouts/**/*.pug'),
+      path.join(__dirname, '../src/**/*'),
     ],
     {
       ignoreInitial: true,

@@ -1,6 +1,7 @@
 Gemfile.lock
 pkg/
 coverage/
+docs-dev/
 gemfiles/*.lock
 spec/fixtures/*/_site
 

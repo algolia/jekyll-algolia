@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+mkdir -p ./src/stylesheets/vendors/tachyons-algolia/
+cp \
+  ./node_modules/tachyons-algolia/build/* \
+  ./src/stylesheets/vendors/tachyons-algolia
+
+cp \
+  ./node_modules/tachyons-algolia/build/fonts/* \
+  ./src/assets/fonts

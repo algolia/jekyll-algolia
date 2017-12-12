@@ -3,10 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "serve": "NODE_ENV=development node lib/start.js",
-    "build": "NODE_ENV=production node lib/build.js"
+    "serve": "./scripts/serve",
+    "build": "./scripts/build",
+    "postinstall": "./scripts/postinstall"
   },
   "devDependencies": {
+    "@babel/core": "7.0.0-beta.34",
+    "@babel/preset-env": "7.0.0-beta.34",
+    "@babel/preset-react": "7.0.0-beta.34",
     "algolia-aerial": "1.2.6",
     "algolia-frontend-components": "0.0.34",
     "async": "2.6.0",
@@ -41,8 +45,8 @@
     "metalsmith-layouts": "1.8.1",
     "metalsmith-sass": "1.4.0",
     "ms-webpack": "2.0.0",
-    "nodemon": "1.12.5",
     "node-sass": "4.7.2",
+    "nodemon": "1.12.5",
     "postcss": "6.0.14",
     "postcss-loader": "2.0.9",
     "postcss-scss": "1.0.2",
@@ -60,9 +64,7 @@
     "webpack": "3.10.0",
     "webpack-dev-middleware": "1.12.2",
     "webpack-hot-middleware": "2.21.0",
-    "@babel/core": "7.0.0-beta.34",
-    "@babel/preset-env": "7.0.0-beta.34",
-    "@babel/preset-react": "7.0.0-beta.34"
+    "tachyons-algolia": "^0.3.18"
   },
   "engines": {
     "node": "^9.2.0",

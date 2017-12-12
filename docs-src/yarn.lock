@@ -7378,6 +7378,10 @@ table@^4.0.1:
     slice-ansi "1.0.0"
     string-width "^2.1.1"
 
+tachyons-algolia@^0.3.18:
+  version "0.3.18"
+  resolved "https://registry.yarnpkg.com/tachyons-algolia/-/tachyons-algolia-0.3.18.tgz#ca4087aa41774f90bc9a88a78303eff4c2dda7bd"
+
 tapable@^0.2.7, tapable@~0.2.5:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-0.2.8.tgz#99372a5c999bf2df160afc0d74bed4f47948cd22"

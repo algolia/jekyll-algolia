@@ -1,13 +1,15 @@
 /* eslint-disable no-console */
 
 const metalsmith = require('metalsmith');
-const config = require('./config.js');
+const config = require('../config.js');
+const path = require('path');
+console.info(config.docsDist);
 
 module.exports = function builder({ clean = true, middlewares }, cb) {
   console.time('metalsmith build');
-  // default source directory is join(__dirname, 'src');
+  // default source directory ./src
   // https://github.com/metalsmith/metalsmith#sourcepath
-  metalsmith(__dirname)
+  metalsmith(path.join(__dirname, '..'))
     .metadata(config)
     .clean(clean)
     .destination(config.docsDist)

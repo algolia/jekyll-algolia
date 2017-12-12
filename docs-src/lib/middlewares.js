@@ -10,14 +10,14 @@ const markdown = require('./plugins/markdown.js');
 const onlyChanged = require('./plugins/onlyChanged.js');
 const webpackEntryMetadata = require('./plugins/webpackEntryMetadata.js');
 const autoprefixer = require('./plugins/autoprefixer.js');
-const webpackStartConfig = require('./webpack.config.start.js');
-const webpackBuildConfig = require('./webpack.config.build.js');
+const webpackStartConfig = require('../webpack.config.start.js');
+const webpackBuildConfig = require('../webpack.config.build.js');
 
 const common = [
   helpers,
   assets({
-    source: './assets/',
-    destination: './assets/',
+    source: './src/assets',
+    destination: 'assets',
   }),
   ignore(fileName => {
     // if it's a build js file, keep it (`build`)
@@ -70,6 +70,9 @@ module.exports = {
         rebase: false,
       },
     }),
-    layouts('pug'),
+    layouts({
+      engine: 'pug',
+      directory: 'src/layouts'
+    }),
   ],
 };

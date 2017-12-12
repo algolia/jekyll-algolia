@@ -5,7 +5,7 @@ const HappyPack = require('happypack');
 
 module.exports = {
   entry: {
-    'js/main': path.join(__dirname, 'assets/js/main.js'),
+    'js/main': path.join(__dirname, 'src/assets/js/main.js'),
   },
   output: {
     path: config.docsDist,

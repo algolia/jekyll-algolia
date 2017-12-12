@@ -5,13 +5,13 @@ const path = require('path');
 const content = require('./src/data/communityHeader.json');
 const headerAlgoliaLogo = fs
   .readFileSync(
-    path.join(__dirname, 'assets/images/algolia-logo-whitebg.svg'),
+    path.join(__dirname, 'src/assets/images/algolia-logo-whitebg.svg'),
     'utf8'
   )
   .toString();
 const headerCommunityLogo = fs
   .readFileSync(
-    path.join(__dirname, 'assets/images/algolia-community-dark.svg'),
+    path.join(__dirname, 'src/assets/images/algolia-community-dark.svg'),
     'utf8'
   )
   .toString();
@@ -22,10 +22,10 @@ const header = algoliaComponents.communityHeader(content, {
 
 const configs = {
   production: {
-    docsDist: path.join(__dirname, '..', '..', 'docs'),
+    docsDist: path.join(__dirname, '..', 'docs'),
   },
   development: {
-    docsDist: path.join(__dirname, '..', '..', 'docs-dev'),
+    docsDist: path.join(__dirname, '..', 'docs-dev'),
   },
 };
 

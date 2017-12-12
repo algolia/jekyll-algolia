@@ -3,7 +3,7 @@ const path = require('path');
 const glob = require('glob');
 const hasha = require('hasha');
 const replace = require('replace-in-file');
-const config = require('../config.js');
+const config = require('../../config.js');
 
 const DIST_PATH = path.resolve(config.docsDist);
 

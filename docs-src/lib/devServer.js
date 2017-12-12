@@ -4,11 +4,11 @@
 
 const webpack = require('webpack');
 const browserSync = require('browser-sync');
-const webpackConfig = require('./webpack.config.start');
+const webpackConfig = require('../webpack.config.start');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const compression = require('compression');
-const config = require('./config.js');
+const config = require('../config.js');
 
 module.exports = function() {
   const compiler = webpack(webpackConfig);

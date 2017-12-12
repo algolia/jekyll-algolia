@@ -47,7 +47,7 @@
     },
     "project": {
       "view": "links",
-      "label": "Community Project Boilerplate",
+      "label": "Algolia for Jekyll",
       "logo": "",
       "caret": "",
       "url": "https://community.algolia.com/jekyll-algolia/",
@@ -56,12 +56,16 @@
   },
   "sideMenu": [
     {
-      "name": "About",
-      "url": "about.html"
+      "name": "Getting started",
+      "url": "getting-started.html"
     },
     {
-      "name": "Support",
-      "url": "support.html"
+      "name": "Documentation",
+      "url": "documentation.html"
+    },
+    {
+      "name": "Examples",
+      "url": "examples.html"
     },
     {
       "name": "Github",
@@ -71,12 +75,16 @@
   ],
   "mobileMenu": [
     {
-      "name": "About",
-      "url": "about.html"
+      "name": "Getting started",
+      "url": "getting-started.html"
     },
     {
-      "name": "Support",
-      "url": "support.html"
+      "name": "Docs",
+      "url": "documentation.html"
+    },
+    {
+      "name": "Examples",
+      "url": "examples.html"
     },
     {
       "name": "Github",

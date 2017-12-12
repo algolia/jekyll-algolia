@@ -5,4 +5,4 @@ layout: single-column.pug
 
 # Homepage
 
-Hello you
+Hello you!

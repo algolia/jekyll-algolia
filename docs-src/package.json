@@ -5,8 +5,9 @@
   "scripts": {
     "start": "NODE_ENV=development node src/start.js",
     "docs:build": "NODE_ENV=production node src/build.js",
-    "docs:update": "ROOT_PATH=/jekyll-algolia/ yarn docs:build && doctoc --maxlevel 2 README.md CONTRIBUTING.md",
-    "docs:test-build": "ROOT_PATH=/ yarn docs:build && http-server docs/",
+    "docs:update":
+      "ROOT_PATH=/jekyll-algolia/ yarn docs:build && doctoc --maxlevel 2 README.md CONTRIBUTING.md",
+    "docs:test-build": "ROOT_PATH=/ yarn docs:build && http-server docs/"
   },
   "devDependencies": {
     "algolia-aerial": "1.2.6",
@@ -61,10 +62,10 @@
     "uglifyjs-webpack-plugin": "1.1.2",
     "webpack": "3.10.0",
     "webpack-dev-middleware": "1.12.2",
-    "webpack-hot-middleware": "2.21.0"
+    "webpack-hot-middleware": "2.21.0",
     "@babel/core": "7.0.0-beta.34",
     "@babel/preset-env": "7.0.0-beta.34",
-    "@babel/preset-react": "7.0.0-beta.34",
+    "@babel/preset-react": "7.0.0-beta.34"
   },
   "engines": {
     "node": "^9.2.0",
@@ -81,9 +82,7 @@
       ":timezone(Europe/Paris)"
     ]
   },
-  "workspaces": [
-    "src/*"
-  ],
+  "workspaces": ["src/*"],
   "license": "MIT",
   "author": "Algolia, Inc. (https://www.algolia.com)"
 }

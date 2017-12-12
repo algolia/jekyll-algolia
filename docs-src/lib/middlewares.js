@@ -29,6 +29,9 @@ const common = [
     // ignore scss partials, only include scss entrypoints
     if (/_.*\.s[ac]ss/.test(fileName)) return true;
 
+    // we ignore layout files
+    if (/^layouts\//.test(fileName)) return true;
+
     // otherwise, keep file
     return false;
   }),

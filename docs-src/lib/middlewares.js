@@ -6,6 +6,7 @@ const cleanCSS = require('metalsmith-clean-css');
 const assets = require('./plugins/assets.js');
 const helpers = require('./plugins/helpers.js');
 const ignore = require('./plugins/ignore.js');
+const sidebarMenu = require('./plugins/sidebar-menu.js');
 const markdown = require('./plugins/markdown.js');
 const onlyChanged = require('./plugins/onlyChanged.js');
 const webpackEntryMetadata = require('./plugins/webpackEntryMetadata.js');
@@ -37,6 +38,7 @@ const common = [
   }),
   markdown,
   headings('h2'),
+  sidebarMenu(),
   sass({
     sourceMap: true,
     sourceMapContents: true,

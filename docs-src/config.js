@@ -1,26 +1,18 @@
-const algoliaComponents = require('algolia-frontend-components');
 const fs = require('fs');
 const path = require('path');
+const algoliaComponents = require('algolia-frontend-components');
+const headerData = require('./src/data/communityHeader.json');
 
-const content = require('./src/data/communityHeader.json');
-const headerAlgoliaLogo = fs
-  .readFileSync(
-    path.join(__dirname, 'src/assets/images/algolia-logo-whitebg.svg'),
-    'utf8'
-  )
-  .toString();
-const headerCommunityLogo = fs
-  .readFileSync(
-    path.join(__dirname, 'src/assets/images/algolia-community-dark.svg'),
-    'utf8'
-  )
-  .toString();
-const header = algoliaComponents.communityHeader(content, {
-  algoliaLogo: headerAlgoliaLogo,
-  communityLogo: headerCommunityLogo,
+function readFile(filepath) {
+  return fs.readFileSync(path.join(__dirname, filepath), 'utf8').toString();
+}
+
+const header = algoliaComponents.communityHeader(headerData, {
+  algoliaLogo: readFile('src/assets/images/algolia-logo-whitebg.svg'),
+  communityLogo: readFile('src/assets/images/algolia-community-dark.svg'),
 });
 
-const configs = {
+const environmentConfig = {
   production: {
     docsDist: path.join(__dirname, '..', 'docs'),
   },
@@ -29,8 +21,42 @@ const configs = {
   },
 };
 
+const sidebarMenu = [
+  {
+    title: 'Essentials',
+    items: [
+      { title: 'Getting Started', url: 'getting-started.html' },
+      { title: 'How it works', url: 'how-it-works.html' },
+    ],
+  },
+  {
+    title: 'Configuration',
+    items: [
+      { title: 'Options', url: 'options.html' },
+      { title: 'Commandline', url: 'commandline.html' },
+      { title: 'Hooks', url: 'hooks.html' },
+    ],
+  },
+  {
+    title: 'Advanced',
+    items: [
+      { title: 'Github Pages', url: 'github-pages.html' },
+      { title: 'Netlify', url: 'netlify.html' },
+      { title: 'Travis', url: 'travis.html' },
+    ],
+  },
+  {
+    title: 'Examples',
+    items: [
+      { title: 'Autocomplete', url: 'autocomplete.html' },
+      { title: 'InstantSearch', url: 'instantsearch.html' },
+    ],
+  },
+];
+
 module.exports = {
-  ...configs[process.env.NODE_ENV],
+  ...environmentConfig[process.env.NODE_ENV],
   publicPath: process.env.ROOT_PATH || '/',
   header,
+  sidebarMenu
 };

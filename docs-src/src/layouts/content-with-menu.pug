@@ -1,10 +1,17 @@
 extends ./common/meta.pug
 
 block body
-  .bg-red.h5 test!!!
+  section.documentation-section.debug
+    .container
+      nav.sidebar.pos-abt.z-100
+        .sidebar-container
+          each category in sidebarMenu
+            h2.sidebar-header.text-bold=category['title']
+            ul.sidebar-elements
+              each item in category['items']
+                li.sidebar-element
+                  a(href=item['url'])=item['title']
 
-
-  //      block content
-  //  !=contents
-  //    .bg-red
-  //        h2=title
+      a.sidebar-opener
+      .documentation-container
+        !=contents

@@ -1,7 +1,6 @@
 @charset 'utf-8';
 
 @import 'node_modules/algolia-frontend-components/dist/_communityHeader';
-// @import 'partials/bootstrap'
 @import 'node_modules/algolia-aerial/src/stylesheet/aerial';
 
 @import 'modules/base';
@@ -27,4 +26,6 @@
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
+
+.debug * { outline: 1px solid gold; }
 

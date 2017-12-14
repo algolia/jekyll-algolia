@@ -41,18 +41,40 @@ If everything went well, you should be able to run `jekyll help` and see the
 
 ## Configuration
 
-You need to provide certain Algolia credentials for this plugin to *index* your
+You need to provide your Algolia credentials for this plugin to *index* your
 site.
 
 *If you don't yet have an Algolia account, you can open a free [Community plan
 here][4]. Once signed in, you can get your credentials from
 [your dashboard][5].*
 
-The plugin will try to fetch the credentials from your environment-variables
-hash and fallback to your Jekyll configuration if not found.
+Once you have your credentials, you should define your `application_id` and
+`index_name` inside your `_config.yml` file like this:
 
-To pass the credentials as ENV variables, you can do so at the same time when
-you run the `jekyll algolia` command
+```yaml
+# _config.yml
+
+algolia:
+  application_id: 'your_application_id'
+  index_name:     'your_index_name'
+```
+
+## Usage
+
+Once your credentials are setup, you can run the indexing by running the
+following command:
+
+```shell
+ALGOLIA_API_KEY='{your_admin_api_key}' bundle exec jekyll algolia
+```
+
+Note that `ALGOLIA_API_KEY` should be set to your admin API key. This key has
+write access to your index so will be able to push new data. This is also why
+you have to set it on the command line and not in the `_config.yml` file: you
+want to keep this key secret and not commit it to your versioning system.
+
+_Note that the method can be simplified to `jekyll algolia` by using an
+[alternative way][6] of loading the API key and using [rubygems-bundler][7]._
 
 
 [1]: https://jekyllrb.com/
@@ -60,3 +82,5 @@ you run the `jekyll algolia` command
 [3]: http://bundler.io/
 [4]: https://www.algolia.com/users/sign_up/hacker
 [5]: https://www.algolia.com/licensing
+[6]: ./commandline.html#algolia-api-key-file
+[7]: https://github.com/rvm/rubygems-bundler

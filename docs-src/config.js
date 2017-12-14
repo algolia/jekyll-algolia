@@ -35,21 +35,22 @@ const sidebarMenu = [
       { title: 'Options', url: 'options.html' },
       { title: 'Commandline', url: 'commandline.html' },
       { title: 'Hooks', url: 'hooks.html' },
+      { title: 'Indexing modes', url: 'indexing-modes.html' },
     ],
   },
   {
     title: 'Advanced',
     items: [
-      { title: 'Github Pages', url: 'github-pages.html' },
-      { title: 'Netlify', url: 'netlify.html' },
-      { title: 'Travis', url: 'travis.html' },
+      { title: 'Deploying on Netlify', url: 'netlify.html' },
+      { title: 'Deploying on Github Pages', url: 'github-pages.html' },
     ],
   },
   {
     title: 'Examples',
     items: [
-      { title: 'Autocomplete', url: 'autocomplete.html' },
-      { title: 'InstantSearch', url: 'instantsearch.html' },
+      { title: 'Blog', url: 'blog.html' },
+      { title: 'Dropdown menu', url: 'autocomplete.html' },
+      { title: 'Collection search', url: 'collections.html' },
     ],
   },
 ];

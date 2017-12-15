@@ -4,8 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "serve": "./scripts/serve",
-    "build": "./scripts/build",
-    "postinstall": "./scripts/postinstall"
+    "build": "./scripts/build"
   },
   "devDependencies": {
     "@babel/core": "7.0.0-beta.34",
@@ -61,10 +60,10 @@
     "stat-mode": "0.2.2",
     "style-loader": "0.19.0",
     "uglifyjs-webpack-plugin": "1.1.2",
+    "vdom-to-html": "^2.3.1",
     "webpack": "3.10.0",
     "webpack-dev-middleware": "1.12.2",
-    "webpack-hot-middleware": "2.21.0",
-    "tachyons-algolia": "^0.3.18"
+    "webpack-hot-middleware": "2.21.0"
   },
   "engines": {
     "node": "^9.2.0",
@@ -81,7 +80,9 @@
       ":timezone(Europe/Paris)"
     ]
   },
-  "workspaces": ["src/*"],
+  "workspaces": [
+    "src/*"
+  ],
   "license": "MIT",
   "author": "Algolia, Inc. (https://www.algolia.com)"
 }

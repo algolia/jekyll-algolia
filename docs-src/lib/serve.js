@@ -16,22 +16,17 @@ builder({ middlewares }, err => {
 
 // then we watch and rebuild
 chokidar
-  .watch(
-    [
-      path.join(__dirname, '../src/**/*'),
-    ],
-    {
-      ignoreInitial: true,
-      ignored: /assets\/js\/(.*)?\.js$/,
-    }
-  )
-  .on('all', () =>
+  .watch([path.join(__dirname, '../src/**/*')], {
+    ignoreInitial: true,
+    ignored: /assets\/js\/(.*)?\.js$/,
+  })
+  .on('all', () => {
     builder({ clean: false, middlewares }, err => {
       if (err) {
         throw err;
       }
-    })
-  )
+    });
+  })
   .on('error', err => {
     throw err;
   });

@@ -10,7 +10,7 @@ they do. Includes ENV variables as well.
 
 
 
-## Command line
+## Arguments
 
 Here is the list of command line options you can pass to the `jekyll algolia
 push` command:

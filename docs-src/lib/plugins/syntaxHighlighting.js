@@ -1,28 +1,30 @@
 const { runMode } = require('codemirror/addon/runmode/runmode.node');
-require('codemirror/mode/shell/shell');
-require('codemirror/mode/jsx/jsx');
-require('codemirror/mode/htmlmixed/htmlmixed');
 require('codemirror/mode/css/css');
+require('codemirror/mode/htmlmixed/htmlmixed');
+require('codemirror/mode/jsx/jsx');
+require('codemirror/mode/ruby/ruby');
+require('codemirror/mode/shell/shell');
+require('codemirror/mode/yaml/yaml');
 const escape = require('escape-html');
 
-module.exports = function highlight(source, lang) {
+module.exports = function highlight(source, languageCode) {
   let tokenizedSource = '';
-  let newLang = lang;
 
-  if (newLang === 'html') {
-    newLang = 'htmlmixed';
-  }
-  if (newLang === 'js') {
-    newLang = 'jsx';
-  }
-  if (newLang === 'shell') {
-    newLang = 'shell';
-  }
-  // eslint-disable-next-line no-unused-var
-  const codeType = newLang === 'shell' ? 'Command' : 'Code';
+  const languageMapping = {
+    html: 'htmlmixed',
+    js: 'jsx',
+    json: 'jsx',
+    shell: 'shell',
+    yaml: 'yaml',
+    yml: 'yaml',
+    ruby: 'ruby',
+  };
+  const languageParser = languageMapping[languageCode];
+
+  const codeType = languageParser === 'shell' ? 'Command' : 'Code';
 
   // this is a synchronous callback API
-  runMode(source, newLang, (text, style) => {
+  runMode(source, languageParser, (text, style) => {
     const escapedText = escape(text);
 
     if (!style) {
@@ -36,7 +38,7 @@ module.exports = function highlight(source, lang) {
   });
 
   return `<pre class="code-sample cm-s-mdn-like codeMirror ${
-    newLang
+    languageParser
   }" data-code-type="${codeType}"><div class="code-wrap"><code>${
     tokenizedSource
   }</code></div></pre>`;

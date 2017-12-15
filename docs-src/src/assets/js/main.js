@@ -1,3 +1,7 @@
+import {
+  repositionSidebarOnScroll,
+  updateReadLinkOnScroll,
+} from './sidebar.js';
 import activateClipboard from './activateClipboard.js';
 import alg from 'algolia-frontend-components/javascripts.js';
 import './editThisPage.js';
@@ -16,5 +20,8 @@ const container = document.querySelector('.documentation-container');
 const codeSamples = document.querySelectorAll('.code-sample');
 
 activateClipboard(codeSamples);
-// eslint-disable-next-line no-console
-console.log('Welcome to main page');
+
+if (document.querySelector('.sidebar')) {
+  repositionSidebarOnScroll();
+  updateReadLinkOnScroll();
+}

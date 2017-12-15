@@ -2,13 +2,24 @@ $sidebarTopOffset: 60px;
 
 .sidebar {
   width: $sidebar-width;
+  // height: 100vh;
   height: calc(100vh - #{$sidebarTopOffset});
   margin-top: 0;
   // margin-top: $sidebarTopOffset
-  padding-top: $sidebarTopOffset;
+  padding-top: 60px;
   padding-bottom: 30px;
   overflow-y: auto;
   overflow-x: visible;
+
+  // Default sidebar position
+  &.sidebar_fixed {
+    position: fixed;
+  }
+  // Added when we scroll down too far
+  &.sidebar_absolute {
+    position: absolute;
+    bottom: 0;
+  }
 
   .sidebar-container {
     margin-bottom: 20px;
@@ -16,10 +27,6 @@ $sidebarTopOffset: 60px;
     .sidebar-header {
       font-size: 17px;
       margin-bottom: 0; } }
-
-  &.fixed {
-    position: fixed;
-    top: $sidebarTopOffset; }
 
   ul {
     list-style: none;
@@ -57,12 +64,9 @@ $sidebarTopOffset: 60px;
       &:hover {
         text-decoration: underline; }
 
-      &.navItem-active {
+      &.sidebar-element_active {
         color:  #00A7FF;
         font-weight: 600;
-        transform: translateX(0px);
-        transition: transform .2s ease;
-
         &:before {
           opacity: 1; } } } }
 

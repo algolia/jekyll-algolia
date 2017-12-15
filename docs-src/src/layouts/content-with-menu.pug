@@ -2,15 +2,21 @@ extends ./common/meta.pug
 
 block body
   section.documentation-section
-    .container
-      nav.sidebar.pos-abt.z-100
+    .container.relative
+      nav.sidebar.z-100.sidebar_fixed
         .sidebar-container
           each category in sidebarMenu
-            h2.sidebar-header.text-bold=category['title']
+            h2.sidebar-header.text-bold=category.title
             ul.sidebar-elements
-              each item in category['items']
+              each item in category.items
                 li.sidebar-element
-                  a(href=item['url'])=item['title']
+                  - var className = item.isActive ? 'sidebar-element_active': '';
+                  a(href=item.url class=className)=item.title
+                  if item.items
+                    ul
+                      each subitem in item.items
+                        li.sidebar-element
+                          a(href=subitem.url)=subitem.title
 
       a.sidebar-opener
       .documentation-container

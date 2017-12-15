@@ -1,5 +1,5 @@
 $sidebar-width: 260px;
-$offset-height: 60px;
+$offset-height: 64px;
 
 .documentation-section,
 .examples-section {
@@ -30,6 +30,10 @@ $offset-height: 60px;
   h2,h3,h4 {
     color: $bunting; }
 
+  h1 {
+    padding-bottom: 16px;
+  }
+
   h2:not(.text-lg) {
     font-size: 28px;
     padding-right: 1em;
@@ -45,6 +49,14 @@ $offset-height: 60px;
 
     @include small-mq {
       font-size: 22px; } }
+
+  // Scroll anchors into view
+  h2:target:before {
+    content: "";
+    display: block;
+    height: $offset-height;
+
+  }
 
   h3 {
     font-size: 24px;
@@ -195,17 +207,11 @@ $offset-height: 60px;
       + pre {
         margin-bottom: 2em; } }
 
-    h2, h3, .api-entry, .css-class, .type {
-      &:before {
-        content: "";
-        display: block;
-        height: $offset-height;
- } }        // margin: (-$offset-height) 0 0
-
     .anchor {
       margin-left: .2em;
       display: inline;
-      visibility: hidden; }
+      visibility: hidden; 
+    }
 
     h2, h3, .api-entry {
       .anchor {

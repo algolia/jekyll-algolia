@@ -28,4 +28,6 @@
   -moz-osx-font-smoothing: grayscale; }
 
 .debug * { outline: 1px solid gold; }
-
+.absolute { position: absolute; }
+.relative { position: relative; }
+.fixed { position: fixed; }

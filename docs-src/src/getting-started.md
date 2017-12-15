@@ -7,8 +7,8 @@ layout: content-with-menu.pug
 
 ## Welcome to jekyll-algolia
 
-`jekyll-algolia` is a Jekyll plugin that lets you index all your content to
-Algolia, to make it searchable by typing `jekyll algolia`.
+`jekyll-algolia` is a Jekyll plugin that lets you index all your content in an
+Algolia index.
 
 ## Requirements
 
@@ -72,6 +72,8 @@ Note that `ALGOLIA_API_KEY` should be set to your admin API key. This key has
 write access to your index so will be able to push new data. This is also why
 you have to set it on the command line and not in the `_config.yml` file: you
 want to keep this key secret and not commit it to your versioning system.
+
+<script type="text/javascript" src="https://asciinema.org/a/VQw3ofNmGXjYs11tneq49PBVc.js" id="asciicast-VQw3ofNmGXjYs11tneq49PBVc" async></script>
 
 _Note that the method can be simplified to `jekyll algolia` by using an
 [alternative way][6] of loading the API key and using [rubygems-bundler][7]._

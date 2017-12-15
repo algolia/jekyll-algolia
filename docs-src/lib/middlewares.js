@@ -4,7 +4,6 @@ const msWebpack = require('ms-webpack');
 const sass = require('metalsmith-sass');
 const cleanCSS = require('metalsmith-clean-css');
 const assets = require('./plugins/assets.js');
-const helpers = require('./plugins/helpers.js');
 const ignore = require('./plugins/ignore.js');
 const sidebarMenu = require('./plugins/sidebar-menu.js');
 const markdown = require('./plugins/markdown.js');
@@ -15,7 +14,6 @@ const webpackStartConfig = require('../webpack.config.start.js');
 const webpackBuildConfig = require('../webpack.config.build.js');
 
 const common = [
-  helpers,
   assets({
     source: './src/assets',
     destination: 'assets',

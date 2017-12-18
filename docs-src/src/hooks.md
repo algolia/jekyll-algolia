@@ -12,7 +12,7 @@ records are being extracted and indexed.
 Using hooks are a more advanced feature than using [regular configuration][1] options
 but they will also give you much more flexibility.
 
-## Usage
+### Usage
 
 You'll have to extend the `Jekyll::Algolia` class to overwrite the method
 definition of the hooks. The best way to do so is to [add a custom plugin][2] to

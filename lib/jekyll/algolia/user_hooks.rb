@@ -8,7 +8,7 @@ module Jekyll
     # filepath - The path to the file, before transformation
     #
     # This hook allow users to define if a specific file should be indexed or
-    # not. Basic exclusion can be done through the `nodes_to_exclude` option,
+    # not. Basic exclusion can be done through the `files_to_exclude` option,
     # but a custom hook like this one can allow more fine-grained customisation.
     def self.hook_should_be_excluded?(_filepath)
       false

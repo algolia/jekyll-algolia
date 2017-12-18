@@ -38,6 +38,7 @@ $offset-height: 64px;
     font-size: 28px;
     padding-right: 1em;
     padding-bottom: 8px;
+    padding-top: 1em;
 
     code {
       background: rgba($royal-blue, 0.1);
@@ -334,6 +335,7 @@ $offset-height: 64px;
   table {
     border-collapse: collapse;
     border-spacing: 0;
+    margin: 0 0 10px;
     border: 1px solid #d8d8d8;
     color: darken($logan, 15%); }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(__dir__, 'lib/jekyll/algolia/version.rb')
 
 Gem::Specification.new do |gem|
@@ -15,13 +17,13 @@ Gem::Specification.new do |gem|
   gem.licenses = ['MIT']
 
   # Supported Ruby versions
-  gem.required_ruby_version = ">= 2.3.0"
+  gem.required_ruby_version = '>= 2.3.0'
 
   # Dependencies
-  gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.1'
+  gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'filesize', '~> 0.1'
-  gem.add_runtime_dependency 'jekyll', '~> 3.6'
+  gem.add_runtime_dependency 'jekyll', '~> 3.0'
   gem.add_runtime_dependency 'jekyll-paginate', '~> 1.1'
   gem.add_runtime_dependency 'json', '~> 2.0'
   gem.add_runtime_dependency 'nokogiri', '~> 1.6'

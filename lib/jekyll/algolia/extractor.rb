@@ -23,6 +23,7 @@ module Jekyll
         # Building the list of records
         records = []
         raw_records.map do |record|
+          # We do not need to pass the HTML node element to the final record
           node = record[:node]
           record.delete(:node)
 

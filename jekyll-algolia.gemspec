@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 2.3.0'
 
   # Dependencies
-  gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.1'
+  gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.2'
   gem.add_runtime_dependency 'algoliasearch', '~> 1.18'
   gem.add_runtime_dependency 'filesize', '~> 0.1'
   gem.add_runtime_dependency 'jekyll', '~> 3.0'

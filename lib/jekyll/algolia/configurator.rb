@@ -32,7 +32,7 @@ module Jekyll
             hierarchy.lvl3
             hierarchy.lvl4
             hierarchy.lvl5
-            unordered(text)
+            unordered(content)
             collection,unordered(categories),unordered(tags)
           ]
         }

@@ -78,6 +78,21 @@ want to keep this key secret and not commit it to your versioning system.
 _Note that the method can be simplified to `jekyll algolia` by using an
 [alternative way][6] of loading the API key and using [rubygems-bundler][7]._
 
+## Front-end
+
+The plugin only takes care of extracting your data and pushing it to an Algolia
+index. Building the front-end that will allow your users to search into that
+data is not part of the plugin.
+
+As it would depend too much on the theming you applied to Jekyll, we could not
+create a one-size-fits-all solution. Instead, the best solution is to use our
+[InstantSearch.js][8] library (also available for [Vue.js][9] and [React][10]).
+It's an easy-to-use set of UI widgets you can use to build your own search in
+a matter of minutes.
+
+You can also head to the [Examples][11] section to see some tutorials
+on the most common use-cases.
+
 
 [1]: https://jekyllrb.com/
 [2]: https://www.ruby-lang.org/en/
@@ -86,3 +101,7 @@ _Note that the method can be simplified to `jekyll algolia` by using an
 [5]: https://www.algolia.com/licensing
 [6]: ./commandline.html#algolia-api-key-file
 [7]: https://github.com/rvm/rubygems-bundler
+[8]: https://community.algolia.com/instantsearch.js/
+[9]: https://community.algolia.com/vue-instantsearch/
+[10]: https://community.algolia.com/react-instantsearch/
+[11]: ./examples.html

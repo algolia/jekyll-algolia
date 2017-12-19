@@ -92,7 +92,7 @@ module Jekyll
       #
       # file - The Jekyll file
       def self.excluded_from_hook?(file)
-        Jekyll::Algolia.hook_should_be_excluded?(file.path)
+        Hooks.should_be_excluded?(file.path)
       end
 
       # Public: Return the path to the original file, relative from the Jekyll

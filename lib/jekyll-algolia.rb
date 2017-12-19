@@ -8,7 +8,7 @@ module Jekyll
   module Algolia
     require 'jekyll/algolia/version'
     require 'jekyll/algolia/utils'
-    require 'jekyll/algolia/user_hooks'
+    require 'jekyll/algolia/hooks'
     require 'jekyll/algolia/configurator'
     require 'jekyll/algolia/logger'
     require 'jekyll/algolia/error_handler'
@@ -91,7 +91,12 @@ module Jekyll
         end
 
         # Applying the user hook on the whole list of records
-        records = Jekyll::Algolia.hook_before_indexing_all(records)
+        records = Hooks.apply_all(records)
+
+        # Adding a unique objectID to each record
+        records.map! do |record|
+          Extractor.add_unique_object_id(record)
+        end
 
         Logger.verbose("I:Found #{files.length} files")
 

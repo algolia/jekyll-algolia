@@ -6,6 +6,8 @@ require 'spec_helper'
 describe(Jekyll::Algolia) do
   let(:current) { Jekyll::Algolia }
   let(:indexer) { Jekyll::Algolia::Indexer }
+  let(:hooks) { Jekyll::Algolia::Hooks }
+  let(:extractor) { Jekyll::Algolia::Extractor }
 
   # Suppress Jekyll log about not having a config file
   before do
@@ -87,17 +89,21 @@ describe(Jekyll::Algolia) do
         source: File.expand_path('./spec/site')
       )
     end
-    # The actual indexing should be done on the list of records + one added
-    # through the custom hook
-    RSpec::Matchers.define :a_custom_record_added_at_the_end do
-      match do |actual|
-        actual[-1][:name] == 'Last one'
-      end
-    end
+    let(:records_after_hook) { [{ foo: 'bar', objectID: 'AAA' }] }
+    let(:record_after_unique_id) { { foo: 'bar', objectID: 'BBB' } }
 
     before do
       allow(Jekyll.logger).to receive(:info)
-      expect(indexer).to receive(:run).with(a_custom_record_added_at_the_end)
+      expect(hooks)
+        .to receive(:apply_all)
+        .and_return(records_after_hook)
+      expect(extractor)
+        .to receive(:add_unique_object_id)
+        .with(records_after_hook[0])
+        .and_return(record_after_unique_id)
+      expect(indexer)
+        .to receive(:run)
+        .with([record_after_unique_id])
     end
 
     it { current.init(configuration).run }

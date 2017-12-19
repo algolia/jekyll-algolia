@@ -6,6 +6,7 @@ require 'spec_helper'
 describe(Jekyll::Algolia::Extractor) do
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:filebrowser) { Jekyll::Algolia::FileBrowser }
+  let(:hooks) { Jekyll::Algolia::Hooks }
   let(:current) { Jekyll::Algolia::Extractor }
   let(:site) { init_new_jekyll_site }
 
@@ -76,8 +77,8 @@ describe(Jekyll::Algolia::Extractor) do
     context 'with mock data' do
       let!(:file) { site.__find_file('html.html') }
       before do
-        allow(Jekyll::Algolia)
-          .to receive(:hook_before_indexing_each)
+        allow(hooks)
+          .to receive(:apply_each)
             .with(anything, anything) { |input| input }
 
         allow(current)
@@ -133,41 +134,18 @@ describe(Jekyll::Algolia::Extractor) do
     end
   end
 
-  describe '.apply_hook_each' do
-    subject { current.apply_hook_each(record, node) }
+  describe '.add_unique_object_id' do
+    subject { current.add_unique_object_id(record) }
 
-    let(:record) { {} }
-    let(:node) { nil }
-
+    let(:record) { { foo: 'bar' } }
+    let(:objectID) { nil }
     before do
-      allow(Jekyll::Algolia)
-        .to receive(:hook_before_indexing_each)
-        .and_return(hook_each_value)
+      allow(AlgoliaHTMLExtractor)
+        .to receive(:uuid)
+        .and_return(:objectID)
     end
 
-    describe 'should update the value' do
-      let(:record) { { foo: 'bar' } }
-      let(:hook_each_value) { { new_foo: 'new_bar' } }
-      it { expect(subject).to include(new_foo: 'new_bar') }
-    end
-
-    context 'when returning nil from the hook' do
-      let(:hook_each_value) { nil }
-      it { should be_nil }
-    end
-
-    describe 'should update the objectID' do
-      let(:record) { { foo: 'bar', objectID: 'AAA' } }
-      let(:hook_each_value) { { new_foo: 'new_bar', objectID: 'AAA' } }
-
-      it {
-        expect(AlgoliaHTMLExtractor)
-          .to receive(:uuid)
-          .and_return('BBB')
-        expect(subject[:objectID]).to_not eq 'AAA'
-        expect(subject[:objectID]).to eq 'BBB'
-      }
-    end
+    it { expect(subject).to include(objectID: :objectID) }
   end
 end
 # rubocop:enable Metrics/BlockLength

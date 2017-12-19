@@ -26,7 +26,9 @@ The file should have the following structure:
 ```ruby
 module Jekyll
   module Algolia
-    # Add your hooks here
+    module Hooks
+      # Add your hooks here
+    end
   end
 end
 ```
@@ -40,7 +42,7 @@ indexed if it returns `false`.
 
 | Key  | Value  |
 | ---- | ---- |
-| Signature | `hook_should_be_excluded?(filepath)` |
+| Signature | `should_be_excluded?(filepath)` |
 | Arguments | <ul><li>`filepath`: The source path of the file</li></ul> |
 | Expected returns | <ul><li>`true` if the file should be excluded</li><li>`false` if it should be indexed</li></ul> |
 
@@ -52,10 +54,12 @@ indexed if it returns `false`.
 ```ruby
 module Jekyll
   module Algolia
-    def self.hook_should_be_excluded?(filepath)
-      # Do not index blog posts from 2015
-      return true if filepath =~ %r{_posts/2015-}
-      false
+    module Hooks
+      def self.should_be_excluded?(filepath)
+        # Do not index blog posts from 2015
+        return true if filepath =~ %r{_posts/2015-}
+        false
+      end
     end
   end
 end
@@ -75,7 +79,7 @@ representation of the HTML node the record was extracted from (as specified in
 
 | Key  | Value  |
 | ---- | ---- |
-| Signature | `hook_before_indexing_each(record, node)` |
+| Signature | `before_indexing_each(record, node)` |
 | Arguments | <ul><li>`record`: A hash of the record that will be pushed</li><li>`node`: A [Nokogiri][7] representation of the HTML node it was extracted from</li></ul> |
 | Expected returns | <ul><li>A hash of the record to be indexed</li><li>`nil` if the record should not be indexed</li></ul> |
 
@@ -84,13 +88,15 @@ representation of the HTML node the record was extracted from (as specified in
 ```ruby
 module Jekyll
   module Algolia
-    def self.hook_before_indexing_each(record, node)
-      # Do not index deprecation warnings
-      return nil if node.attr('class') =~ 'deprecation-notice'
-      # Add my name as an author to each record
-      record[:author] = 'Myself'
+    module Hooks
+      def self.before_indexing_each(record, node)
+        # Do not index deprecation warnings
+        return nil if node.attr('class') =~ 'deprecation-notice'
+        # Add my name as an author to each record
+        record[:author] = 'Myself'
 
-      record
+        record
+      end
     end
   end
 end
@@ -110,7 +116,7 @@ knowing the full context of what is going to be pushed.
 
 | Key  | Value  |
 | ---- | ---- |
-| Signature | `hook_before_indexing_all(records)` |
+| Signature | `before_indexing_all(records)` |
 | Arguments | <ul><li>`records`: An array of hashes representing the records that are going to be pushed</li></ul> |
 | Expected returns | <ul><li>An array of hashes to be pushed as records</li></ul> |
 
@@ -119,17 +125,19 @@ knowing the full context of what is going to be pushed.
 ```ruby
 module Jekyll
   module Algolia
-    def self.hook_before_indexing_all(records)
-      # Add a tags array to each record
-      records.each do |record|
-        record[:tags] = []
-        # Add 'blog' as a tag if it's a post
-        record[:tags] << 'blog' if record[:type] == 'post'
-        # Add js as a tag if it's about javascript
-        record[:tags] << 'js' if record[:title].include?('js')
-      end
+    module Hooks
+      def self.before_indexing_all(records)
+        # Add a tags array to each record
+        records.each do |record|
+          record[:tags] = []
+          # Add 'blog' as a tag if it's a post
+          record[:tags] << 'blog' if record[:type] == 'post'
+          # Add js as a tag if it's about javascript
+          record[:tags] << 'js' if record[:title].include?('js')
+        end
 
-      records
+        records
+      end
     end
   end
 end

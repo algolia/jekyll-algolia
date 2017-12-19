@@ -22,11 +22,9 @@ describe(Jekyll::Algolia::Extractor) do
     context 'with mock data' do
       # Given
       let(:content) { 'some html markup' }
-      let(:html_extractor) { double('AlgoliaHTMLExtractor', extract: nil) }
       before do
         allow(AlgoliaHTMLExtractor)
-          .to receive(:new)
-          .and_return(html_extractor)
+          .to receive(:run)
       end
       before do
         allow(configurator)
@@ -41,15 +39,14 @@ describe(Jekyll::Algolia::Extractor) do
       # Then
       it 'should create a new AlgoliaHTMLExtractor with the content passed' do
         expect(AlgoliaHTMLExtractor)
-          .to have_received(:new)
+          .to have_received(:run)
           .with(content, anything)
       end
       it 'should configure the extractor with the nodex_to_index value' do
         expect(AlgoliaHTMLExtractor)
-          .to have_received(:new)
+          .to have_received(:run)
           .with(anything, options: { css_selector: 'foo' })
       end
-      it { expect(html_extractor).to have_received(:extract) }
     end
 
     context 'with real data' do
@@ -121,25 +118,6 @@ describe(Jekyll::Algolia::Extractor) do
           expect(subject[0]).to include(yep: 'yep')
         end
       end
-
-      context 'with a custom hook on each' do
-        before do
-          allow(Jekyll::Algolia)
-            .to receive(:hook_before_indexing_each)
-            .and_return(hook_each_value)
-        end
-
-        context 'when updating the value' do
-          let(:metadata) { { foo: 'bar' } }
-          let(:hook_each_value) { { new_foo: 'new_bar' } }
-          it { expect(subject[0]).to include(new_foo: 'new_bar') }
-        end
-
-        context 'when returning nil from the hook' do
-          let(:hook_each_value) { nil }
-          it { should be_empty }
-        end
-      end
     end
 
     context 'with real data' do
@@ -154,4 +132,42 @@ describe(Jekyll::Algolia::Extractor) do
       end
     end
   end
+
+  describe '.apply_hook_each' do
+    subject { current.apply_hook_each(record, node) }
+
+    let(:record) { {} }
+    let(:node) { nil }
+
+    before do
+      allow(Jekyll::Algolia)
+        .to receive(:hook_before_indexing_each)
+        .and_return(hook_each_value)
+    end
+
+    describe 'should update the value' do
+      let(:record) { { foo: 'bar' } }
+      let(:hook_each_value) { { new_foo: 'new_bar' } }
+      it { expect(subject).to include(new_foo: 'new_bar') }
+    end
+
+    context 'when returning nil from the hook' do
+      let(:hook_each_value) { nil }
+      it { should be_nil }
+    end
+
+    describe 'should update the objectID' do
+      let(:record) { { foo: 'bar', objectID: 'AAA' } }
+      let(:hook_each_value) { { new_foo: 'new_bar', objectID: 'AAA' } }
+
+      it {
+        expect(AlgoliaHTMLExtractor)
+          .to receive(:uuid)
+          .and_return('BBB')
+        expect(subject[:objectID]).to_not eq 'AAA'
+        expect(subject[:objectID]).to eq 'BBB'
+      }
+    end
+  end
 end
+# rubocop:enable Metrics/BlockLength

@@ -469,3 +469,4 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

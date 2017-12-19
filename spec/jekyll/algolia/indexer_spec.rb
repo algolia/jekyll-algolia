@@ -402,3 +402,4 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

@@ -103,3 +103,4 @@ describe(Jekyll::Algolia) do
     it { current.init(configuration).run }
   end
 end
+# rubocop:enable Metrics/BlockLength

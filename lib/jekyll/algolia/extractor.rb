@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# require 'algoliasearch'
-# require 'json'
 require 'algolia_html_extractor'
 
 module Jekyll
@@ -31,10 +29,9 @@ module Jekyll
           record = Utils.compact_empty(record.merge(shared_metadata))
 
           # Apply custom user-defined hooks
-          record = Jekyll::Algolia.hook_before_indexing_each(record, node)
-
           # Users can return `nil` from the hook to signal we should not index
           # such a record
+          record = apply_hook_each(record, node)
           next if record.nil?
 
           records << record
@@ -43,17 +40,36 @@ module Jekyll
         records
       end
 
+      # Public: Apply the hook_before_indexing_each hook to the record.
+      # Returning nil from this hook will skip the record. If the record has
+      # been changed from the hook, its internal objectID should be updated
+      # accordingly.
+      #
+      # record - The hash of the record to be pushed
+      # node - The Nokogiri node of the element
+      def self.apply_hook_each(record, node)
+        hooked_record = Jekyll::Algolia.hook_before_indexing_each(record, node)
+        return nil if hooked_record.nil?
+
+        # If the record has been changed, we need to update its objectID
+        if hooked_record != record
+          record = hooked_record
+          record[:objectID] = AlgoliaHTMLExtractor.uuid(hooked_record)
+        end
+        record
+      end
+
       # Public: Extract raw records from the file, including content for each
       # node to index and hierarchy
       #
       # content - The HTML content to parse
       def self.extract_raw_records(content)
-        AlgoliaHTMLExtractor.new(
+        AlgoliaHTMLExtractor.run(
           content,
           options: {
             css_selector: Configurator.algolia('nodes_to_index')
           }
-        ).extract
+        )
       end
     end
   end

@@ -126,7 +126,7 @@ module Jekyll
         # Add 'blog' as a tag if it's a post
         record[:tags] << 'blog' if record[:type] == 'post'
         # Add js as a tag if it's about javascript
-        record[:tags] << 'js' if record[:title] =~ 'js'
+        record[:tags] << 'js' if record[:title].include?('js')
       end
 
       records

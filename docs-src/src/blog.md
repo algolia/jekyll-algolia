@@ -13,7 +13,7 @@ already have pushed all your data, following our [getting started][2] guide.
 
 ## What we'll build
 
-![Search in the minima theme][3]
+[![Search in the minima theme][3]](https://community.algolia.com/jekyll-algolia-example/)
 
 In this tutorial we'll add a search on the front page that will let you search
 into all your posts (both titles and content), in a fast and relevant manner.
@@ -151,7 +151,7 @@ InstantSearch loads, it will replace the list with its own results.
 This is what it should look like at this stage. We have a search bar, but
 results are displayed in a raw JSON format. Let's work on styling this.
 
-![Minimal InstantSearch.js styling][10]
+![Minimal InstantSearch.js styling][9]
 
 ## Templating
 
@@ -181,7 +181,7 @@ search.addWidget(
 );
 ```
 
-![InstantSearch.js styling][11]
+![InstantSearch.js styling][10]
 
 This looks much better already. By using a template, we managed to make the
 result look close to what the initial display was. In the next section, we'll
@@ -196,7 +196,7 @@ default we display it exactly as it was saved in the Algolia index: as a UNIX
 timestamp.
 
 Because our template is a JavaScript function, we can reformat data before
-rendering it. Here we will use the [moment.js](https://momentjs.com/docs/)
+rendering it. Here we will use the [moment.js][11]
 library to format our date.
 
 Using `moment.unix(hit.date).format('MMM D, YYYY');` we'll transform
@@ -224,6 +224,21 @@ All HTML nodes added by InstantSearch.js come with a custom `.ais-*` class added
 to them. This makes altering the styling of the elements to match your overall
 theme easy to achieve.
 
+### Edge-case handling
+
+With the current configuration, we will sometimes end up with results that look
+irrelevant: nothing is highlighted neither in the title or the content.
+
+This is because by default the plugin is searching into different fields
+(including `tags`, `categories` and the parent heading hierarchy of each
+paragraph). Because we chose to only display the title and content, it means that
+when a match in another attribute is occurring, we have no way to visually signal
+it to the user. It makes the result look irrelevant, while it is actually
+relevant (but we're not explaining why).
+
+One way to work around this issue is to manually tell the API in which field it
+should search, by using the `[restrictSearchableAttributes][12]` option.
+
 ### Final code
 
 Here is the complete new version of the `_includes/algolia.html` file.
@@ -239,6 +254,12 @@ const search = instantsearch({
   appId: '{{ site.algolia.application_id }}',
   apiKey: '{{ site.algolia.search_only_api_key }}',
   indexName: '{{ site.algolia.index_name }}',
+  searchParameters: {
+    restrictSearchableAttributes: [
+      'title',
+      'content'
+    ]
+  }
 });
 
 const hitTemplate = function(hit) {
@@ -299,17 +320,21 @@ search.start();
 
 ## Final result
 
-You can check the final result directly here, and clone this repository to use
-a basis to get all the code.
+You can check the [final result live here][13], and have a look at all the code from
+the [GitHub repository][14].
+
 
 [1]: https://github.com/jekyll/minima
 [2]: ./getting-started.html
-[3]: /assets/images/minima-search.gif
+[3]: ./assets/images/minima-search.gif
 [4]: https://raw.githubusercontent.com/jekyll/minima/master/_layouts/home.html
 [5]: https://community.algolia.com/instantsearch.js/
 [6]: https://yarnpkg.com/en/package/instantsearch.js
 [7]: https://www.npmjs.com/package/instantsearch.js
 [8]: https://www.algolia.com/api-keys
-[9]: https://community.algolia.com/instantsearch.js/v2/widgets.html
-[10]: /assets/images/instantsearch-nostyling.png
-[11]: /assets/images/instantsearch-styling.png
+[9]: ./assets/images/instantsearch-nostyling.png
+[10]: ./assets/images/instantsearch-styling.png
+[11]: https://momentjs.com/docs/
+[12]: https://www.algolia.com/doc/api-reference/api-parameters/restrictSearchableAttributes/
+[13]: https://community.algolia.com/jekyll-algolia-example/
+[14]: https://github.com/algolia/jekyll-algolia-example

@@ -33,7 +33,7 @@ module Jekyll
 end
 ```
 
-## `hook_should_be_excluded?`
+## `should_be_excluded?`
 
 This hook will give you more control on which file should be indexed or not. It
 will be called for every indexable file, with the source `filepath` as an
@@ -65,7 +65,7 @@ module Jekyll
 end
 ```
 
-## `hook_before_indexing_each`
+## `before_indexing_each`
 
 This hook will be called on every single record before indexing them. It gives you
 a way to edit the record before pushing it. You can use this hook to add, edit
@@ -102,9 +102,9 @@ module Jekyll
 end
 ```
 
-## `hook_before_indexing_all`
+## `before_indexing_all`
 
-This hook is very similar to [hook_before_index_each][8], but instead of being called
+This hook is very similar to [before_index_each][8], but instead of being called
 on every record, it is called only once, on the full list of record, right
 before pushing them.
 

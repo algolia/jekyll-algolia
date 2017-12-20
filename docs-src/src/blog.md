@@ -16,128 +16,300 @@ already have pushed all your data, following our [getting started][2] guide.
 ![Search in the minima theme][3]
 
 In this tutorial we'll add a search on the front page that will let you search
-into all your posts (both titles and content), and that will display relevant
-results extremely quickly.
-
+into all your posts (both titles and content), in a fast and relevant manner.
 
 ## Extending the theme
 
 Because the `minima` is pre-packaged as a dependency, if you want to edit it,
-you need to overwrite some of its files locally. For this tutorial, you'll only
-need to change one file from the original theme.
-
-Start by downloading [this file][4] from the original theme repository, and save
-it to `_layouts/home.html` in your own Jekyll directory. You might have to
-create the `_layouts` folder if it does not yet exist.
-
-The part we're interested in is the one that will display the list of posts:
+you need to overwrite some of its files locally. For this tutorial, we'll
+need to update [one file][4] from the original theme.
 
 ```html
-<h1 class="page-heading">Posts</h1>
-<ul class="post-list">
-  {% for post in site.posts %}
-    <li>
-      {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
-      <span class="post-meta">{{ post.date | date: date_format }}</span>
+---
+layout: default
+---
 
-      <h2>
-        <a class="post-link" href="{{ post.url | relative_url }}">
-          {{ post.title | escape }}
-        </a>
-      </h2>
-    </li>
-  {% endfor %}
-</ul>
+<div class="home">
+
+  {{ content }}
+
+  <h1 class="page-heading">Posts</h1>
+
+  <div id="search-searchbar"></div>
+
+  <div class="post-list" id="search-hits">
+    {% for post in site.posts %}
+      <div class="post-item">
+        {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
+        <span class="post-meta">{{ post.date | date: date_format }}</span>
+
+        <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}">
+            {{ post.title | escape }}
+          </a>
+        </h2>
+
+        <div class="post-snippet">{{ post.excerpt }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include algolia.html %}
+
+  <p class="rss-subscribe">subscribe <a href="{{ '/feed.xml' | relative_url }}">via RSS</a></p>
+
+</div>
 ```
 
-From here, we'll only have to add two things:
+This file should be saved to `_layouts/home.html` in your own Jekyll directory.
+You might have to create the `_layouts` folder if it does not yet exist.
 
-- `<div id="search-searchbar"></div>` between the heading and the list of posts.
-  This will be transformed into our search bar.
-- `{% include algolia.html %}` after the list of posts. This will include
-  another file (that we'll create shortly) that will contain all the JavaScript
-  code required to make the search work.
+## Adding front-end code
 
-Your final layout should now look similar to this:
+We'll now create the `_includes/algolia.html` file that we included in the
+previous code. You'll have to create the `_includes` directory if it does not
+exist yet.
+
+In that file, we'll add the following content. It's a lot of code in one go, but
+don't worry, we'll explain it all right after.
 
 ```html
-<h1 class="page-heading">Posts</h1>
-<div id="search-searchbar"></div>
-<ul class="post-list">
-  {% for post in site.posts %}
-    <li>
-      {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
-      <span class="post-meta">{{ post.date | date: date_format }}</span>
+<!-- Including InstantSearch.js library and styling -->
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch-theme-algolia.min.css">
 
-      <h2>
-        <a class="post-link" href="{{ post.url | relative_url }}">
-          {{ post.title | escape }}
-        </a>
-      </h2>
-    </li>
-  {% endfor %}
-</ul>
-{% include algolia.html %}
+<script>
+// Instanciating InstantSearch.js with Algolia credentials
+const search = instantsearch({
+  appId: '{{ site.algolia.application_id }}',
+  indexName: '{{ site.algolia.index_name }}',
+  apiKey: '{{ site.algolia.search_only_api_key }}'
+});
+
+// Adding searchbar and results widgets
+search.addWidget(
+  instantsearch.widgets.searchBox({
+    container: '#search-searchbar',
+    placeholder: 'Search into posts...'
+  })
+);
+search.addWidget(
+  instantsearch.widgets.hits({
+    container: '#search-hits'
+  })
+);
+
+// Starting the search
+search.start();
+</script>
 ```
 
+### Including the InstantSearch.js library
+
+The first lines will include the [InstantSearch.js][5] library as well as
+minimal styling, directlt from the jsDeliver CDN. Those files are also available
+through [Yarn][6]/[NPM][7] if you need them locally.
+
+### Instanciating the library
+
+Then we instanciate `instantsearch` with our Algolia credentials. We use the `{{
+}}` notation here to include variables that are defined in your `_config.yml`
+file.
+
+Both `application_id` and `index_name` should already be in your `_config.yml`
+file. The `search_only_api_key` should be new, though.
+
+Add a new entry in your `_config.yml` file, under the `algolia` namespace with
+the value of your Search API Key (you can find it in your [Dashboard][8]):
+
+```yml
+# _config.yml
+algolia:
+   application_id: YOUR_APPLICATION_ID
+   index_name: YOUR_INDEX_NAME
+   search_only_api_key: YOUR_SEARCH_ONLY_API_KEY
+```
+
+### Adding widgets
+
+InstantSearch.js lets you build your search UI through widgets. Each part of the
+UI is a specific widget, and all widgets are kept in sync at all time.
+
+For this example we'll need two widgets: a searchbar, and a list of results. The
+mandatory configuration for each widget is the `container` option. It defines where
+in the page the widget should be placed.
+
+The searchbar will be added inside the `#search-searchbar` empty `<div>`. The
+results will be added inside `#search-hits`. This `<div>` already contains the
+static list of posts Jekyll added, but it's not an issue. When the page will
+load, the static list from Jekyll will be displayed, but as soon as
+InstantSearch loads, it will replace the list with its own results.
+
+### What it looks like for now
+
+This is what it should look like at this stage. We have a search bar, but
+results are displayed in a raw JSON format. Let's work on styling this.
+
+![Minimal InstantSearch.js styling][10]
+
+## Templating
+
+We'll add some templating to the result, so they look like regular posts. We use
+the `templates.item` key of the widget for that. It accepts a function that will
+take the matching `hit` (the result) as input, and should return an HTML string.
+
+We'll re-use a similar markup than the one used in the original Liquid template.
 
 
+```javascript
+search.addWidget(
+  instantsearch.widgets.hits({
+    container: '#search-hits',
+    templates: {
+      item: function(hit) {
+        return `
+          <div class="post-item">
+            <span class="post-meta">${hit.date}</span>
+            <h2><a class="post-link" href="${hit.url}">${hit.title}</a></h2>
+            <div class="post-snippet">${hit.html}</div>
+          </div>
+        `;
+      }
+    }
+  })
+);
+```
+
+![InstantSearch.js styling][11]
+
+This looks much better already. By using a template, we managed to make the
+result look close to what the initial display was. In the next section, we'll
+fix the styling and formatting.
+
+## Styling
+
+### Formatting the date
+
+One of the first issues you can notice is that the date is not formatted. By
+default we display it exactly as it was saved in the Algolia index: as a UNIX
+timestamp.
+
+Because our template is a JavaScript function, we can reformat data before
+rendering it. Here we will use the [moment.js](https://momentjs.com/docs/)
+library to format our date.
+
+Using `moment.unix(hit.date).format('MMM D, YYYY');` we'll transform
+`1513764761` into `Dec 20, 2017`.
+
+### Adding highlighting
+
+To make the display even easier to understand, we should add some highlighting:
+words typed in the search bar should be highlighted in the results.
+
+Results returned by the Algolia API are enriched with a `_highlightResult` key
+that contain information about the highlighting.
+
+Adding highlighting is as easy as using `{{hit._highlightResult.title.value}}`
+instead of `{{title}}`.
+
+### Adding CSS
+
+We're almost done, but we still have some minor styling adjustment to make. We
+want the search bar to take the whole width, and we also want to add some
+spacing between the results. We'll also change the color of the highlighted
+words so they are easier to spot.
+
+All HTML nodes added by InstantSearch.js come with a custom `.ais-*` class added
+to them. This makes altering the styling of the elements to match your overall
+theme easy to achieve.
+
+### Final code
+
+Here is the complete new version of the `_includes/algolia.html` file.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch-theme-algolia.min.css">
+
+<script>
+const search = instantsearch({
+  appId: '{{ site.algolia.application_id }}',
+  apiKey: '{{ site.algolia.search_only_api_key }}',
+  indexName: '{{ site.algolia.index_name }}',
+});
+
+const hitTemplate = function(hit) {
+  const date = moment.unix(hit.date).format('MMM D, YYYY');
+  const url = hit.url;
+  const title = hit._highlightResult.title.value;
+  const content = hit._highlightResult.html.value;
+
+  return `
+    <div class="post-item">
+      <span class="post-meta">${date}</span>
+      <h2><a class="post-link" href="${url}">${title}</a></h2>
+      <div class="post-snippet">${content}</div>
+    </div>
+  `;
+}
 
 
+search.addWidget(
+  instantsearch.widgets.searchBox({
+    container: '#search-searchbar',
+    placeholder: 'Search into posts...'
+  })
+);
 
+search.addWidget(
+  instantsearch.widgets.hits({
+    container: '#search-hits',
+    templates: {
+      item: hitTemplate
+    }
+  })
+);
 
-Then, we will add the files needed by Algolia. The IS js file, as well as two
-CSS files to style it. The first one provides just "usable" default, the second
-one provides some theming that happen to be similar to the one of minima. great
+search.start();
+</script>
 
-We will start by configuring the call and instanciating. We'll need to reuse
-some of our credentials, so we can have them directly from the config.yml file
+<style>
+.ais-search-box {
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+.post-item {
+  margin-bottom: 30px;
+}
+.post-link .ais-Highlight {
+  color: #111;
+  font-style: normal;
+  text-decoration: underline;
+}
+.post-snippet .ais-Highlight {
+  color: #2a7ae2;
+  font-style: normal;
+  font-weight: bold;
+}
+</style>
+```
 
-We'll also need a earch only API key. This one is a public key, that can only
-read the idnex (not edit stuff). It's safe to put it in the markup. Just to stay
-consustent, I'll put it along with the other keys, to have all my credentials at
-the same place, ut it's not officially part of the plugin. you can name it the
-way your want
+## Final result
 
-Now that we have that, well it does not do much. What we'll do is add the
-results to be displayed, and adding our first widget
-
-the moment the widget is instanciates, it will replace its target with the
-result grabbed from the index. we will put the target to where the list is
-already displayed. it means that on page load, everything will be here, but then
-the js lib will kick in and replace static results with dynamic one
-
-at that point it works but its too raw. we'll add a template so it looks exactly
-like the static version. we re-use the same kind of markup, but we might have to
-do a few adjustements.
-
-the original version had no excerpt, but we'll add it (both to the static and
-dynamic one, so there is no "jump" from one to the other). we'll also have to
-add some margin around the elements and rpelace it with divs. instantsearch adds
-divs by default, and divs inside ul won't work so we change things around
-
-looks the same. Now we had search, buy adding a search bar, defining its
-placeholder and width
-
-works well, but we have some display issues we should fix. inside the template
-function we'll change a few values. the date should be formatted using moment,
-and the results should be highlighted with what is matching
-
-
-
-
-- Copy file form minima
-- Include algolia.html where we put everything
-- include JS and CSS
-- instanciate the instance with credentials
-- add dynamic results
-- style results so they look the same
-- add excerpt to both sides, format the date
-- add search bar
-- add highlight on results
-
+You can check the final result directly here, and clone this repository to use
+a basis to get all the code.
 
 [1]: https://github.com/jekyll/minima
 [2]: ./getting-started.html
 [3]: /assets/images/minima-search.gif
 [4]: https://raw.githubusercontent.com/jekyll/minima/master/_layouts/home.html
+[5]: https://community.algolia.com/instantsearch.js/
+[6]: https://yarnpkg.com/en/package/instantsearch.js
+[7]: https://www.npmjs.com/package/instantsearch.js
+[8]: https://www.algolia.com/api-keys
+[9]: https://community.algolia.com/instantsearch.js/v2/widgets.html
+[10]: /assets/images/instantsearch-nostyling.png
+[11]: /assets/images/instantsearch-styling.png

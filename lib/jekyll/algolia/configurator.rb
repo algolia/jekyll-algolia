@@ -16,7 +16,11 @@ module Jekyll
         'settings' => {
           'distinct' => true,
           'attributeForDistinct' => 'url',
-          'attributesForFaceting' => %w[tags type title],
+          'attributesForFaceting' => %w[
+            searchable(tags)
+            searchable(type)
+            searchable(title)
+          ],
           'customRanking' => [
             'desc(date)',
             'desc(weight.heading)',
@@ -34,6 +38,21 @@ module Jekyll
             hierarchy.lvl5
             unordered(content)
             collection,unordered(categories),unordered(tags)
+          ],
+          # We want to allow highlight in more keys than what we search on
+          'attributesToHighlight' => %w[
+            title
+            hierarchy.lvl0
+            hierarchy.lvl1
+            hierarchy.lvl2
+            hierarchy.lvl3
+            hierarchy.lvl4
+            hierarchy.lvl5
+            content
+            html
+            collection
+            categories
+            tags
           ]
         }
       }.freeze

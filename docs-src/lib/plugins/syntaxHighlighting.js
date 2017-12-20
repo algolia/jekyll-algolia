@@ -12,6 +12,7 @@ module.exports = function highlight(source, languageCode) {
 
   const languageMapping = {
     html: 'htmlmixed',
+    javascript: 'jsx',
     js: 'jsx',
     json: 'jsx',
     shell: 'shell',

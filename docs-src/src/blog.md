@@ -5,30 +5,86 @@ layout: content-with-menu.pug
 
 # Blog search
 
-The default Jekyll theme ([minima][1] is perfect for writing a blog. Let's see how
+The default Jekyll theme ([minima][1]) is perfect for writing a blog. Let's see how
 to edit this theme to allow searching into all the posts.
 
 This tutorial will be focused on the front-end part, and assumes that you
 already have pushed all your data, following our [getting started][2] guide.
 
-![Search in the minima theme](./assets/img/minima-search.gif)
+## What we'll build
+
+![Search in the minima theme][3]
+
+In this tutorial we'll add a search on the front page that will let you search
+into all your posts (both titles and content), and that will display relevant
+results extremely quickly.
+
+
+## Extending the theme
+
+Because the `minima` is pre-packaged as a dependency, if you want to edit it,
+you need to overwrite some of its files locally. For this tutorial, you'll only
+need to change one file from the original theme.
+
+Start by downloading [this file][4] from the original theme repository, and save
+it to `_layouts/home.html` in your own Jekyll directory. You might have to
+create the `_layouts` folder if it does not yet exist.
+
+The part we're interested in is the one that will display the list of posts:
+
+```html
+<h1 class="page-heading">Posts</h1>
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li>
+      {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
+      <span class="post-meta">{{ post.date | date: date_format }}</span>
+
+      <h2>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h2>
+    </li>
+  {% endfor %}
+</ul>
+```
+
+From here, we'll only have to add two things:
+
+- `<div id="search-searchbar"></div>` between the heading and the list of posts.
+  This will be transformed into our search bar.
+- `{% include algolia.html %}` after the list of posts. This will include
+  another file (that we'll create shortly) that will contain all the JavaScript
+  code required to make the search work.
+
+Your final layout should now look similar to this:
+
+```html
+<h1 class="page-heading">Posts</h1>
+<div id="search-searchbar"></div>
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li>
+      {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
+      <span class="post-meta">{{ post.date | date: date_format }}</span>
+
+      <h2>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h2>
+    </li>
+  {% endfor %}
+</ul>
+{% include algolia.html %}
+```
 
 
 
-Explanation of how to search into a blog. Examples will be given using common
-themes. I could use the Hyde theme as a great use-case and show how to implement
-it with InstantSearch.js.
 
 
-This will be the simplest example. How to add search to Jekyll blog. We'll use
-the default minima theme as an example.
 
-We'll change the front page. Instead of displaying the list of topics, it will
-display a searchable list (and we'll add an excerpt for good measure).
-
-Because I'm editing a pre-pakaged theme, the first thing to do is to copu the
-files from the theme to my locl jekyll section. I take the posts layout, to
-change the display of the full page
 
 Then, we will add the files needed by Algolia. The IS js file, as well as two
 CSS files to style it. The first one provides just "usable" default, the second
@@ -81,5 +137,7 @@ and the results should be highlighted with what is matching
 - add highlight on results
 
 
-[1]: https://github.com/jekyll/minima)
+[1]: https://github.com/jekyll/minima
 [2]: ./getting-started.html
+[3]: /assets/images/minima-search.gif
+[4]: https://raw.githubusercontent.com/jekyll/minima/master/_layouts/home.html

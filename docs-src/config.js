@@ -46,11 +46,11 @@ const sidebarMenu = [
     ],
   },
   {
-    title: 'Examples',
+    title: 'Tutorials',
     items: [
       { title: 'Blog', url: 'blog.html' },
-      { title: 'Dropdown menu', url: 'autocomplete.html' },
-      { title: 'Collection search', url: 'collections.html' },
+      // { title: 'Dropdown menu', url: 'autocomplete.html' },
+      // { title: 'Collection search', url: 'collections.html' },
     ],
   },
 ];

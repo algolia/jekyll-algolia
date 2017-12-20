@@ -192,7 +192,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
             title: 'Page title',
             url: '/path/to/file.ext',
             # rubocop:disable Metrics/LineLength
-            text: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as wel so we will cut it at 100 characters.'
+            content: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as wel so we will cut it at 100 characters.'
             # rubocop:enable Metrics/LineLength
           },
           { objectID: 'foo' }

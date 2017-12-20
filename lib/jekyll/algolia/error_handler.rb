@@ -17,6 +17,9 @@ module Jekyll
       # context - A hash of values that will be passed from where the error
       # happened to the display
       def self.stop(error, context = {})
+        Logger.verbose("E:[jekyll-algolia] Raw error: #{error}")
+        Logger.verbose("E:[jekyll-algolia] Context: #{context}")
+
         identified_error = identify(error, context)
 
         if identified_error == false
@@ -218,7 +221,7 @@ module Jekyll
           'object_id' => object_id,
           'object_title' => record[:title],
           'object_url' => record[:url],
-          'object_hint' => record[:text][0..100],
+          'object_hint' => record[:content][0..100],
           'nodes_to_index' => Configurator.algolia('nodes_to_index'),
           'size' => size,
           'size_limit' => '10 Kb'

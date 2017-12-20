@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-NODE_ENV=production node lib/build.js
+NODE_ENV=production PUBLIC_PATH='/jekyll-algolia/' node lib/build.js

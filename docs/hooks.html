@@ -191,7 +191,7 @@
       </li></ul></div></div>
 
     </nav>
-    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="hooks.html">Hooks</a><ul><li class="sidebar-element"><a href="hooks.html#hook-should-be-excluded">hook_should_be_excluded? </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-each">hook_before_indexing_each </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-all">hook_before_indexing_all </a></li></ul></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="hooks">Hooks <a class="anchor" href="hooks.html#hooks" aria-hidden="true"></a></h1>
+    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="hooks.html">Hooks</a><ul><li class="sidebar-element"><a href="hooks.html#should-be-excluded">should_be_excluded? </a></li><li class="sidebar-element"><a href="hooks.html#before-indexing-each">before_indexing_each </a></li><li class="sidebar-element"><a href="hooks.html#before-indexing-all">before_indexing_all </a></li></ul></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="hooks">Hooks <a class="anchor" href="hooks.html#hooks" aria-hidden="true"></a></h1>
 <p>The plugin gives you access to hooks in its lifecycle. Those hooks can
 be used to add your own custom Ruby logic to have more control on the way
 records are being extracted and indexed.</p>
@@ -212,7 +212,7 @@ already. Inside this folder, create an <code>algolia_hooks.rb</code> file.</p>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
-<h2 id="hook-should-be-excluded"><code>hook_should_be_excluded?</code> <a class="anchor" href="hooks.html#hook-should-be-excluded" aria-hidden="true"></a></h2>
+<h2 id="should-be-excluded"><code>should_be_excluded?</code> <a class="anchor" href="hooks.html#should-be-excluded" aria-hidden="true"></a></h2>
 <p>This hook will give you more control on which file should be indexed or not. It
 will be called for every indexable file, with the source <code>filepath</code> as an
 argument. The file will be excluded if the hook returns <code>true</code>, and will be
@@ -254,7 +254,7 @@ indexed if it returns <code>false</code>.</p>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
-<h2 id="hook-before-indexing-each"><code>hook_before_indexing_each</code> <a class="anchor" href="hooks.html#hook-before-indexing-each" aria-hidden="true"></a></h2>
+<h2 id="before-indexing-each"><code>before_indexing_each</code> <a class="anchor" href="hooks.html#before-indexing-each" aria-hidden="true"></a></h2>
 <p>This hook will be called on every single record before indexing them. It gives you
 a way to edit the record before pushing it. You can use this hook to add, edit
 or delete keys from the record. If the hook returns <code>nil</code>, the
@@ -301,8 +301,8 @@ representation of the HTML node the record was extracted from (as specified in
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
-<h2 id="hook-before-indexing-all"><code>hook_before_indexing_all</code> <a class="anchor" href="hooks.html#hook-before-indexing-all" aria-hidden="true"></a></h2>
-<p>This hook is very similar to <a href="hooks.html#hook-before-indexing-each">hook_before_index_each</a>, but instead of being called
+<h2 id="before-indexing-all"><code>before_indexing_all</code> <a class="anchor" href="hooks.html#before-indexing-all" aria-hidden="true"></a></h2>
+<p>This hook is very similar to <a href="hooks.html#hook-before-indexing-each">before_index_each</a>, but instead of being called
 on every record, it is called only once, on the full list of record, right
 before pushing them.</p>
 <p>It will be called with one argument, <code>records</code>, being the full list of records

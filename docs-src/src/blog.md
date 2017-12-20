@@ -5,6 +5,16 @@ layout: content-with-menu.pug
 
 # Blog search
 
+The default Jekyll theme ([minima][1] is perfect for writing a blog. Let's see how
+to edit this theme to allow searching into all the posts.
+
+This tutorial will be focused on the front-end part, and assumes that you
+already have pushed all your data, following our [getting started][2] guide.
+
+![Search in the minima theme](./assets/img/minima-search.gif)
+
+
+
 Explanation of how to search into a blog. Examples will be given using common
 themes. I could use the Hyde theme as a great use-case and show how to implement
 it with InstantSearch.js.
@@ -43,7 +53,7 @@ the js lib will kick in and replace static results with dynamic one
 
 at that point it works but its too raw. we'll add a template so it looks exactly
 like the static version. we re-use the same kind of markup, but we might have to
-do a few adjustements. 
+do a few adjustements.
 
 the original version had no excerpt, but we'll add it (both to the static and
 dynamic one, so there is no "jump" from one to the other). we'll also have to
@@ -71,12 +81,5 @@ and the results should be highlighted with what is matching
 - add highlight on results
 
 
-
-
-
-
-
-
-
-
-
+[1]: https://github.com/jekyll/minima)
+[2]: ./getting-started.html

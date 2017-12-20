@@ -197,7 +197,7 @@ to edit this theme to allow searching into all the posts.</p>
 <p>This tutorial will be focused on the front-end part, and assumes that you
 already have pushed all your data, following our <a href="./getting-started.html">getting started</a> guide.</p>
 <h2 id="what-well-build">What we’ll build <a class="anchor" href="blog.html#what-well-build" aria-hidden="true"></a></h2>
-<p><img src="/assets/images/minima-search-b197fe774c759dfa33a44798a2445422.gif" alt="Search in the minima theme"></p>
+<p><a href="https://community.algolia.com/jekyll-algolia-example/"><img src="./assets/images/minima-search-b197fe774c759dfa33a44798a2445422.gif" alt="Search in the minima theme"></a></p>
 <p>In this tutorial we’ll add a search on the front page that will let you search
 into all your posts (both titles and content), in a fast and relevant manner.</p>
 <h2 id="extending-the-theme">Extending the theme <a class="anchor" href="blog.html#extending-the-theme" aria-hidden="true"></a></h2>
@@ -308,7 +308,7 @@ InstantSearch loads, it will replace the list with its own results.</p>
 <h3 id="what-it-looks-like-for-now">What it looks like for now <a class="anchor" href="blog.html#what-it-looks-like-for-now" aria-hidden="true"></a></h3>
 <p>This is what it should look like at this stage. We have a search bar, but
 results are displayed in a raw JSON format. Let’s work on styling this.</p>
-<p><img src="/assets/images/instantsearch-nostyling-375beaab74d5f18245d64466c88ecea5.png" alt="Minimal InstantSearch.js styling"></p>
+<p><img src="./assets/images/instantsearch-nostyling-375beaab74d5f18245d64466c88ecea5.png" alt="Minimal InstantSearch.js styling"></p>
 <h2 id="templating">Templating <a class="anchor" href="blog.html#templating" aria-hidden="true"></a></h2>
 <p>We’ll add some templating to the result, so they look like regular posts. We use
 the <code>templates.item</code> key of the widget for that. It accepts a function that will
@@ -322,7 +322,7 @@ take the matching <code>hit</code> (the result) as input, and should return an H
         <span class="cm-keyword">return</span> <span class="cm-string-2">`</span>
           <span class="cm-string-2">&lt;div class=&quot;post-item&quot;&gt;</span>
             <span class="cm-string-2">&lt;span class=&quot;post-meta&quot;&gt;${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">date</span><span class="cm-string-2">}</span><span class="cm-string-2">&lt;/span&gt;</span>
-            <span class="cm-string-2">&lt;h2&gt;&lt;a class=&quot;post-link&quot; href=&quot;${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">url</span><span class="cm-string-2">}</span><span class="cm-string-2">&quot;&gt;${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">title</span><span class="cm-string-2">}</span><span class="cm-string-2">&lt;/a&gt;&lt;/h2&gt;</span>
+            <span class="cm-string-2">&lt;h2&gt;&lt;a class=&quot;post-link&quot; href=&quot;{{ site.baseurl }}${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">url</span><span class="cm-string-2">}</span><span class="cm-string-2">&quot;&gt;${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">title</span><span class="cm-string-2">}</span><span class="cm-string-2">&lt;/a&gt;&lt;/h2&gt;</span>
             <span class="cm-string-2">&lt;div class=&quot;post-snippet&quot;&gt;${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">html</span><span class="cm-string-2">}</span><span class="cm-string-2">&lt;/div&gt;</span>
           <span class="cm-string-2">&lt;/div&gt;</span>
         <span class="cm-string-2">`</span>;
@@ -331,7 +331,7 @@ take the matching <code>hit</code> (the result) as input, and should return an H
   })
 );
 </code></div></pre>
-<p><img src="/assets/images/instantsearch-styling-a520d5b5b520d9582669eb9d42fb18a3.png" alt="InstantSearch.js styling"></p>
+<p><img src="./assets/images/instantsearch-styling-a520d5b5b520d9582669eb9d42fb18a3.png" alt="InstantSearch.js styling"></p>
 <p>This looks much better already. By using a template, we managed to make the
 result look close to what the initial display was. In the next section, we’ll
 fix the styling and formatting.</p>
@@ -360,6 +360,17 @@ words so they are easier to spot.</p>
 <p>All HTML nodes added by InstantSearch.js come with a custom <code>.ais-*</code> class added
 to them. This makes altering the styling of the elements to match your overall
 theme easy to achieve.</p>
+<h3 id="edge-case-handling">Edge-case handling <a class="anchor" href="blog.html#edge-case-handling" aria-hidden="true"></a></h3>
+<p>With the current configuration, we will sometimes end up with results that look
+irrelevant: nothing is highlighted neither in the title or the content.</p>
+<p>This is because by default the plugin is searching into different fields
+(including <code>tags</code>, <code>categories</code> and the parent heading hierarchy of each
+paragraph). Because we chose to only display the title and content, it means that
+when a match in another attribute is occurring, we have no way to visually signal
+it to the user. It makes the result look irrelevant, while it is actually
+relevant (but we’re not explaining why).</p>
+<p>One way to work around this issue is to manually tell the API in which field it
+should search, by using the <code>[restrictSearchableAttributes][12]</code> option.</p>
 <h3 id="final-code">Final code <a class="anchor" href="blog.html#final-code" aria-hidden="true"></a></h3>
 <p>Here is the complete new version of the <code>_includes/algolia.html</code> file.</p>
 <pre class="code-sample cm-s-mdn-like codeMirror htmlmixed" data-code-type="Code"><div class="code-wrap"><code><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
@@ -372,6 +383,12 @@ theme easy to achieve.</p>
   <span class="cm-property">appId</span>: <span class="cm-string">&#39;{{ site.algolia.application_id }}&#39;</span>,
   <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>,
   <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>,
+  <span class="cm-property">searchParameters</span>: {
+    <span class="cm-property">restrictSearchableAttributes</span>: [
+      <span class="cm-string">&#39;title&#39;</span>,
+      <span class="cm-string">&#39;content&#39;</span>
+    ]
+  }
 });
 
 <span class="cm-keyword">const</span> <span class="cm-def">hitTemplate</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>(<span class="cm-def">hit</span>) {
@@ -430,6 +447,6 @@ theme easy to achieve.</p>
 <span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">style</span><span class="cm-tag cm-bracket">&gt;</span>
 </code></div></pre>
 <h2 id="final-result">Final result <a class="anchor" href="blog.html#final-result" aria-hidden="true"></a></h2>
-<p>You can check the final result directly here, and clone this repository to use
-a basis to get all the code.</p>
+<p>You can check the <a href="https://community.algolia.com/jekyll-algolia-example/">final result live here</a>, and have a look at all the code from
+the <a href="https://github.com/algolia/jekyll-algolia-example">GitHub repository</a>.</p>
 </div></div></section></body><section class="footer-new-cta footer-new h300 pos-rel"><div class="container color-white stellar-container vh-center"><div class="col-md-5"><div class="spacer120 hidden-sm"></div><div class="spacer32 visible-xs"></div><header><h2 class="text-normal m-t-none">Start creating stellar search,<span class="cf hidden-xs"></span>no strings attached.</h2><p>Dive into Algolia with our 14-day trial - No credit card required. Plenty of time to see how Algolia can change your business.</p></header></div><div class="col-md-7 pos-rel z-10"><div class="spacer120 inline hidden-sm"></div><div class="spacer32 inline hidden-sm"></div><div class="spacer16 visible-sm"></div><div class="button-holder h200 p-r-large"><div class="spacer16 hidden-md hidden-sm"></div><span class="inline pos-rel"><a class="btn btn-static-primary btn-static-shadow-dark" href="https://algolia.com/users/sign_up">Get Started<svg class="arrow-icon" width="22"><use xlink:href="#arrow-right"></use></svg></a><svg class="search-icon" width="22"><use xlink:href="#search-icon"></use></svg></span></div></div></div></section><div id="footer"><div class="credits"><div class="container pos-rel"><div class="row"><div class="col-md-12 text-center"><a data-no-turbolink="true" href="/"><img width="40" src="https://www.algolia.com/static_assets/images/flat2/algolia/algolia-logo_badge-598a1fe6.svg"></a></div></div><div class="spacer40"></div></div></div></div><svg style="display: none;"><symbol width="40" height="40" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" id="search-icon"><path d="M26.806 29.012a16.312 16.312 0 0 1-10.427 3.746C7.33 32.758 0 25.425 0 16.378 0 7.334 7.333 0 16.38 0c9.045 0 16.378 7.333 16.378 16.38 0 3.96-1.406 7.593-3.746 10.426L39.547 37.34c.607.608.61 1.59-.004 2.203a1.56 1.56 0 0 1-2.202.004L26.808 29.012zm-10.427.627c7.32 0 13.26-5.94 13.26-13.26 0-7.325-5.94-13.26-13.26-13.26-7.325 0-13.26 5.935-13.26 13.26 0 7.32 5.935 13.26 13.26 13.26z" fill-rule="evenodd"></path></symbol><symbol width="46" height="38" viewbox="0 0 46 38" xmlns="http://www.w3.org/2000/svg" id="arrow-right"><path d="M34.852 15.725l-8.624-9.908L24.385 3.7 28.62.014l1.84 2.116 13.1 15.05 1.606 1.846-1.61 1.844-13.1 15.002-1.845 2.114-4.23-3.692 1.85-2.114 9.465-10.84h-24.66v-5.615h23.817zm-26.774 0h-.002 2.96v5.614H0v-5.615h8.078z" fill-rule="evenodd"></path></symbol><symbol xmlns="http://www.w3.org/2000/svg" viewbox="0 0 708.8 717" id="icon-copy"><path d="M658.8 158H490.2c-13.3 0-26 5.3-35.4 14.6l-4.6 4.6V25c0-13.8-11.2-25-25-25H235.6c-6.6 0-13 2.6-17.7 7.3L7.3 218C2.6 222.6 0 229 0 235.6V541c0 13.8 11.2 25 25 25h227.8v101c0 27.6 22.4 50 50 50h356c27.6 0 50-22.4 50-50V208c0-27.6-22.4-50-50-50zm-204 85.4V360H338.2l116.6-116.6zm-253-149.2V209H87L201.8 94.2zM50 516V259h176.8c13.8 0 25-11.2 25-25V50h148.4v177.3L267.5 360c-9.4 9.4-14.6 22.1-14.6 35.4V516H50zm608.8 151h-356V410h177c13.8 0 25-11.2 25-25V208h154v459z"></path></symbol><symbol id="check-icon" viewbox="0 0 33 26"><path d="M32.57872 2.63298L30.2617.31596c-.38617-.38617-1.01808-.38617-1.40425 0l-18.1851 18.20266-6.4947-6.49468c-.38616-.38617-1.01808-.38617-1.40425 0L.45638 14.34096c-.38617.38617-.38617 1.01808 0 1.40425l7.17926 7.17928 2.31702 2.31702c.38617.38616 1.01808.38616 1.40425 0l2.3346-2.29948 18.8872-18.9048c.38617-.38616.38617-1.01807 0-1.40424z" fill-rule="evenodd"></path></symbol></svg><!--Google Tag Manager--><noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N8JP8G" height="0" width="0" style="display:none;visibility:hidden;"></iframe></noscript><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-N8JP8G');</script><script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script><script src="/jekyll-algolia/js/common-build-d9bb17198ab9c9f1b71123862c7d1397.js"></script><script src="/jekyll-algolia/js/main-build-02a223764a9f99713efdd9d12f8528a3.js"></script></html>

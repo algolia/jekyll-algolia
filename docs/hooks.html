@@ -191,13 +191,13 @@
       </li></ul></div></div>
 
     </nav>
-    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="hooks.html">Hooks</a><ul><li class="sidebar-element"><a href="hooks.html#usage">Usage </a></li><li class="sidebar-element"><a href="hooks.html#hook-should-be-excluded">hook_should_be_excluded? </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-each">hook_before_indexing_each </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-all">hook_before_indexing_all </a></li></ul></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li></ul><h2 class="sidebar-header text-bold">Examples</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li><li class="sidebar-element"><a href="autocomplete.html">Dropdown menu</a></li><li class="sidebar-element"><a href="collections.html">Collection search</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="hooks">Hooks <a class="anchor" href="hooks.html#hooks" aria-hidden="true"></a></h1>
+    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="hooks.html">Hooks</a><ul><li class="sidebar-element"><a href="hooks.html#hook-should-be-excluded">hook_should_be_excluded? </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-each">hook_before_indexing_each </a></li><li class="sidebar-element"><a href="hooks.html#hook-before-indexing-all">hook_before_indexing_all </a></li></ul></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li></ul><h2 class="sidebar-header text-bold">Examples</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li><li class="sidebar-element"><a href="autocomplete.html">Dropdown menu</a></li><li class="sidebar-element"><a href="collections.html">Collection search</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="hooks">Hooks <a class="anchor" href="hooks.html#hooks" aria-hidden="true"></a></h1>
 <p>The plugin gives you access to hooks in its lifecycle. Those hooks can
 be used to add your own custom Ruby logic to have more control on the way
 records are being extracted and indexed.</p>
 <p>Using hooks are a more advanced feature than using <a href="./options.html">regular configuration</a> options
 but they will also give you much more flexibility.</p>
-<h2 id="usage">Usage <a class="anchor" href="hooks.html#usage" aria-hidden="true"></a></h2>
+<h3 id="usage">Usage <a class="anchor" href="hooks.html#usage" aria-hidden="true"></a></h3>
 <p>You’ll have to extend the <code>Jekyll::Algolia</code> class to overwrite the method
 definition of the hooks. The best way to do so is to <a href="https://jekyllrb.com/docs/plugins/#installing-a-plugin">add a custom plugin</a> to
 your Jekyll site.</p>
@@ -206,7 +206,9 @@ already. Inside this folder, create an <code>algolia_hooks.rb</code> file.</p>
 <p>The file should have the following structure:</p>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-comment"># Add your hooks here</span>
+    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
+      <span class="cm-comment"># Add your hooks here</span>
+    <span class="cm-keyword">end</span>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
@@ -225,7 +227,7 @@ indexed if it returns <code>false</code>.</p>
 <tbody>
 <tr>
 <td>Signature</td>
-<td><code>hook_should_be_excluded?(filepath)</code></td>
+<td><code>should_be_excluded?(filepath)</code></td>
 </tr>
 <tr>
 <td>Arguments</td>
@@ -242,10 +244,12 @@ indexed if it returns <code>false</code>.</p>
 <h3 id="example">Example <a class="anchor" href="hooks.html#example" aria-hidden="true"></a></h3>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">hook_should_be_excluded?</span>(<span class="cm-variable">filepath</span>)
-      <span class="cm-comment"># Do not index blog posts from 2015</span>
-      <span class="cm-keyword">return</span> <span class="cm-keyword">true</span> <span class="cm-keyword">if</span> <span class="cm-variable">filepath</span> <span class="cm-operator">=~</span> <span class="cm-string-2">%r{_posts/2015-}</span>
-      <span class="cm-keyword">false</span>
+    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
+      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">should_be_excluded?</span>(<span class="cm-variable">filepath</span>)
+        <span class="cm-comment"># Do not index blog posts from 2015</span>
+        <span class="cm-keyword">return</span> <span class="cm-keyword">true</span> <span class="cm-keyword">if</span> <span class="cm-variable">filepath</span> <span class="cm-operator">=~</span> <span class="cm-string-2">%r{_posts/2015-}</span>
+        <span class="cm-keyword">false</span>
+      <span class="cm-keyword">end</span>
     <span class="cm-keyword">end</span>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
@@ -269,7 +273,7 @@ representation of the HTML node the record was extracted from (as specified in
 <tbody>
 <tr>
 <td>Signature</td>
-<td><code>hook_before_indexing_each(record, node)</code></td>
+<td><code>before_indexing_each(record, node)</code></td>
 </tr>
 <tr>
 <td>Arguments</td>
@@ -284,13 +288,15 @@ representation of the HTML node the record was extracted from (as specified in
 <h3 id="example-2">Example <a class="anchor" href="hooks.html#example-2" aria-hidden="true"></a></h3>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">hook_before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>)
-      <span class="cm-comment"># Do not index deprecation warnings</span>
-      <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">attr</span>(<span class="cm-string">&#39;class&#39;</span>) <span class="cm-operator">=~</span> <span class="cm-string">&#39;deprecation-notice&#39;</span>
-      <span class="cm-comment"># Add my name as an author to each record</span>
-      <span class="cm-variable">record</span>[<span class="cm-atom">:author</span>] <span class="cm-operator">=</span> <span class="cm-string">&#39;Myself&#39;</span>
+    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
+      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>)
+        <span class="cm-comment"># Do not index deprecation warnings</span>
+        <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">attr</span>(<span class="cm-string">&#39;class&#39;</span>) <span class="cm-operator">=~</span> <span class="cm-string">&#39;deprecation-notice&#39;</span>
+        <span class="cm-comment"># Add my name as an author to each record</span>
+        <span class="cm-variable">record</span>[<span class="cm-atom">:author</span>] <span class="cm-operator">=</span> <span class="cm-string">&#39;Myself&#39;</span>
 
-      <span class="cm-variable">record</span>
+        <span class="cm-variable">record</span>
+      <span class="cm-keyword">end</span>
     <span class="cm-keyword">end</span>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
@@ -313,7 +319,7 @@ knowing the full context of what is going to be pushed.</p>
 <tbody>
 <tr>
 <td>Signature</td>
-<td><code>hook_before_indexing_all(records)</code></td>
+<td><code>before_indexing_all(records)</code></td>
 </tr>
 <tr>
 <td>Arguments</td>
@@ -328,17 +334,19 @@ knowing the full context of what is going to be pushed.</p>
 <h3 id="example-3">Example <a class="anchor" href="hooks.html#example-3" aria-hidden="true"></a></h3>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">hook_before_indexing_all</span>(<span class="cm-variable">records</span>)
-      <span class="cm-comment"># Add a tags array to each record</span>
-      <span class="cm-variable">records</span><span class="cm-operator">.</span><span class="cm-property">each</span> <span class="cm-keyword">do</span> |<span class="cm-def">record</span>|
-        <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">=</span> []
-        <span class="cm-comment"># Add &#39;blog&#39; as a tag if it&#39;s a post</span>
-        <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;blog&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:type</span>] <span class="cm-operator">==</span> <span class="cm-string">&#39;post&#39;</span>
-        <span class="cm-comment"># Add js as a tag if it&#39;s about javascript</span>
-        <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;js&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:title</span>] <span class="cm-operator">=~</span> <span class="cm-string">&#39;js&#39;</span>
-      <span class="cm-keyword">end</span>
+    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
+      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_all</span>(<span class="cm-variable">records</span>)
+        <span class="cm-comment"># Add a tags array to each record</span>
+        <span class="cm-variable">records</span><span class="cm-operator">.</span><span class="cm-property">each</span> <span class="cm-keyword">do</span> |<span class="cm-def">record</span>|
+          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">=</span> []
+          <span class="cm-comment"># Add &#39;blog&#39; as a tag if it&#39;s a post</span>
+          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;blog&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:type</span>] <span class="cm-operator">==</span> <span class="cm-string">&#39;post&#39;</span>
+          <span class="cm-comment"># Add js as a tag if it&#39;s about javascript</span>
+          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;js&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:title</span>]<span class="cm-operator">.</span><span class="cm-property">include?</span>(<span class="cm-string">&#39;js&#39;</span>)
+        <span class="cm-keyword">end</span>
 
-      <span class="cm-variable">records</span>
+        <span class="cm-variable">records</span>
+      <span class="cm-keyword">end</span>
     <span class="cm-keyword">end</span>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>

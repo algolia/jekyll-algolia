@@ -66,6 +66,14 @@ task :watch do
 end
 
 # GEM RELEASE
+desc 'Release a new version of the gem'
+task release: %i[lint test] do
+  Rake::Task['release:update_develop_from_master'].invoke
+  Rake::Task['release:update_version'].invoke
+  Rake::Task['release:build'].invoke
+  Rake::Task['release:push'].invoke
+  Rake::Task['release:update_master_from_develop'].invoke
+end
 namespace 'release' do
   desc 'Getting up to date from master'
   task :update_develop_from_master do

@@ -11,7 +11,7 @@ every time you push your Jekyll website to GitHub, it will be deployed on
 a `username.github.io/reponame` url.
 
 But GitHub will only build your website (`jekyll build`), it will not run other
-commands (`jekyll algolia`), so if you want to update your search results on
+commands (like `jekyll algolia`), so if you want to update your search results on
 each push, you'll have to find another way.
 
 We recommend using [Netlify][3], but if you want to stay hosted on GitHub pages,

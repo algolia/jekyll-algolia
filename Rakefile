@@ -95,17 +95,17 @@ namespace 'release' do
     # Create the git tag
     sh "git tag -am 'tag v#{new_version}' #{new_version}"
   end
-  desc 'Build the gem in ./build directory'
+  desc 'Build the gem'
   task :build do
     sh 'bundle install'
-    sh 'gem build algolia_html_extractor.gemspec'
+    sh 'gem build jekyll-algolia.gemspec'
   end
   desc 'Push the gem to rubygems'
   task :push do
     load 'lib/version.rb'
     current_version = AlgoliaHTMLExtractorVersion.to_s
-    sh "gem push algolia_html_extractor-#{current_version}.gem"
-    sh "rm algolia_html_extractor-#{current_version}.gem"
+    sh "gem push jekyll-algolia-#{current_version}.gem"
+    sh "rm jekyll-algolia-#{current_version}.gem"
     sh "git push origin #{current_version}"
   end
   desc 'Update master'

@@ -65,6 +65,58 @@ task :watch do
   sh 'bundle exec guard --clear --watchdir lib spec'
 end
 
+# GEM RELEASE
+namespace 'release' do
+  desc 'Getting up to date from master'
+  task :update_develop_from_master do
+    sh 'git checkout master --quiet'
+    sh 'git pull --rebase origin master --quiet'
+    sh 'git checkout develop --quiet'
+    sh 'git rebase master --quiet'
+  end
+  desc 'Update current version'
+  task :update_version do
+    version_file_path = 'lib/version.rb'
+    require_relative version_file_path
+
+    # Ask for new version
+    old_version = AlgoliaHTMLExtractorVersion.to_s
+    puts "Current version is #{old_version}"
+    puts 'Enter new version:'
+    new_version = STDIN.gets.strip
+
+    # Write it to file
+    version_file_content = File.open(version_file_path, 'rb').read
+    version_file_content.gsub!(old_version, new_version)
+    File.write(version_file_path, version_file_content)
+
+    # Commit it in git
+    sh "git commit -a -m 'release #{new_version}'"
+    # Create the git tag
+    sh "git tag -am 'tag v#{new_version}' #{new_version}"
+  end
+  desc 'Build the gem in ./build directory'
+  task :build do
+    sh 'bundle install'
+    sh 'gem build algolia_html_extractor.gemspec'
+  end
+  desc 'Push the gem to rubygems'
+  task :push do
+    load 'lib/version.rb'
+    current_version = AlgoliaHTMLExtractorVersion.to_s
+    sh "gem push algolia_html_extractor-#{current_version}.gem"
+    sh "rm algolia_html_extractor-#{current_version}.gem"
+    sh "git push origin #{current_version}"
+  end
+  desc 'Update master'
+  task :update_master_from_develop do
+    sh 'git checkout master --quiet'
+    sh 'git rebase develop --quiet'
+    sh 'git checkout develop --quiet'
+  end
+end
+
+# DOCUMENTATION
 namespace 'docs' do
   desc 'Rebuild documentation website'
   task :build do

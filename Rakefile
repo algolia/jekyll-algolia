@@ -110,6 +110,7 @@ namespace 'release' do
   end
   desc 'Push the gem to rubygems'
   task :push do
+    # This will throw a warning because we're redefining a constant. That's ok.
     load 'lib/jekyll/algolia/version.rb'
     current_version = Jekyll::Algolia::VERSION.to_s
     sh "gem push jekyll-algolia-#{current_version}.gem"

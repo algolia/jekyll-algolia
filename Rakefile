@@ -84,7 +84,7 @@ namespace 'release' do
   end
   desc 'Update current version'
   task :update_version do
-    version_file_path = 'lib/version.rb'
+    version_file_path = 'lib/jekyll/algolia/version.rb'
     require_relative version_file_path
 
     # Ask for new version
@@ -110,7 +110,7 @@ namespace 'release' do
   end
   desc 'Push the gem to rubygems'
   task :push do
-    load 'lib/version.rb'
+    load 'lib/jekyll/algolia/version.rb'
     current_version = AlgoliaHTMLExtractorVersion.to_s
     sh "gem push jekyll-algolia-#{current_version}.gem"
     sh "rm jekyll-algolia-#{current_version}.gem"

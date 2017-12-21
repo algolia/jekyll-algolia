@@ -19,7 +19,7 @@ This will push the content of your Jekyll website to your Algolia index.
 ## Documentation
 
 Full documentation can be found on
-[https://community.algolia.com/jekyll-algolia/](https://community.algolia.com/jekyll-algolia/)
+[https://community.algolia.com/jekyll-algolia/](https://community.algolia.com/jekyll-algolia/getting-started.html)
 
 ## Installation
 

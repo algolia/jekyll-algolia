@@ -63,4 +63,29 @@ task :watch do
   sh 'bundle exec guard --clear --watchdir lib spec'
 end
 
+namespace 'docs' do
+  desc 'Rebuild documentation website'
+  task :build do
+    Dir.chdir('./docs-src') do
+      sh 'yarn'
+      sh 'yarn run build'
+    end
+  end
+  desc 'Rebuild and deploy documentation'
+  task :deploy do
+    Rake::Task['docs:build'].invoke
+    sh 'git add ./docs'
+    sh "git commit -m 'Updating documentation website'"
+
+    # Switch to master, add docs, and push
+    sh 'git checkout master --quiet'
+    sh 'git pull --rebase origin master --quiet'
+    sh 'git rebase develop --quiet'
+    sh 'git push'
+
+    # Revert to develop
+    sh 'git checkout develop --quiet'
+  end
+end
+
 task default: :test

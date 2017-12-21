@@ -13,8 +13,3 @@ But runs with ruby 2.1.2, not compatible with the plugin.
 Add a .ruby-version containing 2.4 to change the version
 
 Showing how to deploy on Netlify easily
-
-
-
-
-

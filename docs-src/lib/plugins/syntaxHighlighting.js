@@ -2,6 +2,7 @@ const { runMode } = require('codemirror/addon/runmode/runmode.node');
 require('codemirror/mode/css/css');
 require('codemirror/mode/htmlmixed/htmlmixed');
 require('codemirror/mode/jsx/jsx');
+require('codemirror/mode/toml/toml');
 require('codemirror/mode/ruby/ruby');
 require('codemirror/mode/shell/shell');
 require('codemirror/mode/yaml/yaml');
@@ -13,12 +14,13 @@ module.exports = function highlight(source, languageCode) {
   const languageMapping = {
     html: 'htmlmixed',
     javascript: 'jsx',
-    js: 'jsx',
     json: 'jsx',
+    js: 'jsx',
+    ruby: 'ruby',
     shell: 'shell',
+    toml: 'toml',
     yaml: 'yaml',
     yml: 'yaml',
-    ruby: 'ruby',
   };
   const languageParser = languageMapping[languageCode];
 

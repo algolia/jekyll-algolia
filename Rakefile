@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rubygems'
 require 'bundler'
 begin
@@ -63,24 +65,6 @@ task :watch do
   sh 'bundle exec guard --clear --watchdir lib spec'
 end
 
-
-
-namespace 'git' do
-  desc 'Make sure develop is up to date with master'
-  task :update_develop_from_master do
-    sh 'git checkout master --quiet'
-    sh 'git pull --rebase origin master --quiet'
-    sh 'git checkout develop --quiet'
-    sh 'git rebase master --quiet'
-  end
-  desc 'Make sure master is up to date with develop'
-  task :update_master_from_develop do
-    sh 'git checkout master --quiet'
-    sh 'git rebase develop --quiet'
-    sh 'git checkout develop --quiet'
-  end
-end
-
 namespace 'docs' do
   desc 'Rebuild documentation website'
   task :build do
@@ -91,7 +75,11 @@ namespace 'docs' do
   end
   desc 'Rebuild and deploy documentation'
   task :deploy do
-    Rake::Task['git:update_develop_from_master'].invoke
+    # Make sure develop is up to date with master
+    sh 'git checkout master --quiet'
+    sh 'git pull --rebase origin master --quiet'
+    sh 'git checkout develop --quiet'
+    sh 'git rebase master --quiet'
 
     Rake::Task['docs:build'].invoke
     sh 'git add ./docs'

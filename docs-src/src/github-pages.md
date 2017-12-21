@@ -20,9 +20,9 @@ deployed website.
 
 ## Enabling Travis
 
-[Travis CI][4] is an hosted continuous integration
-service, and it's free for open-source projects. It can listen to any changes in
-your GitHub repository and run a specific command in response.
+[Travis CI][4] is an hosted continuous integration service, and it's free for
+open-source projects. It can listen to any changes in your GitHub repository and
+run a specific command in response.
 
 We will use it to automatically run `jekyll algolia` every time a new push to
 your GitHub Pages is done.

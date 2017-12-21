@@ -88,7 +88,7 @@ namespace 'release' do
     require_relative version_file_path
 
     # Ask for new version
-    old_version = AlgoliaHTMLExtractorVersion.to_s
+    old_version = Jekyll::Algolia::VERSION.to_s
     puts "Current version is #{old_version}"
     puts 'Enter new version:'
     new_version = STDIN.gets.strip
@@ -111,7 +111,7 @@ namespace 'release' do
   desc 'Push the gem to rubygems'
   task :push do
     load 'lib/jekyll/algolia/version.rb'
-    current_version = AlgoliaHTMLExtractorVersion.to_s
+    current_version = Jekyll::Algolia::VERSION.to_s
     sh "gem push jekyll-algolia-#{current_version}.gem"
     sh "rm jekyll-algolia-#{current_version}.gem"
     sh "git push origin #{current_version}"

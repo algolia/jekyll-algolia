@@ -108,7 +108,7 @@ search.start();
 ### Including the InstantSearch.js library
 
 The first lines will include the [InstantSearch.js][5] library as well as
-minimal styling, directlt from the jsDeliver CDN. Those files are also available
+minimal styling, directly from the jsDeliver CDN. Those files are also available
 through [Yarn][6]/[NPM][7] if you need them locally.
 
 ### Instanciating the library

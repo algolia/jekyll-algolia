@@ -42,7 +42,7 @@ Gem::Specification.new do |gem|
   # Files
   gem.files = Dir[
     'lib/**/*.rb',
-    'errors/*.txt',
+    'lib/errors/*.txt',
     'README.md',
     'CONTRIBUTING.md',
     'LICENSE.txt',

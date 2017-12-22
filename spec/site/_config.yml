@@ -1,7 +1,6 @@
 collections:
   my-collection:
     output: true
-paginate: 1
 timezone: Europe/Paris
 
 algolia:
@@ -15,4 +14,8 @@ algolia:
 # Jekyll 3.0 extracted the secondary features into their own plugins
 plugins: 
   - jekyll-paginate
+
+# jekyll-paginate lets you define the path to the pagination pages
+paginate: 5
+paginate_path: "/blog/pages/:num"
 

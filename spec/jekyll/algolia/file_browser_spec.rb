@@ -28,7 +28,7 @@ describe(Jekyll::Algolia::FileBrowser) do
       it { should eq false }
     end
     context 'with a pagination page' do
-      let(:file) { site.__find_file('page2/index.html') }
+      let(:file) { site.__find_file('blog/pages/2/index.html') }
       it { should eq false }
     end
     context 'with a file excluded by the config' do
@@ -84,8 +84,18 @@ describe(Jekyll::Algolia::FileBrowser) do
   describe '.pagination_page?' do
     subject { current.pagination_page?(file) }
 
-    context 'with a pagination page' do
-      let(:file) { site.__find_file('page2/index.html') }
+    context 'with a custom pagination page' do
+      let(:file) { site.__find_file('blog/pages/2/index.html') }
+      it { should eq true }
+    end
+
+    context 'with a pagination page starting with no forward slash' do
+      let(:file) { double('File', path: 'blog/pages/2/index.html') }
+      it { should eq true }
+    end
+
+    context 'with a pagination page starting with no a forward slash' do
+      let(:file) { double('File', path: '/blog/pages/2/index.html') }
       it { should eq true }
     end
   end

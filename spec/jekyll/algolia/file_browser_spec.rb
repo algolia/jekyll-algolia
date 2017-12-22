@@ -211,13 +211,17 @@ describe(Jekyll::Algolia::FileBrowser) do
   describe '.date' do
     subject { current.date(file) }
 
-    context 'with a regular page' do
+    context 'with a page in the root' do
       let(:file) { site.__find_file('about.md') }
       it { should eq nil }
     end
-    context 'with a collection element' do
+    context 'with a collection element with a date set in front-matter' do
       let(:file) { site.__find_file('_my-collection/collection-item.html') }
       it { should eq 452_469_600 }
+    end
+    context 'with a collection element with no date' do
+      let(:file) { site.__find_file('_my-collection/sample-item.md') }
+      it { should eq nil }
     end
     context 'with a post' do
       let(:file) { site.__find_file('_posts/2015-07-02-test-post.md') }

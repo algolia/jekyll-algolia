@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'jekyll/commands/algolia'
+require 'date'
 
 module Jekyll
   # Requirable file, loading all dependencies.
@@ -27,6 +28,7 @@ module Jekyll
     # monkey-patching its `write` method and building it.
     def self.init(config = {})
       @config = config
+      @start_time = Time.now
       @site = Jekyll::Algolia::Site.new(@config)
 
       exit 1 unless Configurator.assert_valid_credentials
@@ -66,6 +68,15 @@ module Jekyll
     # Tests will need access to the inner Jekyll website so we expose it here
     def self.site
       @site
+    end
+
+    # Public: Get access to the time at which the command was run
+    #
+    # Jekyll will override some date with the current time, and we'll need to
+    # keep them as nil, so we have to compare to this date to assume it has been
+    # overwritten
+    def self.start_time
+      @start_time
     end
 
     # A Jekyll::Site subclass that overrides #write from the parent class to

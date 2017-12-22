@@ -12,6 +12,7 @@ describe(Jekyll::Algolia) do
   # Suppress Jekyll log about not having a config file
   before do
     allow(Jekyll.logger).to receive(:warn)
+    allow(Jekyll::Algolia::Logger).to receive(:log)
   end
 
   describe '.init' do

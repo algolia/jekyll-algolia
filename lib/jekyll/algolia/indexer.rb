@@ -94,6 +94,9 @@ module Jekyll
       # processed, but makes debugging easier when comparing arrays is needed.
       def self.remote_object_ids(index)
         list = []
+        Logger.verbose(
+          "I:Inspecting existing records in index #{index.name}..."
+        )
         begin
           index.browse(attributesToRetrieve: 'objectID') do |hit|
             list << hit['objectID']
@@ -154,7 +157,7 @@ module Jekyll
           return
         end
 
-        Logger.log('I:Pushing records to Algolia...')
+        Logger.log("I:Updating records in index #{index.name}...")
 
         # Delete remote records that are no longer available locally
         delete_records_by_id(index, old_records_ids)

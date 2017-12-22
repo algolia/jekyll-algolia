@@ -75,7 +75,9 @@ describe(Jekyll::Algolia::Indexer) do
   end
 
   describe 'update_records' do
-    let(:index) { double('Algolia::Index', add_objects!: nil) }
+    let(:index) do
+      double('Algolia::Index', add_objects!: nil, name: 'my_index')
+    end
 
     context 'with a small number of records' do
       let(:records) { Array.new(10, foo: 'bar') }
@@ -125,7 +127,9 @@ describe(Jekyll::Algolia::Indexer) do
   end
 
   describe '.delete_records_by_id' do
-    let(:index) { double('Algolia::Index', delete_objects!: nil) }
+    let(:index) do
+      double('Algolia::Index', delete_objects!: nil, name: 'my_index')
+    end
     let(:ids) { %w[foo bar baz] }
 
     before { current.delete_records_by_id(index, ids) }
@@ -211,7 +215,9 @@ describe(Jekyll::Algolia::Indexer) do
     before do
       allow(current)
         .to receive(:index)
-        .and_return(double('Algolia::Index', new: 'my_index'))
+        .and_return(
+          double('Algolia::Index', new: 'my_index', name: 'my_index')
+        )
       allow(current).to receive(:remote_object_ids).and_return(remote_ids)
       allow(current).to receive(:delete_records_by_id)
       allow(current).to receive(:update_records)

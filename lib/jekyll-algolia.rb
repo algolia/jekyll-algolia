@@ -31,6 +31,12 @@ module Jekyll
 
       exit 1 unless Configurator.assert_valid_credentials
 
+      if Configurator.dry_run?
+        Logger.log('W:==== THIS IS A DRY RUN ====')
+        Logger.log('W:  - No records will be pushed to your index')
+        Logger.log('W:  - No settings will be updated on your index')
+      end
+
       self
     end
 
@@ -43,6 +49,7 @@ module Jekyll
     # Note: The internal list of files to be processed will only be created when
     # calling .process
     def self.run
+      Logger.log('I:Processing site...')
       @site.process
     end
 
@@ -66,14 +73,9 @@ module Jekyll
     # to Algolia instead of writing files to disk.
     class Site < Jekyll::Site
       def write
-        if Configurator.dry_run?
-          Logger.log('W:==== THIS IS A DRY RUN ====')
-          Logger.log('W:  - No records will be pushed to your index')
-          Logger.log('W:  - No settings will be updated on your index')
-        end
-
         records = []
         files = []
+        Logger.log('I:Extracting records...')
         each_site_file do |file|
           # Skip files that should not be indexed
           is_indexable = FileBrowser.indexable?(file)

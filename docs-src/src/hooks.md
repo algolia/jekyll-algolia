@@ -14,7 +14,7 @@ but they will also give you much more flexibility.
 
 ### Usage
 
-You'll have to extend the `Jekyll::Algolia` class to overwrite the method
+You'll have to extend the `Jekyll::Algolia::Hooks` class to overwrite the method
 definition of the hooks. The best way to do so is to [add a custom plugin][2] to
 your Jekyll site.
 

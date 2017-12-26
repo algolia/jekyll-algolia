@@ -34,30 +34,28 @@ to overwrite those values.
 key                    | value
 ---------------------- | ----------------------
 ALGOLIA_APPLICATION_ID | `your_application_id`
-ALGOLIA_API_KEY        | `your_api_key`
 ALGOLIA_INDEX_NAME     | `your_index_name`
+ALGOLIA_API_KEY        | `your_api_key`
 
 
 ## `_algolia_api_key` file
 
 The recommended way to define your Algolia admin API key is to use the
 `ALGOLIA_API_KEY` environment variable. Because this key should be kept secret,
-its better if it's loaded directly from the environment.
-
-But the plugin can also load the key from another source. **Note that this
-method trades off security for convenience, so be very careful when using it.**
+its better if it's loaded directly from the environment. But the plugin can also
+load the key from another source.
 
 You can create a file named `_algolia_api_key` in your source directory that
 contains your admin API key. If no `ALGOLIA_API_KEY` environment variable is
 defined, the plugin will fallback to the value set in the `_algolia_api_key`
 file.
 
-**Do not commit this file in your versioning system**. This API key has write
+**Note that this method trades off security for convenience, so be very careful
+when using it. Do not commit this file in your versioning system.**
+
+*This API key has write
 access to your index, so you have to keep it secret. For example, you should
 add `_algolia_api_key` to your `.gitignore` file. It contains your private API
-key
-
-
-
+key*
 
 

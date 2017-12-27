@@ -1,8 +1,6 @@
 ---
-title: ⚡ Homepage
-layout: single-column.pug
+title: Algolia for Jekyll
+layout: index.pug
 ---
 
-# Homepage
-
-Hello you!
+<!-- the content is in layouts/index.pug -->

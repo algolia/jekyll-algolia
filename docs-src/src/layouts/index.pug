@@ -1,0 +1,80 @@
+extends ./common/meta.pug
+
+block body
+
+  section.hero
+    .container.z-10
+      .spacer80
+      h1.heading-text Algolia for Jekyll
+      h2.color-logan.text-lg.text-thin Add fast and relevant search to your Jekyll site
+      .spacer32
+      a.btn.btn-static-theme.elevation0(href="getting-started.html").
+        Read the documentation
+        <svg> <use xlink:href="#arrow-right"></svg>
+
+      .spacer80.hidden-sm
+    .row.z-10.m-l-none.m-r-none
+      .spacer40
+      .spacer40.hidden-md
+      figure
+        img(src="assets/images/placeholder.png")
+      .spacer40.hidden-sm
+    .spacer120
+    .spacer40.hidden-sm
+
+  +feature({
+    title: "Automatic indexing", 
+  })
+    | Plug in your Algolia API keys and run 
+    code jekyll algolia
+    |. The plugin will
+    | traverse all your posts, pages and custom collections and push them to
+    | your index.
+  +feature({
+    title: "Extensible", 
+    flip: true
+  })
+    | Customize which files are indexed and many other behaviors using a variety
+    | of 
+    a(href="./options.html") configuration options
+    |. You can even add your own custom 
+    a(href="./hooks.html") Ruby hooks 
+    | into the plugin lifecycle to get the exact output you want.
+  +feature({
+    title: "Incremental indexing", 
+  })
+    | The plugin is smart enough to only index content that changed between two
+    | runs. This helps make the most out of your Algolia quota.
+  +feature({
+    title: "Index on deploy", 
+    flip: true
+  })
+    | If your website is hosted on Netlify or GitHub Pages, the plugin can
+    | automatically re-index your content on each deploy. This keeps your search
+    | and your site in sync!
+
+  section.row.fill-white.p-xlarge.m-l-none.m-r-none.pos-rel
+    .container
+      .inline.spacer80
+      .col-md-12.z-10.text-center.row
+        header
+          h3.no-p-t.m-t-none.text-thin Demo
+
+        .spacer40
+        .row.h100.logos-container
+          .col-md-6.col-md-offset-3
+            .card.fill-white.elevation1.radius6.p-large.text-center
+              p Blog Search
+              a(href="https://community.algolia.com/jekyll-algolia-example/")
+                figure
+                  img(src="assets/images/minima-search.gif", alt="Blog search demo", width="100%")
+                  figcaption Blog search
+              p 
+                a(href="./blog.html") Tutorial
+                |   |  
+                a(href="https://github.com/algolia/jekyll-algolia-example") GitHub
+                |   |  
+                a(href="https://community.algolia.com/jekyll-algolia-example/") Live demo
+
+
+        .spacer40.inline

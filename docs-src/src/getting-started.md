@@ -73,7 +73,7 @@ write access to your index so will be able to push new data. This is also why
 you have to set it on the command line and not in the `_config.yml` file: you
 want to keep this key secret and not commit it to your versioning system.
 
-<script type="text/javascript" src="https://asciinema.org/a/VQw3ofNmGXjYs11tneq49PBVc.js" id="asciicast-VQw3ofNmGXjYs11tneq49PBVc" async></script>
+<script src="https://asciinema.org/a/JpQFqjNeXlmI59NhhvDAJ3M1l.js" id="asciicast-JpQFqjNeXlmI59NhhvDAJ3M1l" async></script>
 
 _Note that the method can be simplified to `jekyll algolia` by using an
 [alternative way][6] of loading the API key and using [rubygems-bundler][7]._

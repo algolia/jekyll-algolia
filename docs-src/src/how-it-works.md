@@ -62,6 +62,4 @@ an estimate of how many records will actually be pushed. The plugin tries to be
 smart and consume as less operations as possible, but you can always run it in
 `--dry-run` mode to better understand what it would do.
 
-<div class="m-l-r-auto">
-  <script type="text/javascript" src="https://asciinema.org/a/FSuwJWRZR3g7S5JUYg8nySwXe.js" id="asciicast-FSuwJWRZR3g7S5JUYg8nySwXe" async></script>
-</div>
+<script src="https://asciinema.org/a/oJViDi42ps8LQMUBVa66IfYBi.js" id="asciicast-oJViDi42ps8LQMUBVa66IfYBi" async></script>

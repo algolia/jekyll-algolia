@@ -1,0 +1,25 @@
+mixin feature(options)
+  - var title = options.title
+  - var image = options.image || './assets/images/placeholder.png'
+  - var isFlipped = options.flip || false
+  section.row.p-xlarge.m-l-none.m-r-none.pos-rel
+    .container
+      .inline.spacer40.hidden-sm
+      .col-md-12.z-10
+        if isFlipped === false
+          .col-md-6.hidden-sm
+            img.section-illustration(src=image, alt=title, width="525")
+
+        .col-md-6.p-r-xlarge
+          header
+            h3.no-p-t.m-t-none.text-thin=title
+          .spacer16.visible-sm
+          img.section-illustration.visible-sm(src=image, alt=title, width="525")
+          .spacer24
+          p.color-east-bay.text-regular.text-normal 
+            block
+          .spacer24
+
+        if isFlipped === true
+          .col-md-6.hidden-sm
+            img.section-illustration(src=image, alt=title, width="525")

@@ -7,8 +7,8 @@ import alg from 'algolia-frontend-components/javascripts.js';
 import './editThisPage.js';
 
 const docSearch = {
-  apiKey: '5cb6763f264e31381e18639a1147634c',
-  indexName: 'react-instantsearch',
+  apiKey: '5e2de32b362723ffdb03414c5c3d2ec8',
+  indexName: 'jekyll_algolia',
   inputSelector: '#searchbox',
 };
 

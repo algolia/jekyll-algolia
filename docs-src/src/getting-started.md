@@ -90,8 +90,8 @@ create a one-size-fits-all solution. Instead, the best solution is to use our
 It's an easy-to-use set of UI widgets you can use to build your own search in
 a matter of minutes.
 
-You can also head to the [Examples][12] section to see some tutorials
-on the most common use-cases.
+You can follow [this tutorial][12] to see how to add search on the default blog
+theme.
 
 
 [1]: https://jekyllrb.com/
@@ -105,4 +105,4 @@ on the most common use-cases.
 [9]: https://community.algolia.com/instantsearch.js/
 [10]: https://community.algolia.com/vue-instantsearch/
 [11]: https://community.algolia.com/react-instantsearch/
-[12]: ./examples.html
+[12]: ./blog.html

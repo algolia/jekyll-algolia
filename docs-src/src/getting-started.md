@@ -73,10 +73,10 @@ write access to your index so will be able to push new data. This is also why
 you have to set it on the command line and not in the `_config.yml` file: you
 want to keep this key secret and not commit it to your versioning system.
 
-<script src="https://asciinema.org/a/JpQFqjNeXlmI59NhhvDAJ3M1l.js" id="asciicast-JpQFqjNeXlmI59NhhvDAJ3M1l" async></script>
+![jekyll algolia command example][6]
 
 _Note that the method can be simplified to `jekyll algolia` by using an
-[alternative way][6] of loading the API key and using [rubygems-bundler][7]._
+[alternative way][7] of loading the API key and using [rubygems-bundler][8]._
 
 ## Front-end
 
@@ -86,11 +86,11 @@ data is not part of the plugin.
 
 As it would depend too much on the theming you applied to Jekyll, we could not
 create a one-size-fits-all solution. Instead, the best solution is to use our
-[InstantSearch.js][8] library (also available for [Vue.js][9] and [React][10]).
+[InstantSearch.js][9] library (also available for [Vue.js][10] and [React][11]).
 It's an easy-to-use set of UI widgets you can use to build your own search in
 a matter of minutes.
 
-You can also head to the [Examples][11] section to see some tutorials
+You can also head to the [Examples][12] section to see some tutorials
 on the most common use-cases.
 
 
@@ -99,9 +99,10 @@ on the most common use-cases.
 [3]: http://bundler.io/
 [4]: https://www.algolia.com/users/sign_up/hacker
 [5]: https://www.algolia.com/licensing
-[6]: ./commandline.html#algolia-api-key-file
-[7]: https://github.com/rvm/rubygems-bundler
-[8]: https://community.algolia.com/instantsearch.js/
-[9]: https://community.algolia.com/vue-instantsearch/
-[10]: https://community.algolia.com/react-instantsearch/
-[11]: ./examples.html
+[6]: ./assets/images/getting-started.gif
+[7]: ./commandline.html#algolia-api-key-file
+[8]: https://github.com/rvm/rubygems-bundler
+[9]: https://community.algolia.com/instantsearch.js/
+[10]: https://community.algolia.com/vue-instantsearch/
+[11]: https://community.algolia.com/react-instantsearch/
+[12]: ./examples.html

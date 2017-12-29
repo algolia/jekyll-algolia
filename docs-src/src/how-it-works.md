@@ -62,4 +62,7 @@ an estimate of how many records will actually be pushed. The plugin tries to be
 smart and consume as less operations as possible, but you can always run it in
 `--dry-run` mode to better understand what it would do.
 
-<script src="https://asciinema.org/a/oJViDi42ps8LQMUBVa66IfYBi.js" id="asciicast-oJViDi42ps8LQMUBVa66IfYBi" async></script>
+![jekyll algolia dry run example][1]
+
+[1]: ./assets/images/dry-run.gif
+

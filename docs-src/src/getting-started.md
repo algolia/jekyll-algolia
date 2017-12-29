@@ -7,7 +7,7 @@ layout: content-with-menu.pug
 
 ## Welcome to jekyll-algolia
 
-`jekyll-algolia` is a Jekyll plugin that lets you index all your content in an
+`jekyll-algolia` is a Jekyll plugin that lets you push all your content in an
 Algolia index.
 
 ## Requirements

@@ -341,10 +341,11 @@ fix the styling and formatting.</p>
 default we display it exactly as it was saved in the Algolia index: as a UNIX
 timestamp.</p>
 <p>Because our template is a JavaScript function, we can reformat data before
-rendering it. Here we will use the <a href="https://momentjs.com/docs/">moment.js</a>
-library to format our date.</p>
+rendering it. Here we will use the <a href="https://momentjs.com/docs/">moment.js</a> library to format our date.</p>
 <p>Using <code>moment.unix(hit.date).format('MMM D, YYYY');</code> we’ll transform
 <code>1513764761</code> into <code>Dec 20, 2017</code>.</p>
+<p>Note that, contrary to posts, pages don’t have a date defined, so we don’t
+display this field if that’s the case.</p>
 <h3 id="adding-highlighting">Adding highlighting <a class="anchor" href="blog.html#adding-highlighting" aria-hidden="true"></a></h3>
 <p>To make the display even easier to understand, we should add some highlighting:
 words typed in the search bar should be highlighted in the results.</p>
@@ -392,7 +393,10 @@ should search, by using the <code>[restrictSearchableAttributes][12]</code> opti
 });
 
 <span class="cm-keyword">const</span> <span class="cm-def">hitTemplate</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>(<span class="cm-def">hit</span>) {
-  <span class="cm-keyword">const</span> <span class="cm-def">date</span> <span class="cm-operator">=</span> <span class="cm-variable">moment</span>.<span class="cm-property">unix</span>(<span class="cm-variable-2">hit</span>.<span class="cm-property">date</span>).<span class="cm-property">format</span>(<span class="cm-string">&#39;MMM D, YYYY&#39;</span>);
+  <span class="cm-keyword">let</span> <span class="cm-def">date</span> <span class="cm-operator">=</span> <span class="cm-string">&#39;&#39;</span>;
+  <span class="cm-keyword">if</span> (<span class="cm-variable-2">hit</span>.<span class="cm-property">date</span>) {
+    <span class="cm-variable-2">date</span> <span class="cm-operator">=</span> <span class="cm-variable">moment</span>.<span class="cm-property">unix</span>(<span class="cm-variable-2">hit</span>.<span class="cm-property">date</span>).<span class="cm-property">format</span>(<span class="cm-string">&#39;MMM D, YYYY&#39;</span>);
+  }
   <span class="cm-keyword">const</span> <span class="cm-def">url</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">url</span>;
   <span class="cm-keyword">const</span> <span class="cm-def">title</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">title</span>.<span class="cm-property">value</span>;
   <span class="cm-keyword">const</span> <span class="cm-def">content</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">html</span>.<span class="cm-property">value</span>;

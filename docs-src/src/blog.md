@@ -196,11 +196,13 @@ default we display it exactly as it was saved in the Algolia index: as a UNIX
 timestamp.
 
 Because our template is a JavaScript function, we can reformat data before
-rendering it. Here we will use the [moment.js][11]
-library to format our date.
+rendering it. Here we will use the [moment.js][11] library to format our date.
 
 Using `moment.unix(hit.date).format('MMM D, YYYY');` we'll transform
 `1513764761` into `Dec 20, 2017`.
+
+Note that, contrary to posts, pages don't have a date defined, so we don't
+display this field if that's the case.
 
 ### Adding highlighting
 
@@ -263,7 +265,10 @@ const search = instantsearch({
 });
 
 const hitTemplate = function(hit) {
-  const date = moment.unix(hit.date).format('MMM D, YYYY');
+  let date = '';
+  if (hit.date) {
+    date = moment.unix(hit.date).format('MMM D, YYYY');
+  }
   const url = hit.url;
   const title = hit._highlightResult.title.value;
   const content = hit._highlightResult.html.value;

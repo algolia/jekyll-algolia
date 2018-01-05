@@ -191,164 +191,91 @@
       </li></ul></div></div>
 
     </nav>
-    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="hooks.html">Hooks</a><ul><li class="sidebar-element"><a href="hooks.html#should-be-excluded">should_be_excluded? </a></li><li class="sidebar-element"><a href="hooks.html#before-indexing-each">before_indexing_each </a></li><li class="sidebar-element"><a href="hooks.html#before-indexing-all">before_indexing_all </a></li></ul></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li><li class="sidebar-element"><a href="migration-guide.html">Migration guide</a></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="hooks">Hooks <a class="anchor" href="hooks.html#hooks" aria-hidden="true"></a></h1>
-<p>The plugin gives you access to hooks in its lifecycle. Those hooks can
-be used to add your own custom Ruby logic to have more control on the way
-records are being extracted and indexed.</p>
-<p>Using hooks are a more advanced feature than using <a href="./options.html">regular configuration</a> options
-but they will also give you much more flexibility.</p>
-<h3 id="usage">Usage <a class="anchor" href="hooks.html#usage" aria-hidden="true"></a></h3>
-<p>You’ll have to extend the <code>Jekyll::Algolia::Hooks</code> class to overwrite the method
-definition of the hooks. The best way to do so is to <a href="https://jekyllrb.com/docs/plugins/#installing-a-plugin">add a custom plugin</a> to
-your Jekyll site.</p>
-<p>Create a <code>_plugins</code> directory in your Jekyll source folder if you don’t have one
-already. Inside this folder, create an <code>algolia_hooks.rb</code> file.</p>
-<p>The file should have the following structure:</p>
-<pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
-  <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-comment"># Add your hooks here</span>
-    <span class="cm-keyword">end</span>
-  <span class="cm-keyword">end</span>
-<span class="cm-keyword">end</span>
-</code></div></pre>
-<h2 id="should-be-excluded"><code>should_be_excluded?</code> <a class="anchor" href="hooks.html#should-be-excluded" aria-hidden="true"></a></h2>
-<p>This hook will give you more control on which file should be indexed or not. It
-will be called for every indexable file, with the source <code>filepath</code> as an
-argument. The file will be excluded if the hook returns <code>true</code>, and will be
-indexed if it returns <code>false</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Signature</td>
-<td><code>should_be_excluded?(filepath)</code></td>
-</tr>
-<tr>
-<td>Arguments</td>
-<td><ul><li><code>filepath</code>: The source path of the file</li></ul></td>
-</tr>
-<tr>
-<td>Expected returns</td>
-<td><ul><li><code>true</code> if the file should be excluded</li><li><code>false</code> if it should be indexed</li></ul></td>
-</tr>
-</tbody>
-</table>
-<p><em>Note that the hook will not be called on files already excluded by
-<a href="./options.html#extensions-to-index">extensions_to_index</a> or <a href="./options.html#files-to-exclude">files_to_exclude</a>.</em></p>
-<h3 id="example">Example <a class="anchor" href="hooks.html#example" aria-hidden="true"></a></h3>
-<pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
-  <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">should_be_excluded?</span>(<span class="cm-variable">filepath</span>)
-        <span class="cm-comment"># Do not index blog posts from 2015</span>
-        <span class="cm-keyword">return</span> <span class="cm-keyword">true</span> <span class="cm-keyword">if</span> <span class="cm-variable">filepath</span> <span class="cm-operator">=~</span> <span class="cm-string-2">%r{_posts/2015-}</span>
-        <span class="cm-keyword">false</span>
-      <span class="cm-keyword">end</span>
-    <span class="cm-keyword">end</span>
-  <span class="cm-keyword">end</span>
-<span class="cm-keyword">end</span>
-</code></div></pre>
-<h2 id="before-indexing-each"><code>before_indexing_each</code> <a class="anchor" href="hooks.html#before-indexing-each" aria-hidden="true"></a></h2>
-<p>This hook will be called on every single record before indexing them. It gives you
-a way to edit the record before pushing it. You can use this hook to add, edit
-or delete keys from the record. If the hook returns <code>nil</code>, the
-record will not be indexed.</p>
-<p>The hook will receive two arguments: <code>record</code> and <code>node</code>. <code>record</code> is the hash
-of the record, ready to be pushed to Algolia. <code>node</code> is a <a href="http://www.nokogiri.org">Nokogiri</a>
-representation of the HTML node the record was extracted from (as specified in
-<a href="./options.html#nodes-to-index">nodes_to_index</a>.</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Signature</td>
-<td><code>before_indexing_each(record, node)</code></td>
-</tr>
-<tr>
-<td>Arguments</td>
-<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node it was extracted from</li></ul></td>
-</tr>
-<tr>
-<td>Expected returns</td>
-<td><ul><li>A hash of the record to be indexed</li><li><code>nil</code> if the record should not be indexed</li></ul></td>
-</tr>
-</tbody>
-</table>
-<h3 id="example-2">Example <a class="anchor" href="hooks.html#example-2" aria-hidden="true"></a></h3>
-<pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
-  <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
-    <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>)
-        <span class="cm-comment"># Do not index deprecation warnings</span>
-        <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">attr</span>(<span class="cm-string">&#39;class&#39;</span>) <span class="cm-operator">=~</span> <span class="cm-string">&#39;deprecation-notice&#39;</span>
-        <span class="cm-comment"># Add my name as an author to each record</span>
-        <span class="cm-variable">record</span>[<span class="cm-atom">:author</span>] <span class="cm-operator">=</span> <span class="cm-string">&#39;Myself&#39;</span>
+    <!-- End community_header --> </div><div class="spacer64"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a href="hooks.html">Hooks</a></li><li class="sidebar-element"><a href="indexing-modes.html">Indexing modes</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="migration-guide.html">Migration guide</a><ul><li class="sidebar-element"><a href="migration-guide.html#renaming">Renaming </a></li><li class="sidebar-element"><a href="migration-guide.html#options">Options </a></li><li class="sidebar-element"><a href="migration-guide.html#hooks">Hooks </a></li><li class="sidebar-element"><a href="migration-guide.html#records">Records </a></li><li class="sidebar-element"><a href="migration-guide.html#need-more-help">Need more help? </a></li></ul></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="migrating-from-algoliasearch-jekyll">Migrating from <code>algoliasearch-jekyll</code> <a class="anchor" href="migration-guide.html#migrating-from-algoliasearch-jekyll" aria-hidden="true"></a></h1>
+<p>If you’re using the previous <code>algoliasearch-jekyll</code> gem, and would
+like to migrate to the new <code>jekyll-algolia</code>, this guide will help you through
+the migration process.</p>
+<h2 id="renaming">Renaming <a class="anchor" href="migration-guide.html#renaming" aria-hidden="true"></a></h2>
+<p>Most of the changes you’ll have to do to migrate is to rename configuration
+settings.</p>
+<p>The most obvious one being that the gem is now called <code>jekyll-algolia</code> and not
+<code>algoliasearch-jekyll</code>. You should update your <code>Gemfile</code> to add the
+<code>jekyll-algolia</code> gem to the <code>:jekyll_plugin</code> group, like this:</p>
+<pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-variable">source</span> <span class="cm-string">&#39;https://rubygems.org&#39;</span>
 
-        <span class="cm-variable">record</span>
-      <span class="cm-keyword">end</span>
-    <span class="cm-keyword">end</span>
-  <span class="cm-keyword">end</span>
+<span class="cm-variable">gem</span> <span class="cm-string">&#39;jekyll&#39;</span>, <span class="cm-string">&#39;~&gt; 3.6&#39;</span>
+
+<span class="cm-variable">group</span> <span class="cm-atom">:jekyll_plugins</span> <span class="cm-keyword">do</span>
+  <span class="cm-variable">gem</span> <span class="cm-string">&#39;jekyll-algolia&#39;</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
-<h2 id="before-indexing-all"><code>before_indexing_all</code> <a class="anchor" href="hooks.html#before-indexing-all" aria-hidden="true"></a></h2>
-<p>This hook is very similar to <a href="hooks.html#hook-before-indexing-each">before_index_each</a>, but instead of being called
-on every record, it is called only once, on the full list of record, right
-before pushing them.</p>
-<p>It will be called with one argument, <code>records</code>, being the full list of records
-to be pushed, and expects a list of records to be returned.</p>
-<p>You can use this hook to add, edit or delete complete records from the list,
-knowing the full context of what is going to be pushed.</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Signature</td>
-<td><code>before_indexing_all(records)</code></td>
-</tr>
-<tr>
-<td>Arguments</td>
-<td><ul><li><code>records</code>: An array of hashes representing the records that are going to be pushed</li></ul></td>
-</tr>
-<tr>
-<td>Expected returns</td>
-<td><ul><li>An array of hashes to be pushed as records</li></ul></td>
-</tr>
-</tbody>
-</table>
-<h3 id="example-3">Example <a class="anchor" href="hooks.html#example-3" aria-hidden="true"></a></h3>
+<p>Note that you no longer need to add the plugin to the list of <code>plugins</code> in your
+<code>_config.yml</code>, this is now taken care of at the <code>Gemfile</code> level. The other
+important change is that the new version requires at least Ruby 2.3 and Jekyll
+3.6 to work.</p>
+<p>The command to run the plugin has been simplified from <code>jekyll algolia push</code> to
+<code>jekyll algolia</code>.</p>
+<h2 id="options">Options <a class="anchor" href="migration-guide.html#options" aria-hidden="true"></a></h2>
+<p>All the previous option and behaviors are still available, but their names have
+been changed:</p>
+<p><code>excluded_files</code> has been renamed to <a href="./options.html#files-to-exclude">files_to_exclude</a>,
+<code>record_css_selector</code> to <a href="./options.html#nodes-to-index">nodes_to_index</a> and <code>allowed_extensions</code> to
+<a href="./options.html#extensions-to-index">extensions_to_index</a>.  Note that for the last one, it now expects
+a comma-separated list of extensions.</p>
+<p>The <code>lazy_update</code> option has renamed to <a href="./options.html#indexing-mode">indexing_mode</a>. The default indexing
+mode (<a href="./indexing-modes.html#diff-default">diff</a>), is equivalent to <code>lazy_update: true</code>. This means that by
+default the plugin will now be smart enough to only update records that actually
+changed since the last run. You can still get the old behavior of re-pushing
+everything every time by using the <a href="./indexing-modes.html#atomic">atomic</a> indexing mode.</p>
+<h2 id="hooks">Hooks <a class="anchor" href="migration-guide.html#hooks" aria-hidden="true"></a></h2>
+<p>All three hooks (<code>custom_hook_excluded_file?</code>, <code>custom_hook_each</code> and
+<code>custom_hook_all</code>) are still here, but they have been renamed to
+<a href="./hooks.html#should-be-excluded">should_be_excluded?</a>, <a href="./hooks.html#before-indexing-each">before_indexing_each</a> and <a href="./hooks.html#before-indexing-all">before_indexing_all</a>.</p>
+<p>They all have the same behavior and expect the same arguments as before, but
+should now extend the <code>Jekyll::Algolia::Hooks</code> module. It means that the file
+you used to define them should now look like this:</p>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
     <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_all</span>(<span class="cm-variable">records</span>)
-        <span class="cm-comment"># Add a tags array to each record</span>
-        <span class="cm-variable">records</span><span class="cm-operator">.</span><span class="cm-property">each</span> <span class="cm-keyword">do</span> |<span class="cm-def">record</span>|
-          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">=</span> []
-          <span class="cm-comment"># Add &#39;blog&#39; as a tag if it&#39;s a post</span>
-          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;blog&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:type</span>] <span class="cm-operator">==</span> <span class="cm-string">&#39;post&#39;</span>
-          <span class="cm-comment"># Add js as a tag if it&#39;s about javascript</span>
-          <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">&lt;&lt;</span> <span class="cm-string">&#39;js&#39;</span> <span class="cm-keyword">if</span> <span class="cm-variable">record</span>[<span class="cm-atom">:title</span>]<span class="cm-operator">.</span><span class="cm-property">include?</span>(<span class="cm-string">&#39;js&#39;</span>)
-        <span class="cm-keyword">end</span>
-
-        <span class="cm-variable">records</span>
-      <span class="cm-keyword">end</span>
+    <span class="cm-comment"># Add your hooks here</span>
     <span class="cm-keyword">end</span>
   <span class="cm-keyword">end</span>
 <span class="cm-keyword">end</span>
 </code></div></pre>
+<p>You can find the complete documentation on the <a href="./hooks.html">dedicated page</a>.</p>
+<h2 id="records">Records <a class="anchor" href="migration-guide.html#records" aria-hidden="true"></a></h2>
+<p>Records extracted from Jekyll have the same structure as before, except that the
+<code>text</code> key has been renamed to <code>content</code>.</p>
+<p>Here is an example of a record extracted by the plugin:</p>
+<pre class="code-sample cm-s-mdn-like codeMirror jsx" data-code-type="Code"><div class="code-wrap"><code>{
+  <span class="cm-string">&quot;objectID&quot;</span>: <span class="cm-string">&quot;e2dd8dd1eaaf961baa6da4de309628e9&quot;</span>,
+  <span class="cm-string">&quot;title&quot;</span>: <span class="cm-string">&quot;New experimental version of Hacker News Search built with Algolia&quot;</span>,
+  <span class="cm-string">&quot;type&quot;</span>: <span class="cm-string">&quot;post&quot;</span>,
+  <span class="cm-string">&quot;url&quot;</span>: <span class="cm-string">&quot;/2015/01/12/try-new-experimental-version-hn-search.html&quot;</span>,
+  <span class="cm-string">&quot;draft&quot;</span>: <span class="cm-atom">false</span>,
+  <span class="cm-string">&quot;layout&quot;</span>: <span class="cm-string">&quot;post&quot;</span>,
+  <span class="cm-string">&quot;ext&quot;</span>: <span class="cm-string">&quot;.md&quot;</span>,
+  <span class="cm-string">&quot;date&quot;</span>: <span class="cm-number">1421017200</span>,
+  <span class="cm-string">&quot;excerpt_html&quot;</span>: <span class="cm-string">&quot;&lt;p&gt;Exactly a year ago, we began to power […]&lt;/p&gt;&quot;</span>,
+  <span class="cm-string">&quot;excerpt_text&quot;</span>: <span class="cm-string">&quot;Exactly a year ago, we began to power […]&quot;</span>,
+  <span class="cm-string">&quot;slug&quot;</span>: <span class="cm-string">&quot;try-new-experimental-version-hn-search&quot;</span>,
+
+  <span class="cm-string">&quot;html&quot;</span>: <span class="cm-string">&quot;&lt;p&gt;We&#39;ve learned a lot from your comments […]&lt;/p&gt;&quot;</span>,
+  <span class="cm-string">&quot;content&quot;</span>: <span class="cm-string">&quot;We&#39;ve learned a lot from your comments […]&quot;</span>,
+  <span class="cm-string">&quot;tag_name&quot;</span>: <span class="cm-string">&quot;p&quot;</span>,
+  <span class="cm-string">&quot;hierarchy&quot;</span>: {
+    <span class="cm-string">&quot;lvl0&quot;</span>: <span class="cm-atom">null</span>,
+    <span class="cm-string">&quot;lvl1&quot;</span>: <span class="cm-string">&quot;Applying more UI best practices&quot;</span>,
+    <span class="cm-string">&quot;lvl2&quot;</span>: <span class="cm-string">&quot;Focus on readability&quot;</span>,
+  },
+  <span class="cm-string">&quot;anchor&quot;</span>: <span class="cm-string">&quot;focus-on-readability&quot;</span>,
+  <span class="cm-string">&quot;weight&quot;</span>: {
+    <span class="cm-string">&quot;position&quot;</span>: <span class="cm-number">8</span>,
+    <span class="cm-string">&quot;heading&quot;</span>: <span class="cm-number">70</span>
+  }
+}
+</code></div></pre>
+<h2 id="need-more-help">Need more help? <a class="anchor" href="migration-guide.html#need-more-help" aria-hidden="true"></a></h2>
+<p>If you need more help migrating from the previous plugin to this new version,
+you can <a href="https://github.com/algolia/jekyll-algolia/issues">file an issue</a> on the GitHub repo and we’ll do our best to help you.</p>
 </div></div></section></body><section class="footer-new-cta footer-new h300 pos-rel"><div class="container color-white stellar-container vh-center"><div class="col-md-5"><div class="spacer120 hidden-sm"></div><div class="spacer32 visible-xs"></div><header><h2 class="text-normal m-t-none">Start creating stellar search,<span class="cf hidden-xs"></span>no strings attached.</h2><p>Dive into Algolia with our forever-free Community plan. No credit card required and up to 10k records to give us a spin.</p></header></div><div class="col-md-7 pos-rel z-10"><div class="spacer120 inline hidden-sm"></div><div class="spacer32 inline hidden-sm"></div><div class="spacer16 visible-sm"></div><div class="button-holder h200 p-r-large"><div class="spacer16 hidden-md hidden-sm"></div><span class="inline pos-rel"><a class="btn btn-static-primary btn-static-shadow-dark" href="https://algolia.com/users/sign_up">Get Started<svg class="arrow-icon" width="22"><use xlink:href="#arrow-right"></use></svg></a><svg class="search-icon" width="22"><use xlink:href="#search-icon"></use></svg></span></div></div></div></section><div id="footer"><div class="credits"><div class="container pos-rel"><div class="row"><div class="col-md-12 text-center"><a data-no-turbolink="true" href="/"><img width="40" src="https://www.algolia.com/static_assets/images/flat2/algolia/algolia-logo_badge-598a1fe6.svg"></a></div></div><div class="spacer40"></div></div></div></div><svg style="display: none;"><symbol width="40" height="40" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" id="search-icon"><path d="M26.806 29.012a16.312 16.312 0 0 1-10.427 3.746C7.33 32.758 0 25.425 0 16.378 0 7.334 7.333 0 16.38 0c9.045 0 16.378 7.333 16.378 16.38 0 3.96-1.406 7.593-3.746 10.426L39.547 37.34c.607.608.61 1.59-.004 2.203a1.56 1.56 0 0 1-2.202.004L26.808 29.012zm-10.427.627c7.32 0 13.26-5.94 13.26-13.26 0-7.325-5.94-13.26-13.26-13.26-7.325 0-13.26 5.935-13.26 13.26 0 7.32 5.935 13.26 13.26 13.26z" fill-rule="evenodd"></path></symbol><symbol width="46" height="38" viewbox="0 0 46 38" xmlns="http://www.w3.org/2000/svg" id="arrow-right"><path d="M34.852 15.725l-8.624-9.908L24.385 3.7 28.62.014l1.84 2.116 13.1 15.05 1.606 1.846-1.61 1.844-13.1 15.002-1.845 2.114-4.23-3.692 1.85-2.114 9.465-10.84h-24.66v-5.615h23.817zm-26.774 0h-.002 2.96v5.614H0v-5.615h8.078z" fill-rule="evenodd"></path></symbol><symbol xmlns="http://www.w3.org/2000/svg" viewbox="0 0 708.8 717" id="icon-copy"><path d="M658.8 158H490.2c-13.3 0-26 5.3-35.4 14.6l-4.6 4.6V25c0-13.8-11.2-25-25-25H235.6c-6.6 0-13 2.6-17.7 7.3L7.3 218C2.6 222.6 0 229 0 235.6V541c0 13.8 11.2 25 25 25h227.8v101c0 27.6 22.4 50 50 50h356c27.6 0 50-22.4 50-50V208c0-27.6-22.4-50-50-50zm-204 85.4V360H338.2l116.6-116.6zm-253-149.2V209H87L201.8 94.2zM50 516V259h176.8c13.8 0 25-11.2 25-25V50h148.4v177.3L267.5 360c-9.4 9.4-14.6 22.1-14.6 35.4V516H50zm608.8 151h-356V410h177c13.8 0 25-11.2 25-25V208h154v459z"></path></symbol><symbol id="check-icon" viewbox="0 0 33 26"><path d="M32.57872 2.63298L30.2617.31596c-.38617-.38617-1.01808-.38617-1.40425 0l-18.1851 18.20266-6.4947-6.49468c-.38616-.38617-1.01808-.38617-1.40425 0L.45638 14.34096c-.38617.38617-.38617 1.01808 0 1.40425l7.17926 7.17928 2.31702 2.31702c.38617.38616 1.01808.38616 1.40425 0l2.3346-2.29948 18.8872-18.9048c.38617-.38616.38617-1.01807 0-1.40424z" fill-rule="evenodd"></path></symbol></svg><!--Google Tag Manager--><noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N8JP8G" height="0" width="0" style="display:none;visibility:hidden;"></iframe></noscript><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-N8JP8G');</script><script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script><script src="/jekyll-algolia/js/common-build-d9bb17198ab9c9f1b71123862c7d1397.js"></script><script src="/jekyll-algolia/js/main-build-013f8489f32f903a8e90b0f0305b332a.js"></script></html>

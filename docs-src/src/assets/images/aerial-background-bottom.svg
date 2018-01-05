@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1161" height="228" viewBox="0 0 1161 228">
+    <defs>
+        <filter id="a" width="167.9%" height="317%" x="-33.9%" y="-108%" filterUnits="objectBoundingBox">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="127"/>
+            <feColorMatrix in="shadowBlurOuter1" result="shadowMatrixOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <linearGradient id="b" x1="-101.327%" x2="83.637%" y1="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+        <linearGradient id="c" x1="-213.872%" x2="25.054%" y1="100%" y2="50%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+        <linearGradient id="d" x1="0%" x2="83.637%" y1="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+        <linearGradient id="e" x1="0%" x2="83.637%" y1="100%" y2="100%">
+            <stop offset="0%" stop-color="#00AEFF"/>
+            <stop offset="100%" stop-color="#3369E6"/>
+        </linearGradient>
+        <linearGradient id="f" x1="-76.487%" x2="83.637%" y1="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" filter="url(#a)" opacity=".8" transform="rotate(-6 796.658 625.324)">
+        <path fill="url(#b)" d="M0 64h310c8.837 0 16 7.162 16 16 0 8.837-7.17 16-16 16H0V64zm0 256h131.006c8.833 0 15.994 7.162 15.994 16 0 8.837-7.165 16-15.994 16H0v-32z" opacity=".2"/>
+        <path fill="url(#c)" d="M0 32h209.996C218.835 32 226 39.162 226 48c0 8.837-7.169 16-16.004 16H0V32z" opacity=".25"/>
+        <path fill="url(#d)" d="M0 0h84.003C92.838 0 100 7.162 100 16c0 8.837-7.172 16-15.997 16H0V0z" opacity=".1"/>
+        <path fill="url(#e)" d="M0 224h1049.798c8.835 0 15.998 7.162 15.998 16 0 8.837-7.16 16-15.998 16H0v-32z"/>
+        <path fill="url(#e)" d="M0 192h1109.793c8.834 0 15.996 7.162 15.996 16 0 8.837-7.171 16-15.996 16H0v-32z" opacity=".9"/>
+        <path fill="url(#e)" d="M0 192h918.993c8.84 0 16.007 7.162 16.007 16 0 8.837-7.154 16-16.007 16H0v-32zm0-32h1076.995c8.84 0 16.005 7.162 16.005 16 0 8.837-7.16 16-16.005 16H0v-32z" opacity=".9"/>
+        <path fill="url(#d)" d="M0 128h1049.798c8.835 0 15.998 7.162 15.998 16 0 8.837-7.16 16-15.998 16H0v-32z" opacity=".4"/>
+        <path fill="url(#d)" d="M0 96h933c8.837 0 16 7.162 16 16 0 8.837-7.16 16-16 16H0V96z" opacity=".2"/>
+        <path fill="url(#e)" d="M0 160h703.995c8.84 0 16.005 7.162 16.005 16 0 8.837-7.155 16-16.005 16H0v-32z" opacity=".2" style="mix-blend-mode:overlay"/>
+        <path fill="url(#e)" d="M0 160h464.996c8.839 0 16.004 7.162 16.004 16 0 8.837-7.173 16-16.004 16H0v-32z" opacity=".75"/>
+        <path fill="url(#f)" d="M0 96h537.01c8.83 0 15.99 7.162 15.99 16 0 8.837-7.169 16-15.99 16H0V96zm0 32h803.007c8.833 0 15.993 7.162 15.993 16 0 8.837-7.158 16-15.993 16H0v-32zm0 128h918.993c8.84 0 16.007 7.162 16.007 16 0 8.837-7.154 16-16.007 16H0v-32z" opacity=".4"/>
+        <path fill="url(#d)" d="M0 128h277.998c8.837 0 16.002 7.162 16.002 16 0 8.837-7.158 16-16.002 16H0v-32z" opacity=".2"/>
+    </g>
+</svg>

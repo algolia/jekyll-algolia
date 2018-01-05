@@ -7,7 +7,7 @@
 @import 'modules/mixins';
 
 @import 'components/navigation';
-@import 'components/hero';
+// @import 'components/hero';
 @import 'components/medias';
 @import 'components/icons';
 @import 'components/buttons';
@@ -18,7 +18,7 @@
 @import 'components/code-highlighting';
 
 
-@import 'pages/home';
+@import 'pages/index';
 @import 'pages/examples';
 
 
@@ -31,3 +31,22 @@
 .absolute { position: absolute; }
 .relative { position: relative; }
 .fixed { position: fixed; }
+.bottom-0 { bottom: 0; }
+
+.flex-none { flex: none; }
+.flex-auto { flex: 1 1 auto; min-width: 0; min-height: 0; }
+.flex-row-center-vertical { display: flex; align-items: center; }
+.flex-row-center-horizontal { display: flex; justify-content: center; }
+.flex-column-center-vertical { display: flex; justify-content: center; }
+.flex-column-center-horizontal { display: flex; align-items: center; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-row-align-left { justify-content: flex-start; }
+.flex-row-align-right { justify-content: flex-end; }
+.flex-column-align-top { justify-content: flex-start; }
+.flex-column-align-bottom { justify-content: flex-end; }
+
+.w50 { width: 50%; }
+.w75 { width: 75%; }
+.color-titan-white { color: $titan-white; }
+.fill-titan-white { background-color: $titan-white; }
+.align-right { text-align: right; }

@@ -3,24 +3,32 @@ extends ./common/meta.pug
 block body
 
   section.hero
-    .container.z-10
-      .spacer80
-      h1.heading-text Algolia for Jekyll
-      h2.color-logan.text-lg.text-thin Add fast and relevant search to your Jekyll site
-      .spacer32
-      a.btn.btn-static-theme.elevation0(href="getting-started.html").
-        Read the documentation
-        <svg> <use xlink:href="#arrow-right"></svg>
+    .flex-container.hero-top
+      .flex-it-2.flex-container.flex-center
+        .flex-none.w75
+          .text-heading.color-titan-white.text-bold Algolia for Jekyll
+          .color-titan-white.text-bg.text-thin Add fast and relevant search to your Jekyll site
+          a.btn.color-purple-heart.fill-titan-white.text-bold.elevation0.m-t-large(href="getting-started.html").
+            Read the documentation
+            <i class="icon icon-arrow-right"></i>
+      .flex-it-2.flex-row-center-horizontal
+        .flex-none.w50
+          .spacer64
+          .relative
+            img.hero-markdown(src="./assets/images/markdown.svg")
+            .hero-animated
+              img.w100p(src="./assets/images/minima-search.gif")
+    .flex-container.hero-bottom
+      .flex-it-2.flex-dir-col.p-xlarge
+        .flex-none.align-right.text-xxl Demo
+        .flex-container.flex-dir-row.flex-row-align-right
+          a.flex-none.m-r-large.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="") 
+            i.icon.icon-github.m-r-small
+            | GitHub
+          a.flex-none.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="") 
+            i.icon.icon-play.m-r-small
+            | Live Demo
 
-      .spacer80.hidden-sm
-    .row.z-10.m-l-none.m-r-none
-      .spacer40
-      .spacer40.hidden-md
-      figure
-        img(src="assets/images/placeholder.png")
-      .spacer40.hidden-sm
-    .spacer120
-    .spacer40.hidden-sm
 
   +feature({
     title: "Automatic indexing", 

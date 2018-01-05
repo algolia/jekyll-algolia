@@ -20,7 +20,7 @@ indexed.
 
 By default, all HTML and markdown source files will be indexed.
 
-If you are using another markup language (such as [AsciiDoc][2] or [Textile][3],
+If you are using another markup language (such as [AsciiDoc][2] or [Textile][3]),
 you might want to update the value like this:
 
 ```yml
@@ -62,6 +62,27 @@ algolia:
 _Note that some files (pagination pages, static assets, etc) will **always** be
 excluded and you don't have to specify them._
 
+## `indexing_batch_size`
+
+The Algolia API allows you to send batches of changes to add or update several
+records at once, instead of doing one HTTP call per record. The plugin will
+batch updates by groups of 1000 records by default.
+
+If you are on an unstable internet connection, you might want to decrease the
+value. You will send more batches, but each will be smaller in size.
+
+```yml
+algolia:
+  # Send fewer records per batch
+  indexing_batch_size: 500
+```
+
+## `indexing_mode`
+
+This option will let you choose the strategy used to sync your data with your
+Algolia index. The default value should work for most cases, but feel free to
+[read the pros and cons][4] of each and pick the one best suited for your needs.
+
 ## `nodes_to_index`
 
 This options defines how each page is split into chunks. It expects
@@ -79,12 +100,6 @@ algolia:
   # Also index quotes, list items and custom paragraphs
   nodes_to_index: 'p,blockquote,li,div.paragraph'
 ```
-
-## `indexing_mode`
-
-This option will let you choose the strategy used to sync your data with your
-Algolia index. The default value should work for most cases, but feel free to
-[read the pros and cons][4] of each and pick the one best suited for your needs.
 
 ## `settings`
 
@@ -105,20 +120,6 @@ algolia:
     highlightPostTag: '</em>'
 ```
 
-## `indexing_batch_size`
-
-The Algolia API allows you to send batches of changes to add or update several
-records at once, instead of doing one HTTP call per record. The plugin will
-batch updates by groups of 1000 records by default.
-
-If you are on an unstable internet connection, you might want to decrease the
-value. You will send more batches, but each will be smaller in size.
-
-```yml
-algolia:
-  # Send fewer records per batch
-  indexing_batch_size: 500
-```
 
 [1]: ./how-it-works.html
 [2]: http://www.methods.co.nz/asciidoc/

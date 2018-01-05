@@ -31,7 +31,7 @@ Here is an example of what a record looks like:
   "slug": "try-new-experimental-version-hn-search",
 
   "html": "<p>We've learned a lot from your comments […]</p>",
-  "text": "We've learned a lot from your comments […]",
+  "content": "We've learned a lot from your comments […]",
   "tag_name": "p",
   "hierarchy": {
     "lvl0": null,

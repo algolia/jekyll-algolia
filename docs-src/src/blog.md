@@ -239,7 +239,7 @@ it to the user. It makes the result look irrelevant, while it is actually
 relevant (but we're not explaining why).
 
 One way to work around this issue is to manually tell the API in which field it
-should search, by using the `[restrictSearchableAttributes][12]` option.
+should search, by using the [restrictSearchableAttributes][12] option.
 
 ### Final code
 

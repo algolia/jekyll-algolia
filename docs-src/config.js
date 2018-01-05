@@ -43,6 +43,7 @@ const sidebarMenu = [
     items: [
       { title: 'Deploying on Netlify', url: 'netlify.html' },
       { title: 'Deploying on Github Pages', url: 'github-pages.html' },
+      { title: 'Migration guide', url: 'migration-guide.html' },
     ],
   },
   {

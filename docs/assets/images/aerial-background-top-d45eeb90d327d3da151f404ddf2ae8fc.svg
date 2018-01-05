@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="196" viewBox="0 0 1440 196">
+    <defs>
+        <filter id="a" width="169.9%" height="338.6%" x="-34.9%" y="-118.6%" filterUnits="objectBoundingBox">
+            <feOffset dy="4" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="214.5"/>
+            <feColorMatrix in="shadowBlurOuter1" result="shadowMatrixOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <linearGradient id="b" x1="0%" x2="83.637%" y1="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+        <linearGradient id="c" x1="115.053%" x2="0%" y1="50%" y2="100%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" filter="url(#a)" opacity=".3" transform="rotate(174 894.83 70.479)">
+        <path fill="url(#b)" d="M0 54.182h523.917c14.934 0 27.04 12.105 27.04 27.045 0 14.937-12.117 27.046-27.04 27.046H0V54.182zm0 432.727h221.407c14.929 0 27.03 12.105 27.03 27.046 0 14.936-12.108 27.045-27.03 27.045H0v-54.09z" opacity=".4"/>
+        <path fill="url(#b)" d="M0 .09h354.904c14.938 0 27.048 12.106 27.048 27.046 0 14.937-12.115 27.046-27.048 27.046H0V.09z" opacity=".2"/>
+        <path fill="url(#b)" d="M0 270.545h1553.146c14.942 0 27.054 12.106 27.054 27.046 0 14.937-12.092 27.045-27.054 27.045H0v-54.09zm0-54.09h1820.179c14.939 0 27.05 12.105 27.05 27.045 0 14.937-12.1 27.045-27.05 27.045H0v-54.09z" opacity=".4"/>
+        <path fill="url(#c)" d="M0 162.364h1774.214c14.933 0 27.038 12.105 27.038 27.045 0 14.937-12.1 27.046-27.038 27.046H0v-54.091z" opacity=".4"/>
+        <path fill="url(#b)" d="M0 108.273h1576.82c14.934 0 27.04 12.105 27.04 27.045 0 14.937-12.1 27.046-27.04 27.046H0v-54.091z" opacity=".2"/>
+        <path fill="url(#b)" d="M0 108.273h907.574c14.926 0 27.025 12.105 27.025 27.045 0 14.937-12.115 27.046-27.025 27.046H0v-54.091zm0 54.09h1357.125c14.928 0 27.029 12.106 27.029 27.046 0 14.937-12.098 27.046-27.029 27.046H0v-54.091zm0 216.364h1553.146c14.942 0 27.054 12.106 27.054 27.046 0 14.937-12.092 27.045-27.054 27.045H0v-54.09z" opacity=".4"/>
+    </g>
+</svg>

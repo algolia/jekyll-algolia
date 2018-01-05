@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="120" viewBox="0 0 120 120">
+    <defs>
+        <rect id="b" width="56" height="56" x="12" y="12" rx="16"/>
+        <filter id="a" width="260.7%" height="260.7%" x="-69.6%" y="-69.6%" filterUnits="objectBoundingBox">
+            <feOffset dx="6" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="14"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0.080441808 0 0 0 0 0.232361178 0 0 0 0 0.407498937 0 0 0 0.1 0"/>
+        </filter>
+        <circle id="d" cx="40" cy="41" r="5"/>
+        <filter id="c" width="700%" height="700%" x="-300%" y="-290%" filterUnits="objectBoundingBox">
+            <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="9"/>
+            <feColorMatrix in="shadowBlurOuter1" result="shadowMatrixOuter1" values="0 0 0 0 0.00392156863 0 0 0 0 0.678431373 0 0 0 0 1 0 0 0 1 0"/>
+            <feOffset dy="1" in="SourceAlpha" result="shadowOffsetOuter2"/>
+            <feGaussianBlur in="shadowOffsetOuter2" result="shadowBlurOuter2" stdDeviation="1.5"/>
+            <feColorMatrix in="shadowBlurOuter2" result="shadowMatrixOuter2" values="0 0 0 0 0.0507970813 0 0 0 0 0.0831818478 0 0 0 0 0.226217049 0 0 0 0.2 0"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="shadowMatrixOuter2"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd" transform="translate(20 11)">
+        <g transform="rotate(45 40 40)">
+            <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+            <use fill="#FFF" xlink:href="#b"/>
+        </g>
+        <use fill="#000" filter="url(#c)" xlink:href="#d"/>
+        <use fill="#01ADFF" xlink:href="#d"/>
+        <circle cx="40" cy="41" r="9" stroke="#04ADFF" stroke-width="2" opacity=".1"/>
+    </g>
+</svg>

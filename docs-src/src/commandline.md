@@ -12,8 +12,7 @@ they do. Includes ENV variables as well.
 
 ## Arguments
 
-Here is the list of command line options you can pass to the `jekyll algolia
-push` command:
+Here is the list of command line options you can pass to the `jekyll algolia` command:
 
 | Flag                     | Description                                                           |
 | ----                     | -----                                                                 |
@@ -51,11 +50,5 @@ defined, the plugin will fallback to the value set in the `_algolia_api_key`
 file.
 
 **Note that this method trades off security for convenience, so be very careful
-when using it. Do not commit this file in your versioning system.**
-
-*This API key has write
-access to your index, so you have to keep it secret. For example, you should
-add `_algolia_api_key` to your `.gitignore` file. It contains your private API
-key*
-
-
+when using it. Do not commit this file in your versioning system (add it to your
+`.gitignore` for example).**

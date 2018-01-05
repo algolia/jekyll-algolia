@@ -37,7 +37,8 @@ will make its management easier.
 
 This file will be read by Netlify on each push to your repo. Because you have
 a `Gemfile` in your project, Netlify will automatically detect that it's a Ruby
-project and will setup Bundler for you.
+project and will setup Bundler for you, making the use of `bundle exec`
+optional.
 
 It will then run the defined `command`, building the website and then pushing
 records to Algolia. Once done, the directory specified in `publish` will be

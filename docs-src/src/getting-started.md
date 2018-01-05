@@ -75,8 +75,9 @@ want to keep this key secret and not commit it to your versioning system.
 
 ![jekyll algolia command example][6]
 
-_Note that the method can be simplified to `jekyll algolia` by using an
-[alternative way][7] of loading the API key and using [rubygems-bundler][8]._
+_Note that in the animation I simplified the method call to `jekyll algolia` by using an
+[alternative way][7] of loading the API key and using [rubygems-bundler][8] to
+remove the need to add `bundle exec`._
 
 ## Front-end
 

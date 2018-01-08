@@ -1,5 +1,3 @@
-.hero {
-}
 .hero-top {
   height: 544px;
   background-image: 
@@ -18,4 +16,37 @@
   width: 560px;
   left: -110px;
   top: 150px;
+}
+
+.home-code {
+  color: $logan;
+  background-color: white;
+  border-radius: 0;
+  border: 0;
+  line-height: 2;
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(255,255,255,.8) 100%), 
+  }
+}
+
+.home-funnel {
+  background:
+    url(../assets/images/funnel.svg) 505px 0% no-repeat,
+    url(../assets/images/touch-point.svg) 500px 285px no-repeat,
+    url(../assets/images/touch-point.svg) 500px 435px no-repeat,
+    url(../assets/images/servers.svg) 425px 100% no-repeat;
+  height: 825px;
+}
+.funnel-extensible {
+  margin-top: 245px;
+}
+.funnel-incremental {
+  margin-top: 420px;
 }

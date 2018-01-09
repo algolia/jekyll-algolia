@@ -56,12 +56,8 @@
   },
   "sideMenu": [
     {
-      "name": "Getting started",
-      "url": "getting-started.html"
-    },
-    {
       "name": "Documentation",
-      "url": "options.html"
+      "url": "getting-started.html"
     },
     {
       "name": "Tutorial",
@@ -75,12 +71,8 @@
   ],
   "mobileMenu": [
     {
-      "name": "Getting started",
+      "name": "Documentation",
       "url": "getting-started.html"
-    },
-    {
-      "name": "Docs",
-      "url": "documentation.html"
     },
     {
       "name": "Tutorial",

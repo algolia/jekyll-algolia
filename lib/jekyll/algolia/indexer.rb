@@ -126,7 +126,7 @@ module Jekyll
         Logger.verbose('I:Updating settings')
         return if Configurator.dry_run?
         begin
-          index.set_settings(settings)
+          index.set_settings!(settings)
         rescue StandardError => error
           ErrorHandler.stop(error, settings: settings)
         end
@@ -190,7 +190,23 @@ module Jekyll
         Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
         return if Configurator.dry_run?
         begin
-          ::Algolia.move_index(old_name, new_name)
+          ::Algolia.move_index!(old_name, new_name)
+        rescue StandardError => error
+          ErrorHandler.stop(error, new_name: new_name)
+        end
+      end
+
+      # Public: Copy an index
+      #
+      # old_name - Current name of the index
+      # new_name - New name of the index
+      #
+      # Does nothing in dry run mode
+      def self.copy_index(old_name, new_name)
+        Logger.verbose("I:Copying `#{old_name}` to `#{new_name}`")
+        return if Configurator.dry_run?
+        begin
+          ::Algolia.copy_index!(old_name, new_name)
         rescue StandardError => error
           ErrorHandler.stop(error, new_name: new_name)
         end
@@ -200,29 +216,48 @@ module Jekyll
       #
       # records - Array of records to push
       #
-      # The `atomic` indexing mode will push all records to a brand new index,
-      # configure it, and then overwrite the previous index with this new one.
-      # For the end-user, it will make all the changes in one go, making sure
-      # people are always searching into a fully configured index. It will
-      # consume more operations, but will never leave the index in a transient
-      # state.
+      # The `atomic` will first create an hidden copy of the current index.
+      # It will then update this copy following the same logic as the `diff`
+      # mode, deleting old records and adding new ones. Once finished, it will
+      # overwrite the current index with this hidden one.
       def self.run_atomic_mode(records)
         index_name = Configurator.index_name
         index = index(index_name)
         index_tmp_name = "#{Configurator.index_name}_tmp"
         index_tmp = index(index_tmp_name)
 
+        # Getting list of objectID in remote and locally
+        remote_ids = remote_object_ids(index)
+        local_ids = local_object_ids(records)
+
+        old_records_ids = remote_ids - local_ids
+        new_records_ids = local_ids - remote_ids
+        if old_records_ids.empty? && new_records_ids.empty?
+          Logger.log('I:Nothing to index. Your content is already up to date.')
+          return
+        end
+
+        # Copying original index to temporary one
         Logger.verbose("I:Using `#{index_tmp_name}` as temporary index")
+        copy_index(index_name, index_tmp_name)
 
-        # Copying original settings to the new index
-        remote_settings = remote_settings(index)
-        new_settings = remote_settings.merge(Configurator.settings)
-        update_settings(index_tmp, new_settings)
+        # Update settings
+        Logger.verbose("I:Updating `#{index_tmp_name}` settings")
+        update_settings(index_tmp, Configurator.settings)
 
-        # Pushing everthing to a brand new index
-        update_records(index_tmp, records)
+        Logger.log("I:Updating records in index #{index_tmp_name}...")
+
+        # Delete remote records that are no longer available locally
+        delete_records_by_id(index_tmp, old_records_ids)
+
+        # Add only records that are not yet already in the remote
+        new_records = records.select do |record|
+          new_records_ids.include?(record[:objectID])
+        end
+        update_records(index_tmp, new_records)
 
         # Renaming the new index in place of the old
+        Logger.verbose("I:Overwriting `#{index_name}` with `#{index_tmp_name}`")
         rename_index(index_tmp_name, index_name)
 
         Logger.log('I:✔ Indexing complete')
@@ -249,12 +284,7 @@ module Jekyll
 
         indexing_mode = Configurator.indexing_mode
         Logger.verbose("I:Indexing mode: #{indexing_mode}")
-        case indexing_mode
-        when 'diff'
-          run_diff_mode(records)
-        when 'atomic'
-          run_atomic_mode(records)
-        end
+        send("run_#{indexing_mode}_mode".to_sym, records)
       end
     end
   end

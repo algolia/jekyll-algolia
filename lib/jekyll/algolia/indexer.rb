@@ -187,13 +187,7 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.rename_index(old_name, new_name)
-        Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
-        return if Configurator.dry_run?
-        begin
-          ::Algolia.move_index!(old_name, new_name)
-        rescue StandardError => error
-          ErrorHandler.stop(error, new_name: new_name)
-        end
+        rename_or_copy_index(old_name, new_name, :move)
       end
 
       # Public: Copy an index
@@ -203,10 +197,27 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.copy_index(old_name, new_name)
-        Logger.verbose("I:Copying `#{old_name}` to `#{new_name}`")
+        rename_or_copy_index(old_name, new_name, :copy)
+      end
+
+      # Public: Rename or copy an index
+      #
+      # old_name - Current name of the index
+      # new_name - New name of the index
+      # type - :move or :copy
+      #
+      # Does nothing in dry run mode
+      def self.rename_or_copy_index(old_name, new_name, type)
+        case type
+        when :copy
+          Logger.verbose("I:Copying `#{old_name}` to `#{new_name}`")
+        when :move
+          Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
+        end
+
         return if Configurator.dry_run?
         begin
-          ::Algolia.copy_index!(old_name, new_name)
+          ::Algolia.send("#{type}_index!", old_name, new_name)
         rescue StandardError => error
           ErrorHandler.stop(error, new_name: new_name)
         end

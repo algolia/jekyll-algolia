@@ -74,6 +74,27 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq 'custom_index' }
   end
 
+  describe 'index?' do
+    subject { current.index?('foo') }
+
+    let(:index) { double('Algolia::Index', get_settings: nil) }
+    before do
+      expect(current)
+        .to receive(:index)
+        .and_return(index)
+    end
+
+    it { should eq true }
+
+    context 'when no settings' do
+      before do
+        expect(index).to receive(:get_settings).and_raise
+      end
+
+      it { should eq false }
+    end
+  end
+
   describe 'update_records' do
     let(:index) do
       double('Algolia::Index', add_objects!: nil, name: 'my_index')
@@ -276,11 +297,25 @@ describe(Jekyll::Algolia::Indexer) do
   end
 
   describe '.copy_index' do
-    before { allow(::Algolia).to receive(:copy_index!) }
-    before { current.copy_index('foo', 'bar') }
+    let(:index_exists) { true }
+
+    before do
+      allow(current).to receive(:index?).and_return(index_exists)
+      allow(::Algolia).to receive(:copy_index!)
+
+      current.copy_index('foo', 'bar')
+    end
 
     it do
       expect(::Algolia).to have_received(:copy_index!).with('foo', 'bar')
+    end
+
+    context 'when no source index' do
+      let(:index_exists) { false }
+      it do
+        expect(::Algolia)
+          .to_not have_received(:copy_index!)
+      end
     end
 
     context 'when running a dry run' do

@@ -45,6 +45,19 @@ module Jekyll
         ::Algolia::Index.new(index_name)
       end
 
+      # Public: Check if an index exists
+      #
+      # index_name - Name of the index
+      #
+      # Note: there is no API endpoint to do that, so we try to get the settings
+      # instead, which will fail if the index does not exist
+      def self.index?(index_name)
+        index(index_name).get_settings
+        return true
+      rescue StandardError
+        return false
+      end
+
       # Public: Update records of the specified index
       #
       # index - Algolia Index to update
@@ -187,7 +200,14 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.rename_index(old_name, new_name)
-        rename_or_copy_index(old_name, new_name, :move)
+        Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
+        return if Configurator.dry_run?
+
+        begin
+          ::Algolia.move_index!(old_name, new_name)
+        rescue StandardError => error
+          ErrorHandler.stop(error, new_name: new_name)
+        end
       end
 
       # Public: Copy an index
@@ -197,27 +217,14 @@ module Jekyll
       #
       # Does nothing in dry run mode
       def self.copy_index(old_name, new_name)
-        rename_or_copy_index(old_name, new_name, :copy)
-      end
-
-      # Public: Rename or copy an index
-      #
-      # old_name - Current name of the index
-      # new_name - New name of the index
-      # type - :move or :copy
-      #
-      # Does nothing in dry run mode
-      def self.rename_or_copy_index(old_name, new_name, type)
-        case type
-        when :copy
-          Logger.verbose("I:Copying `#{old_name}` to `#{new_name}`")
-        when :move
-          Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
-        end
-
+        Logger.verbose("I:Copying `#{old_name}` to `#{new_name}`")
         return if Configurator.dry_run?
+
+        # Stop if no source index
+        return unless index?(old_name)
+
         begin
-          ::Algolia.send("#{type}_index!", old_name, new_name)
+          ::Algolia.copy_index!(old_name, new_name)
         rescue StandardError => error
           ErrorHandler.stop(error, new_name: new_name)
         end

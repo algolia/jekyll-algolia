@@ -7,8 +7,8 @@ block body
       .flex-it-2.flex-container.flex-center
         .flex-none.w75
           .text-heading.color-titan-white.text-bold Algolia for Jekyll
-          .color-titan-white.text-bg.text-thin Add fast and relevant search to your Jekyll site
-          a.btn.color-purple-heart.fill-titan-white.text-bold.elevation0.m-t-large(href="getting-started.html").
+          .color-titan-white.text-regular.text-thin Add fast and relevant search to your Jekyll site
+          a.btn.color-purple-heart.fill-titan-white.text-bold.elevation0.m-t-large.p-large.h-auto(href="getting-started.html").
             Read the documentation
             <i class="icon icon-arrow-right"></i>
       .flex-it-2.flex-row-center-horizontal
@@ -20,7 +20,7 @@ block body
               img.w100p.radius6.elevation2.pos-rel.z-20(src="https://res.cloudinary.com/hilnmyskv/image/upload/q_10/v1516723333/minima-search_ay0ezw.webp")
     .flex-container.hero-bottom
       .flex-it-2.flex-dir-col.p-xlarge.pos-rel.z-10
-        .flex-none.align-right.text-xxl Demo
+        .flex-none.align-right.text-lg Demo
         .flex-container.flex-dir-row.flex-row-align-right
           a.flex-none.m-r-large.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="")
             i.icon.icon-github.m-r-small
@@ -33,7 +33,7 @@ block body
     .spacer120
     .container.z-10.pos-rel
       .row.m600.m-l-r-auto.text-center
-        h3.text-thin.text-xxl Automatic Indexing
+        h3.text-thin.text-lg Automatic Indexing
         p.color-logan.text-regular.text-normal
           | Plug in your Algolia API keys and run #[code jekyll algolia]. The plugin will
           | traverse all your posts, pages and custom collections and push them to
@@ -55,34 +55,36 @@ block body
     .container.z-10
       .col-md-12.home-funnel
         .col-md-5
-          .fill-white.elevation2.radius6.p-large.funnel-extensible
-            h2.text-bg.text-demi Extensible
-            p.text-regular.text-normal
-              | Customize which files are indexed and many other behaviors using
-              | a variety of configuration options. You can even add your own
-              | custom Ruby hooks into the plugin lifecycle to get the exact
-              | output you want.
+          .card.pos-rel.funnel-extensible
+            .pos-rel.z-10.fill-white.elevation2.radius6.p-large
+              h2.text-lg.text-demi Extensible
+              p.text-regular.text-normal
+                | Customize which files are indexed and many other behaviors using
+                | a variety of configuration options. You can even add your own
+                | custom Ruby hooks into the plugin lifecycle to get the exact
+                | output you want.
 
         .col-md-2.pos-rel.h700
           p#text-lines.w100p.m-l-n-small.faded Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure fuga vero ea ipsa aspernatur dolore tempora est facere quam temporibus similique, expedita.
 
 
         .col-md-5
-          .fill-white.elevation2.radius6.p-large.funnel-incremental
-            h2.text-bg.text-demi Incremental
-            p.text-regular.text-normal
-              | The plugin is smart enough to only index content that changed
-              | between two runs. This helps make the most out of your Algolia
-              | quota.
-
+          .card.pos-rel.funnel-incremental
+            .pos-rel.z-10.fill-white.elevation2.radius6.p-large
+              h2.text-lg.text-demi Incremental
+              p.text-regular.text-normal
+                | The plugin is smart enough to only index content that changed
+                | between two runs. This helps make the most out of your Algolia
+                | quota.
+  section.section-conclusion.fill-white.pos-rel
     .spacer120
-    .row.m600.m-l-r-auto.text-center
-      h3.text-thin.text-xxl Index on deploy
-      p.color-logan.text-regular.text-normal
-        | If your website is hosted on Netlify or GitHub Pages, the plugin can
-        | automatically re-index your content on each deploy. This keeps your search
-        | and your site in sync!
+    .container.pos-rel.z-10
+      .row.m600.m-l-r-auto.text-center
+        h3.text-thin.text-lg Index on deploy
+        p.color-logan.text-regular.text-normal
+          | If your website is hosted on Netlify or GitHub Pages, the plugin can
+          | automatically re-index your content on each deploy. This keeps your search
+          | and your site in sync!
 
-    .spacer120
     .spacer120
     .spacer120

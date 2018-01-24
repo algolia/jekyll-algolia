@@ -2,8 +2,8 @@ extends ./common/meta.pug
 
 block body
 
-  section.hero
-    .flex-container.hero-top
+  section.hero.pos-rel
+    .flex-container.hero-top.container
       .flex-it-2.flex-container.flex-center
         .flex-none.w75
           .text-heading.color-titan-white.text-bold Algolia for Jekyll
@@ -17,68 +17,72 @@ block body
           .relative
             img.hero-markdown(src="./assets/images/markdown.svg")
             .hero-animated
-              img.w100p.radius6.elevation2(src="./assets/images/minima-search.gif")
+              img.w100p.radius6.elevation2.pos-rel.z-20(src="https://res.cloudinary.com/hilnmyskv/image/upload/q_10/v1516723333/minima-search_ay0ezw.webp")
     .flex-container.hero-bottom
-      .flex-it-2.flex-dir-col.p-xlarge
+      .flex-it-2.flex-dir-col.p-xlarge.pos-rel.z-10
         .flex-none.align-right.text-xxl Demo
         .flex-container.flex-dir-row.flex-row-align-right
-          a.flex-none.m-r-large.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="") 
+          a.flex-none.m-r-large.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="")
             i.icon.icon-github.m-r-small
             | GitHub
-          a.flex-none.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="") 
+          a.flex-none.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="")
             i.icon.icon-play.m-r-small
             | Live Demo
-  
 
-  .spacer120
-  .row.m600.m-l-r-auto.text-center
-    h3.text-thin.text-xxl Automatic Indexing
-    p.color-logan.text-regular.text-normal 
-      | Plug in your Algolia API keys and run #[code jekyll algolia]. The plugin will
-      | traverse all your posts, pages and custom collections and push them to
-      | your index.
+  section.section-intro.pos-rel
+    .spacer120
+    .container.z-10.pos-rel
+      .row.m600.m-l-r-auto.text-center
+        h3.text-thin.text-xxl Automatic Indexing
+        p.color-logan.text-regular.text-normal
+          | Plug in your Algolia API keys and run #[code jekyll algolia]. The plugin will
+          | traverse all your posts, pages and custom collections and push them to
+          | your index.
 
-  .spacer16
-  .row.m600.m-l-r-auto
-    pre.home-code
-      .color-bunting $ bundle exec jekyll algolia
-      |~ Configuration file: /home/user/jekyll-website/_config.yml
-      |~ Processing site...
-      |~ Extracting records...
-      |~ Updating records in index jekyll-website... 
-      |~ Pushing 822 records
-      |✔ Indexing complete
-  
+      .spacer16
+      .row.m600.m-l-r-auto
+        pre.home-code
+          .color-bunting.
+            $ <span class="color-royal-blue">bundle exec</span> <span class="color-radical-red text-bold">jekyll algolia</span>
+            ~ Configuration file: <span class="color-royal-blue">/home/user/jekyll-website/_config.yml</span>
+            ~ Processing site...
+            ~ Extracting records...
+            ~ Updating records in index <span class="color-royal-blue">jekyll-website</span>...
+            ~ Pushing <span class="color-radical-red text-bold">822</span> records
+            <span class="color-royal-blue text-bold">✔</span> Indexing complete
 
-  .container
-    .col-md-12.home-funnel
-      .col-md-5
-        .fill-titan-white.elevation2.radius6.p-large.funnel-extensible
-          h2.text-bg.text-demi Extensible
-          p.text-regular.text-normal
-            | Customize which files are indexed and many other behaviors using
-            | a variety of configuration options. You can even add your own
-            | custom Ruby hooks into the plugin lifecycle to get the exact
-            | output you want.  
+  section.section-explain.fill-titan.pos-rel
+    .container.z-10
+      .col-md-12.home-funnel
+        .col-md-5
+          .fill-white.elevation2.radius6.p-large.funnel-extensible
+            h2.text-bg.text-demi Extensible
+            p.text-regular.text-normal
+              | Customize which files are indexed and many other behaviors using
+              | a variety of configuration options. You can even add your own
+              | custom Ruby hooks into the plugin lifecycle to get the exact
+              | output you want.
 
-      .col-md-2
+        .col-md-2.pos-rel.h700
+          p#text-lines.w100p.m-l-n-small.faded Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure fuga vero ea ipsa aspernatur dolore tempora est facere quam temporibus similique, expedita.
 
-      .col-md-5
-        .fill-titan-white.elevation2.radius6.p-large.funnel-incremental
-          h2.text-bg.text-demi Incremental
-          p.text-regular.text-normal
-            | The plugin is smart enough to only index content that changed
-            | between two runs. This helps make the most out of your Algolia
-            | quota.
 
-  .spacer120
-  .row.m600.m-l-r-auto.text-center
-    h3.text-thin.text-xxl Index on deploy
-    p.color-logan.text-regular.text-normal 
-      | If your website is hosted on Netlify or GitHub Pages, the plugin can
-      | automatically re-index your content on each deploy. This keeps your search
-      | and your site in sync!
-  
-  .spacer120
-  .spacer120
-  .spacer120
+        .col-md-5
+          .fill-white.elevation2.radius6.p-large.funnel-incremental
+            h2.text-bg.text-demi Incremental
+            p.text-regular.text-normal
+              | The plugin is smart enough to only index content that changed
+              | between two runs. This helps make the most out of your Algolia
+              | quota.
+
+    .spacer120
+    .row.m600.m-l-r-auto.text-center
+      h3.text-thin.text-xxl Index on deploy
+      p.color-logan.text-regular.text-normal
+        | If your website is hosted on Netlify or GitHub Pages, the plugin can
+        | automatically re-index your content on each deploy. This keeps your search
+        | and your site in sync!
+
+    .spacer120
+    .spacer120
+    .spacer120

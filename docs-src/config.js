@@ -60,5 +60,5 @@ module.exports = {
   ...environmentConfig[process.env.NODE_ENV],
   publicPath: process.env.PUBLIC_PATH || '/',
   header,
-  sidebarMenu
+  sidebarMenu,
 };

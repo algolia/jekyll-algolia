@@ -54,7 +54,7 @@ module.exports = {
     onlyChanged,
     layouts({
       engine: 'pug',
-      directory: 'src/layouts'
+      directory: 'src/layouts',
     }),
   ],
   build: [
@@ -78,7 +78,7 @@ module.exports = {
     }),
     layouts({
       engine: 'pug',
-      directory: 'src/layouts'
+      directory: 'src/layouts',
     }),
   ],
 };

@@ -11,8 +11,8 @@ const chokidar = require('chokidar');
 let lastRunTime = false;
 let layoutChange = true;
 let cssChange = true;
-const layoutFiles = path.join(__dirname, '../layouts/**/*');
-const cssFiles = path.join(__dirname, '../src/stylesheets/**/*');
+const layoutFiles = path.join(__dirname, '../../src/layouts/**/*');
+const cssFiles = path.join(__dirname, '../../src/stylesheets/**/*');
 const CSSEntryPoints = ['stylesheets/index.css', 'stylesheets/header.css'];
 
 const hasChanged = file =>

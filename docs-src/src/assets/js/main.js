@@ -5,7 +5,7 @@ import {
 import activateClipboard from './activateClipboard.js';
 import alg from 'algolia-frontend-components/javascripts.js';
 import './editThisPage.js';
-import './freezeGifs.js';
+import { freezeAllGifs } from './freezeGifs.js';
 
 const docSearch = {
   apiKey: '5e2de32b362723ffdb03414c5c3d2ec8',
@@ -21,7 +21,7 @@ const container = document.querySelector('.documentation-container');
 const codeSamples = document.querySelectorAll('.code-sample');
 
 activateClipboard(codeSamples);
-fGifs();
+freezeAllGifs();
 
 if (document.querySelector('.sidebar')) {
   repositionSidebarOnScroll();

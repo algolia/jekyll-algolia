@@ -242,3 +242,8 @@
         transform: none;
         opacity: 1; } } } }
 
+@keyframes floating {
+    from { transform: translate(0,  0px); }
+    65%  { transform: translate(0, 15px); }
+    to   { transform: translate(0, -0px); }
+}

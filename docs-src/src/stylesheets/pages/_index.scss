@@ -134,17 +134,27 @@
     display: block;
     height: 1px;
     width: 140px;
-    background: #01adff;
+    background: rgba(#01adff, 0.2);
     position: absolute;
-    top: 40%;
+    top: 35%;
     right: -100px;
     z-index: 0;
+
   }
 
-  &.funnel-incremental:after {
-    right: inherit;
-    left: -100px;
+  &.funnel-incremental{
+    &:after {
+      right: inherit;
+      left: -100px;
+    }
+
+    animation-direction: reverse
   }
+  will-change: transform;
+  animation-name: floating;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 
 
@@ -159,5 +169,29 @@
     transform: skewY(-4deg);
     top: -90px;
     z-index: 2;
+  }
+}
+
+
+// Gifs layer
+.hero-animated {
+  &:after {
+    content:'';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(62,57,107, 0.4) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150"><g fill="none" fill-rule="evenodd"><circle cx="75" cy="75" r="70" stroke="%23FFF" stroke-width="6"/><path fill="%23FFF" d="M106 75l-47 25V50z"/></g></svg>');
+    background-size:  150px;
+    background-repeat: no-repeat;
+    background-position:  center center, center center;
+    z-index: 25;
+    border-radius: 6px;
+  }
+
+  &:hover:after {
+    display: none;
   }
 }

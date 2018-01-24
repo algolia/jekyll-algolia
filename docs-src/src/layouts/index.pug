@@ -8,7 +8,8 @@ block body
         .flex-none.w75
           .text-heading.color-titan-white.text-bold Algolia for Jekyll
           .color-titan-white.text-regular.text-thin Add fast and relevant search to your Jekyll site
-          a.btn.color-purple-heart.fill-titan-white.text-bold.elevation0.m-t-large.p-large.h-auto(href="getting-started.html").
+          .spacer32
+          a.btn.color-purple-heart.fill-titan-white.text-bold.elevation0.m-t-large.p-small.p-l-xlarge.p-r-xlarge.h-auto(href="getting-started.html").
             Read the documentation
             <i class="icon icon-arrow-right"></i>
       .flex-it-2.flex-row-center-horizontal
@@ -17,10 +18,11 @@ block body
           .relative
             img.hero-markdown(src="./assets/images/markdown.svg")
             .hero-animated
-              img.js-freeze.w100p.radius6.elevation2.pos-rel.z-20(src="/assets/images/minima-search.gif")
+              img.js-freeze.w100p.radius6.elevation2.pos-rel.z-20(src="http://res.cloudinary.com/hilnmyskv/image/upload/v1516723333/minima-search_ay0ezw.gif")
     .flex-container.hero-bottom
       .flex-it-2.flex-dir-col.p-xlarge.pos-rel.z-10
         .flex-none.align-right.text-lg Demo
+        .spacer16
         .flex-container.flex-dir-row.flex-row-align-right
           a.flex-none.m-r-large.color-bunting.p-r-large.p-l-large.p-t-small.p-b-small.radius6.fill-athens-gray(href="")
             i.icon.icon-github.m-r-small
@@ -34,6 +36,7 @@ block body
     .container.z-10.pos-rel
       .row.m600.m-l-r-auto.text-center
         h3.text-thin.text-lg Automatic Indexing
+        .spacer16
         p.color-logan.text-regular.text-normal
           | Plug in your Algolia API keys and run #[code jekyll algolia]. The plugin will
           | traverse all your posts, pages and custom collections and push them to
@@ -56,9 +59,10 @@ block body
       .col-md-12.home-funnel
         .col-md-5
           .card.pos-rel.funnel-extensible
-            .pos-rel.z-10.fill-white.elevation2.radius6.p-large
-              h2.text-lg.text-demi Extensible
-              p.text-regular.text-normal
+            .pos-rel.z-10.fill-white.elevation2.radius6.p-xlarge
+              h2.text-lg.text-thin.m-t-none Extensible
+              .spacer16
+              p.text-regular.text-thin.color-east-bay
                 | Customize which files are indexed and many other behaviors using
                 | a variety of configuration options. You can even add your own
                 | custom Ruby hooks into the plugin lifecycle to get the exact
@@ -70,9 +74,10 @@ block body
 
         .col-md-5
           .card.pos-rel.funnel-incremental
-            .pos-rel.z-10.fill-white.elevation2.radius6.p-large
-              h2.text-lg.text-demi Incremental
-              p.text-regular.text-normal
+            .pos-rel.z-10.fill-white.elevation2.radius6.p-xlarge
+              h2.text-lg.text-thin.m-t-none Incremental
+              .spacer16
+              p.text-regular.text-thin.color-east-bay
                 | The plugin is smart enough to only index content that changed
                 | between two runs. This helps make the most out of your Algolia
                 | quota.
@@ -81,6 +86,7 @@ block body
     .container.pos-rel.z-10
       .row.m600.m-l-r-auto.text-center
         h3.text-thin.text-lg Index on deploy
+        .spacer16
         p.color-logan.text-regular.text-normal
           | If your website is hosted on Netlify or GitHub Pages, the plugin can
           | automatically re-index your content on each deploy. This keeps your search

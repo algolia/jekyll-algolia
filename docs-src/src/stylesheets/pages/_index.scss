@@ -47,6 +47,13 @@
       font-size: 28px;
     }
   }
+
+  @media (max-width: $screen-lg) {
+
+    .text-heading {
+      font-size: 36px;
+    }
+  }
 }
 
 .hero-animated {
@@ -61,7 +68,23 @@
     right: 0;
     margin: auto;
   }
+
+  @media (max-width: $screen-lg) {
+    width: 420px;
+    left: 0;
+  }
+
+  @media (max-width: $screen-md) {
+    width: 360px;
+    left: 0;
+  }
 }
+
+// @media (max-width: $screen-md) {
+//   * {
+//     background: red !important
+//   }
+// }
 
 .hero-bottom {
   @media (max-width: $screen-sm) {

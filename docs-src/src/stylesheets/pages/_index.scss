@@ -1,3 +1,15 @@
+.container {
+  padding: 0;
+  margin: auto;
+}
+
+@media (max-width: $screen-sm) {
+  .row {
+    margin: 0;
+    padding: 0 1em;
+  }
+}
+
 .hero {
   &:after {
     content: '';
@@ -19,19 +31,22 @@
   background-repeat: no-repeat, no-repeat;
   background-position: top left, bottom left;
   background-size: 100%, 100%;
+
+  @media (max-width: $screen-sm) {
+    text-align: center;
+  }
 }
 
 .hero-top {
   height: 544px;
-  // background-image:
-  //   url(../assets/images/aerial-background-top.svg),
-  //   url(../assets/images/aerial-background-bottom.svg),
-  //   linear-gradient(to bottom, rgba(62, 56, 107, 0), #0e0740),
-  //   linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)),
-  //   linear-gradient(#413b7e, #413b7e);
-  // background-repeat: no-repeat, no-repeat;
-  // background-position: top left, bottom left;
-  // background-size: 100%, 100%;
+
+  @media (max-width: $screen-sm) {
+    flex-flow: row wrap;
+
+    .text-heading {
+      font-size: 28px;
+    }
+  }
 }
 
 .hero-animated {
@@ -39,6 +54,27 @@
   width: 560px;
   left: -110px;
   top: 150px;
+
+  @media (max-width: $screen-sm) {
+    width: 316px;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+}
+
+.hero-bottom {
+  @media (max-width: $screen-sm) {
+    text-align: center;
+
+    .align-right {
+      text-align: center;
+    }
+
+    .flex-row-align-right {
+      justify-content: center;
+    }
+  }
 }
 
 .home-code {
@@ -61,6 +97,19 @@
 // Section explain
 .section-intro {
 
+  @media (max-width: $screen-sm) {
+    .row.m600 {
+      max-width: 100%;
+      text-align: left;
+    }
+  }
+}
+
+.home-code {
+  @media (max-width: $screen-sm) {
+    font-size: 12px;
+    max-width: 100%;
+  }
 }
 
 // Section explain
@@ -81,6 +130,43 @@
 .home-funnel {
   height: 825px;
 
+  @media (max-width: $screen-sm) {
+    height: 1400px;
+
+    .col-md-5:not(:last-child) {
+      &:before {
+        content: '';
+        display: block;
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        z-index: 20;
+        top: -350px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        background: url(../assets/images/illu-funnel.svg) no-repeat center center / contain;
+      }
+    }
+
+    .col-md-5:last-child {
+      margin-top: 110px;
+      &:before {
+        content: '';
+        display: block;
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        z-index: 20;
+        bottom: -350px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        background: url(../assets/images/servers.svg) no-repeat center center / contain;
+      }
+    }
+  }
+
   &:after {
     content: '';
     display: block;
@@ -96,13 +182,25 @@
       url(../assets/images/servers.svg) 425px 100% no-repeat;
     pointer-events: none;
     z-index: 10;
+
+    @media (max-width: $screen-sm) {
+      background: none
+    }
   }
 }
 .funnel-extensible {
-  margin-top: 245px;
+  margin-top: 240px;
+  @media (max-width: $screen-sm) {
+    margin-top: 200px;
+  }
 }
 .funnel-incremental {
   margin-top: 420px;
+
+  @media (max-width: $screen-sm) {
+    margin-top: 80px;
+    margin-bottom: 120px;
+  }
 }
 
 #text-lines {
@@ -125,6 +223,14 @@
     top: 0;
     left: 0;
   }
+
+  @media (max-width: $screen-sm) {
+    width: 1000px;
+
+    &:after {
+      background: linear-gradient(to right, #f8faff, transparent 10%, #f8faff)
+    }
+  }
 }
 
 
@@ -139,7 +245,25 @@
     top: 35%;
     right: -100px;
     z-index: 0;
+  }
 
+  @media (max-width: $screen-sm) {
+    &:after {
+      display: none;
+    }
+    &:before {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 100px;
+      position: absolute;
+      z-index: 20;
+      top: -50px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      background: url(../assets/images/touch-point.svg)no-repeat center center / contain;
+    }
   }
 
   &.funnel-incremental{
@@ -150,11 +274,16 @@
 
     animation-direction: reverse
   }
+
   will-change: transform;
   animation-name: floating;
   animation-duration: 10s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
+
+  @media (max-width: $screen-sm) {
+    animation: none
+  }
 }
 
 
@@ -169,6 +298,13 @@
     transform: skewY(-4deg);
     top: -90px;
     z-index: 2;
+  }
+
+    @media (max-width: $screen-sm) {
+    .row.m600 {
+      max-width: 100%;
+      text-align: left;
+    }
   }
 }
 

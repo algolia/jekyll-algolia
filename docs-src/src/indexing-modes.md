@@ -23,7 +23,7 @@ needs.
 ## `diff` (default)
 
 Using the default `diff` mode, the plugin will try to be smart when pushing
-content to your index: it will delete old the records and add new ones. All
+content to your index: it will delete the old records and add new ones. All
 records that didn't change will stay untouched.
 
 To do so, it first grabs the list of all records in your index, then compares

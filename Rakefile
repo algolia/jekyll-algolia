@@ -152,6 +152,13 @@ namespace 'docs' do
 
     sh 'git checkout develop --quiet'
   end
+  desc 'Serve the documentation locally'
+  task :serve do
+    Dir.chdir('./docs-src') do
+      sh 'yarn'
+      sh 'yarn run serve'
+    end
+  end
 end
 
 task default: :test

@@ -1,10 +1,9 @@
 Hi collaborator!
 
-If you have a fix or a new feature, please start by checking in the
-[issues](https://github.com/algolia/jekyll-algolia/issues) if it is
-already referenced. If not, feel free to open one.
+If you have a fix or a new feature, please start by checking in the [issues][1]
+if it is already referenced. If not, feel free to open one.
 
-We use [pull requests](https://github.com/algolia/jekyll-algolia/pulls)
+We use [pull requests][2]
 for collaboration. The workflow is as follow:
 
 - Create a local branch, starting from `develop`
@@ -20,23 +19,18 @@ Start by running `bundle install` to get all the dependencies up to date.
 
 ## Testing
 
-Run `rake test` to launch all tests. You can run `rake test_details` to get an
-output with more details about the tests.
+Run `rake test` to launch the test suite. Run `./scripts/test_all_ruby_versions`
+to run the test on all the supported ruby versions (requires `rvm`).
 
 ## TDD
 
-// TODO
-
-## Testing different ruby versions
-
-You can test the gem across all the supported Ruby versions by running
-`./scripts/test_all_ruby_versions`. Note that you will need to have RVM
-installed for this to work.
+Run `rake watch` to start a watcher on the code and test files. Whenever you
+update the code, the relevant tests will be run. Incredibly useful for TDD.
 
 ## Testing local changes on an existing Jekyll website
 
 If you want to test the plugin on an existing Jekyll website while developping,
-I suggest updating the website `Gemfile` to point to the correct local directory
+we suggest updating the website `Gemfile` to point to the correct local directory
 
 ```ruby
 group :jekyll_plugins do
@@ -44,10 +38,19 @@ group :jekyll_plugins do
 end
 ```
 
+## Linting
+
+Run `rake lint` to check the style of all ruby files. Run `rake
+lint:auto_correct` to try to automatically correct the potential violations.
+It's always a good practice to double check the modification after an
+auto-correct.
+
 # Git Hooks
 
-If you plan on submitting a PR, I suggest you install the git hooks located in
-`./scripts/git_hook`.
+If you plan on submitting a PR, we suggest you install the git hooks located in
+`./scripts/git_hook`. Those hooks will run the linter on each commit, and the
+tests before each push. This greatly help reduce the chances of breaking the
+build on Travis.
 
 The easiest way is to create a symlink from your `.git/hooks` folder:
 
@@ -67,28 +70,36 @@ the git tags, create the gem and push it to Rubygems.
 
 ## Requirements
 
-To run this project, you will need:
+The documentation website uses Metalsmith (and not Jekyll), so you'll need:
 
-- Node.js >= v9.2.0, use nvm - [install instructions](https://github.com/creationix/nvm#install-script)
-- Yarn >= v1.3.2 - [install instructions](https://yarnpkg.com/en/docs/install#alternatives-tab)
+- Node.js >= v9.2.0, use nvm - [install instructions][3]
+- Yarn >= v1.3.2 - [install instructions][4]
 
 ## Development
 
-```sh
-yarn
-yarn start
-```
+All the documentation source files live in the `./docs-src` folder.
 
-Go to <http://localhost:3000>.
+To serve a local version of the documentation (including livereload), run `rake
+docs:serve`. The documentation will be available on
+[localhost:3000](http://localhost:3000/).
 
-## Update docs
+This will create a `./docs-dev` folder and serve files from there. This folder
+is ignored by git.
 
-```sh
-yarn docs:update
-git push
-```
+## Deploying docs
 
+To update the documentation website, you should run `rake docs:deploy` from the
+`develop` branch. This will merge `develop` into master, build the documentation
+into `docs` and push it. The content of the `./docs` folder will then be server
+by GitHub pages.
 
 # Project owner
 
-[@pixelastic](https://github.com/pixelastic)
+[@pixelastic][5]
+
+
+[1]: https://github.com/algolia/jekyll-algolia/issues
+[2]: https://github.com/algolia/jekyll-algolia/pulls
+[3]: https://github.com/creationix/nvm#install-script
+[4]: https://yarnpkg.com/en/docs/install#alternatives-tab
+[5]: https://github.com/pixelastic

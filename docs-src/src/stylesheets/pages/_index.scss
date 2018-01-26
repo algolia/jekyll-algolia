@@ -64,7 +64,7 @@
   top: 150px;
 
   @media (max-width: $screen-sm) {
-    width: 316px;
+    width: 100% !important;
     left: 0;
     right: 0;
     margin: auto;
@@ -192,7 +192,7 @@
         left: 0;
         right: 0;
         margin: auto;
-        background: url(../assets/images/illu-funnel.svg) no-repeat center center / contain;
+        background: url(../assets/images/illu-funnel.svg) no-repeat calc(50% + 10px) center / contain;
       }
     }
 
@@ -201,7 +201,7 @@
       &:before {
         content: '';
         display: block;
-        width: 200px;
+        width: 300px;
         height: 200px;
         position: absolute;
         z-index: 20;

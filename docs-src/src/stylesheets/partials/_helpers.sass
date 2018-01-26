@@ -1,9 +1,32 @@
 // Override some aerial.css classes
 .text-heading
-	font-size: 48px
+  font-size: 48px
 
 .h-auto
-	height: auto
+  height: auto
 
 .m-l-n-large
-	margin-left: -26px
+  margin-left: -26px
+
+
+$debug-color-alpha: gold
+$debug-color-beta: red
+
+[debug]
+  *
+    outline: 1px solid $debug-color-alpha
+    animation: none
+
+    &:before,
+    &:after
+      outline: 1px dashed $debug-color-beta !important
+      animation: none !important
+
+    &:hover
+      background: rgba($debug-color-alpha, 0.25) !important
+
+
+    &:hover:before,
+    &:hover:after
+      background: rgba($debug-color-beta, 0.25) !important
+

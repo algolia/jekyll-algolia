@@ -3,6 +3,7 @@
   margin: auto;
 }
 
+
 @media (max-width: $screen-sm) {
   .row {
     margin: 0;
@@ -78,13 +79,36 @@
     width: 360px;
     left: 0;
   }
+
+  &:before,
+  &:after {
+    content:'';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(62,57,107, 0.4) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150"><g fill="none" fill-rule="evenodd"><circle cx="75" cy="75" r="70" stroke="%23FFF" stroke-width="6"/><path fill="%23FFF" d="M106 75l-47 25V50z"/></g></svg>');
+    background-size:  150px;
+    background-repeat: no-repeat;
+    background-position:  center center, center center;
+    z-index: 25;
+    border-radius: 6px;
+  }
+
+  &:before {
+    background: url(http://res.cloudinary.com/hilnmyskv/image/upload/q_10/v1516723333/minima-search_ay0ezw.png);
+    background-size: 100%;
+    z-index: 24;
+  }
+
+  &:hover:before,
+  &:hover:after {
+    display: none;
+  }
 }
 
-// @media (max-width: $screen-md) {
-//   * {
-//     background: red !important
-//   }
-// }
 
 .hero-bottom {
   @media (max-width: $screen-sm) {
@@ -199,10 +223,10 @@
     top: 0;
     left: 0;
     background:
-      url(../assets/images/illu-funnel.svg) 505px 0% no-repeat,
-      url(../assets/images/touch-point.svg) 500px 285px no-repeat,
-      url(../assets/images/touch-point.svg) 500px 435px no-repeat,
-      url(../assets/images/servers.svg) 425px 100% no-repeat;
+      url(../assets/images/illu-funnel.svg) center 0% no-repeat,
+      url(../assets/images/touch-point.svg) calc(100% / 2 - 10px) 285px no-repeat,
+      url(../assets/images/touch-point.svg) calc(100% / 2 - 10px) 435px no-repeat,
+      url(../assets/images/servers.svg) center 100% no-repeat;
     pointer-events: none;
     z-index: 10;
 
@@ -242,7 +266,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, #f8faff 0%, transparent 30%,  #f8faff 80%);
+    background: linear-gradient(to right, #f8faff 0%, rgba(#f8faff, 0) 30%,  #f8faff 80%);
     top: 0;
     left: 0;
   }
@@ -251,7 +275,7 @@
     width: 1000px;
 
     &:after {
-      background: linear-gradient(to right, #f8faff, transparent 10%, #f8faff)
+      background: linear-gradient(to right, #f8faff, rgba( #f8faff, 0) 10%, #f8faff)
     }
   }
 }
@@ -332,32 +356,3 @@
 }
 
 
-// Gifs layer
-.hero-animated {
-  &:before,
-  &:after {
-    content:'';
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: rgba(62,57,107, 0.4) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150"><g fill="none" fill-rule="evenodd"><circle cx="75" cy="75" r="70" stroke="%23FFF" stroke-width="6"/><path fill="%23FFF" d="M106 75l-47 25V50z"/></g></svg>');
-    background-size:  150px;
-    background-repeat: no-repeat;
-    background-position:  center center, center center;
-    z-index: 25;
-    border-radius: 6px;
-  }
-
-  &:before {
-    background: url(http://res.cloudinary.com/hilnmyskv/image/upload/q_10/v1516723333/minima-search_ay0ezw.png);
-    z-index: 24;
-  }
-
-  &:hover:before,
-  &:hover:after {
-    display: none;
-  }
-}

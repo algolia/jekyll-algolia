@@ -224,8 +224,8 @@
     left: 0;
     background:
       url(../assets/images/illu-funnel.svg) center 0% no-repeat,
-      url(../assets/images/touch-point.svg) calc(100% / 2 - 10px) 285px no-repeat,
-      url(../assets/images/touch-point.svg) calc(100% / 2 - 10px) 435px no-repeat,
+      url(../assets/images/touch-point.svg) calc(50% - 10px) 285px no-repeat,
+      url(../assets/images/touch-point.svg) calc(50% - 10px) 435px no-repeat,
       url(../assets/images/servers.svg) center 100% no-repeat;
     pointer-events: none;
     z-index: 10;

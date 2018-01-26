@@ -292,7 +292,7 @@
   &.funnel-incremental{
     &:after {
       right: inherit;
-      left: -100px;
+      left: -120px;
     }
 
     animation-direction: reverse
@@ -334,6 +334,7 @@
 
 // Gifs layer
 .hero-animated {
+  &:before,
   &:after {
     content:'';
     display: block;
@@ -350,6 +351,12 @@
     border-radius: 6px;
   }
 
+  &:before {
+    background: url(http://res.cloudinary.com/hilnmyskv/image/upload/q_10/v1516723333/minima-search_ay0ezw.png);
+    z-index: 24;
+  }
+
+  &:hover:before,
   &:hover:after {
     display: none;
   }

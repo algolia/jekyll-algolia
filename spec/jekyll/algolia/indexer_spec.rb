@@ -137,7 +137,7 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  fdescribe '.update_settings' do
+  describe '.update_settings' do
     let(:index_name) { 'my_index' }
     let(:index) do
       double('Algolia::Index', name: index_name, set_settings!: nil)

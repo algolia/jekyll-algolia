@@ -74,6 +74,27 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq 'custom_index' }
   end
 
+  describe 'index?' do
+    subject { current.index?('foo') }
+
+    let(:index) { double('Algolia::Index', get_settings: nil) }
+    before do
+      expect(current)
+        .to receive(:index)
+        .and_return(index)
+    end
+
+    it { should eq true }
+
+    context 'when no settings' do
+      before do
+        expect(index).to receive(:get_settings).and_raise
+      end
+
+      it { should eq false }
+    end
+  end
+
   describe '.remote_object_ids' do
     subject { current.remote_object_ids(index) }
 
@@ -116,21 +137,66 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  describe '.update_settings' do
-    let(:index) { double('Algolia::Index', set_settings!: nil) }
-    let(:settings) { { 'foo' => 'bar' } }
-    before { current.update_settings(index, settings) }
+  fdescribe '.update_settings' do
+    let(:index_name) { 'my_index' }
+    let(:index) do
+      double('Algolia::Index', name: index_name, set_settings!: nil)
+    end
+    let(:dry_run) { false }
+    let(:index_exists) { nil }
+    let(:raw_settings) { nil }
+    let(:settings) { 'settings' }
+    before do
+      allow(configurator)
+        .to receive(:algolia)
+        .with('settings')
+        .and_return(raw_settings)
+      allow(configurator).to receive(:settings).and_return(settings)
+      allow(configurator).to receive(:dry_run).and_return(dry_run)
+      allow(current).to receive(:index?).and_return(index_exists)
+    end
+    before { current.update_settings(index) }
 
-    it do
-      expect(index).to have_received(:set_settings!).with(settings)
+    context 'when index does not exist' do
+      let(:index_exists) { false }
+
+      describe do
+        let(:raw_settings) { nil }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
+      end
+
+      describe do
+        let(:raw_settings) { 'settings' }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
+      end
     end
 
-    context 'when running a dry run' do
-      let(:dry_run) { true }
+    context 'when index already exists' do
+      let(:index_exists) { true }
 
-      it do
-        expect(index)
-          .to_not have_received(:set_settings!)
+      describe do
+        let(:raw_settings) { nil }
+        it { expect(index).to_not have_received(:set_settings!) }
+      end
+
+      describe do
+        let(:raw_settings) { 'settings' }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
       end
     end
   end

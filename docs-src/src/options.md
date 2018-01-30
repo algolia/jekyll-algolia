@@ -87,7 +87,7 @@ This option let you pass specific settings to your Algolia index.
 By default the plugin will configure your Algolia index with settings tailored
 to the format of the extracted records. You are of course free to overwrite
 them or configure them as best suits your needs. Every option passed to the
-`settings` entry will be set as [settings to your index][4].
+`settings` entry will be set as [setting to your index][4].
 
 For example if you want to change the HTML tag used for the highlighting, you
 can overwrite it like this:
@@ -98,6 +98,9 @@ algolia:
     highlightPreTag: '<em class="custom_highlight">'
     highlightPostTag: '</em>'
 ```
+
+Settings defined here will take precedence over any setting you manually defined
+through the [Algolia dashboard][5] UI, though.
 
 ## `indexing_batch_size`
 
@@ -122,3 +125,4 @@ algolia:
 [2]: http://www.methods.co.nz/asciidoc/
 [3]: https://github.com/textile
 [4]: https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings
+[5]: https://www.algolia.com/dashboard

@@ -45,6 +45,19 @@ module Jekyll
         ::Algolia::Index.new(index_name)
       end
 
+      # Public: Check if an index exists
+      #
+      # index_name - Name of the index
+      #
+      # Note: there is no API endpoint to do that, so we try to get the settings
+      # instead, which will fail if the index does not exist
+      def self.index?(index_name)
+        index(index_name).get_settings
+        return true
+      rescue StandardError
+        return false
+      end
+
       # Public: Returns an array of all the objectIDs in the index
       #
       # index - Algolia Index to target
@@ -78,12 +91,22 @@ module Jekyll
       # Public: Update settings of the index
       #
       # index - The Algolia Index
-      # settings - The hash of settings to pass to the index
       #
       # Does nothing in dry run mode
-      def self.update_settings(index, settings)
+      # Settings will only be updated in the first push, and if custom settings
+      # are defined in _config.yml. Otherwise, they are left untouched, allowing
+      # users to configure them through their dashboard.
+      def self.update_settings(index)
+        has_custom_settings = !Configurator.algolia('settings').nil?
+        index_exists = index?(index.name)
+
+        # No need to update the settings if the index is already configured and
+        # the user did not specify custom settings
+        return if index_exists && !has_custom_settings
+
         Logger.verbose('I:Updating settings')
         return if Configurator.dry_run?
+        settings = Configurator.settings
         begin
           index.set_settings!(settings)
         rescue StandardError => error
@@ -154,7 +177,7 @@ module Jekyll
         index = index(index_name)
 
         # Update settings
-        update_settings(index, Configurator.settings)
+        update_settings(index)
 
         # Getting list of objectID in remote and locally
         remote_ids = remote_object_ids(index)

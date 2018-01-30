@@ -62,27 +62,6 @@ algolia:
 _Note that some files (pagination pages, static assets, etc) will **always** be
 excluded and you don't have to specify them._
 
-## `indexing_batch_size`
-
-The Algolia API allows you to send batches of changes to add or update several
-records at once, instead of doing one HTTP call per record. The plugin will
-batch updates by groups of 1000 records by default.
-
-If you are on an unstable internet connection, you might want to decrease the
-value. You will send more batches, but each will be smaller in size.
-
-```yml
-algolia:
-  # Send fewer records per batch
-  indexing_batch_size: 500
-```
-
-## `indexing_mode`
-
-This option will let you choose the strategy used to sync your data with your
-Algolia index. The default value should work for most cases, but feel free to
-[read the pros and cons][4] of each and pick the one best suited for your needs.
-
 ## `nodes_to_index`
 
 This options defines how each page is split into chunks. It expects
@@ -108,7 +87,7 @@ This option let you pass specific settings to your Algolia index.
 By default the plugin will configure your Algolia index with settings tailored
 to the format of the extracted records. You are of course free to overwrite
 them or configure them as best suits your needs. Every option passed to the
-`settings` entry will be set as [settings to your index][5].
+`settings` entry will be set as [setting to your index][4].
 
 For example if you want to change the HTML tag used for the highlighting, you
 can overwrite it like this:
@@ -120,9 +99,30 @@ algolia:
     highlightPostTag: '</em>'
 ```
 
+Settings defined here will take precedence over any setting you manually defined
+through the [Algolia dashboard][5] UI, though.
+
+## `indexing_batch_size`
+
+This option defines the number of operations that will be grouped as part of one
+updating batch. All operations of one batch are applied atomically. The default
+value is `1000`.
+
+You might want to increase this value if you are doing a lot of updates on each
+run and still want to have your changes done atomically.
+
+You might want to decrease this value if you're using an unstable internet
+connection. Smaller batches are easier to send that large ones.
+
+```yml
+algolia:
+  # Send fewer records per batch
+  indexing_batch_size: 500
+```
+
 
 [1]: ./how-it-works.html
 [2]: http://www.methods.co.nz/asciidoc/
 [3]: https://github.com/textile
-[4]: ./indexing-modes.html
-[5]: https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings
+[4]: https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings
+[5]: https://www.algolia.com/dashboard

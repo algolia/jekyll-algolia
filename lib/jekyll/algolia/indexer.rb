@@ -45,45 +45,17 @@ module Jekyll
         ::Algolia::Index.new(index_name)
       end
 
-      # Public: Update records of the specified index
+      # Public: Check if an index exists
       #
-      # index - Algolia Index to update
-      # records - Array of records to update
+      # index_name - Name of the index
       #
-      # New records will be automatically added. Technically existing records
-      # should be updated but this case should never happen as changing a record
-      # content will change its objectID as well.
-      #
-      # Does nothing in dry run mode
-      def self.update_records(index, records)
-        batch_size = Configurator.algolia('indexing_batch_size')
-        records.each_slice(batch_size) do |batch|
-          Logger.log("I:Pushing #{batch.size} records")
-          next if Configurator.dry_run?
-          begin
-            index.add_objects!(batch)
-          rescue StandardError => error
-            ErrorHandler.stop(error, records: records)
-          end
-        end
-      end
-
-      # Public: Delete records whose objectIDs are passed
-      #
-      # index - Algolia Index to target
-      # ids - Array of objectIDs to delete
-      #
-      # Does nothing in dry run mode
-      def self.delete_records_by_id(index, ids)
-        return if ids.empty?
-        Logger.log("I:Deleting #{ids.length} records")
-        return if Configurator.dry_run?
-
-        begin
-          index.delete_objects!(ids)
-        rescue StandardError => error
-          ErrorHandler.stop(error)
-        end
+      # Note: there is no API endpoint to do that, so we try to get the settings
+      # instead, which will fail if the index does not exist
+      def self.index?(index_name)
+        index(index_name).get_settings
+        return true
+      rescue StandardError
+        return false
       end
 
       # Public: Returns an array of all the objectIDs in the index
@@ -119,113 +91,69 @@ module Jekyll
       # Public: Update settings of the index
       #
       # index - The Algolia Index
-      # settings - The hash of settings to pass to the index
       #
       # Does nothing in dry run mode
-      def self.update_settings(index, settings)
+      # Settings will only be updated in the first push, and if custom settings
+      # are defined in _config.yml. Otherwise, they are left untouched, allowing
+      # users to configure them through their dashboard.
+      def self.update_settings(index)
+        has_custom_settings = !Configurator.algolia('settings').nil?
+        index_exists = index?(index.name)
+
+        # No need to update the settings if the index is already configured and
+        # the user did not specify custom settings
+        return if index_exists && !has_custom_settings
+
         Logger.verbose('I:Updating settings')
         return if Configurator.dry_run?
+        settings = Configurator.settings
         begin
-          index.set_settings(settings)
+          index.set_settings!(settings)
         rescue StandardError => error
           ErrorHandler.stop(error, settings: settings)
         end
       end
 
-      # Public: Index content following the `diff` indexing mode
+      # Public: Update records of the index
       #
-      # records - Array of local records
+      # index_name - The Algolia index
+      # old_records_ids - Ids of records to delete from the index
+      # new_records - Records to add to the index
       #
-      # The `diff` indexing mode will only push new content to the index and
-      # remove old content from it. It won't touch records that haven't been
-      # updated. It will be a bit slower as it will first need to get the list
-      # of all records in the index, but it will consume less operations.
-      def self.run_diff_mode(records)
-        index = index(Configurator.index_name)
-
-        # Update settings
-        update_settings(index, Configurator.settings)
-
-        # Getting list of objectID in remote and locally
-        remote_ids = remote_object_ids(index)
-        local_ids = local_object_ids(records)
-
-        old_records_ids = remote_ids - local_ids
-        new_records_ids = local_ids - remote_ids
-        if old_records_ids.empty? && new_records_ids.empty?
+      # Note: All operations will be done in one batch, assuring an atomic
+      # update
+      # Does nothing in dry run mode
+      def self.update_records(index_name, old_records_ids, new_records)
+        # Stop if nothing to change
+        if old_records_ids.empty? && new_records.empty?
           Logger.log('I:Nothing to index. Your content is already up to date.')
           return
         end
 
-        Logger.log("I:Updating records in index #{index.name}...")
-
-        # Delete remote records that are no longer available locally
-        delete_records_by_id(index, old_records_ids)
-
-        # Add only records that are not yet already in the remote
-        new_records = records.select do |record|
-          new_records_ids.include?(record[:objectID])
-        end
-        update_records(index, new_records)
-
-        Logger.log('I:✔ Indexing complete')
-      end
-
-      # Public: Get the settings of the remote index
-      #
-      # index - The Algolia Index
-      def self.remote_settings(index)
-        index.get_settings
-      rescue StandardError => error
-        ErrorHandler.stop(error)
-      end
-
-      # Public: Rename an index
-      #
-      # old_name - Current name of the index
-      # new_name - New name of the index
-      #
-      # Does nothing in dry run mode
-      def self.rename_index(old_name, new_name)
-        Logger.verbose("I:Renaming `#{old_name}` to `#{new_name}`")
+        Logger.log("I:Updating records in index #{index_name}...")
+        Logger.log("I:Records to delete: #{old_records_ids.length}")
+        Logger.log("I:Records to add:    #{new_records.length}")
         return if Configurator.dry_run?
-        begin
-          ::Algolia.move_index(old_name, new_name)
-        rescue StandardError => error
-          ErrorHandler.stop(error, new_name: new_name)
+
+        operations = new_records.map do |new_record|
+          { action: 'addObject', indexName: index_name, body: new_record }
         end
-      end
+        old_records_ids.each do |object_id|
+          operations << {
+            action: 'deleteObject', indexName: index_name,
+            body: { objectID: object_id }
+          }
+        end
 
-      # Public: Index content following the `atomic` indexing mode
-      #
-      # records - Array of records to push
-      #
-      # The `atomic` indexing mode will push all records to a brand new index,
-      # configure it, and then overwrite the previous index with this new one.
-      # For the end-user, it will make all the changes in one go, making sure
-      # people are always searching into a fully configured index. It will
-      # consume more operations, but will never leave the index in a transient
-      # state.
-      def self.run_atomic_mode(records)
-        index_name = Configurator.index_name
-        index = index(index_name)
-        index_tmp_name = "#{Configurator.index_name}_tmp"
-        index_tmp = index(index_tmp_name)
-
-        Logger.verbose("I:Using `#{index_tmp_name}` as temporary index")
-
-        # Copying original settings to the new index
-        remote_settings = remote_settings(index)
-        new_settings = remote_settings.merge(Configurator.settings)
-        update_settings(index_tmp, new_settings)
-
-        # Pushing everthing to a brand new index
-        update_records(index_tmp, records)
-
-        # Renaming the new index in place of the old
-        rename_index(index_tmp_name, index_name)
-
-        Logger.log('I:✔ Indexing complete')
+        # Run the batches in slices if they are too large
+        batch_size = Configurator.algolia('indexing_batch_size')
+        operations.each_slice(batch_size) do |slice|
+          begin
+            ::Algolia.batch!(slice)
+          rescue StandardError => error
+            ErrorHandler.stop(error)
+          end
+        end
       end
 
       # Public: Push all records to Algolia and configure the index
@@ -234,10 +162,8 @@ module Jekyll
       def self.run(records)
         init
 
-        record_count = records.length
-
         # Indexing zero record is surely a misconfiguration
-        if record_count.zero?
+        if records.length.zero?
           files_to_exclude = Configurator.algolia('files_to_exclude').join(', ')
           Logger.known_message(
             'no_records_found',
@@ -247,14 +173,25 @@ module Jekyll
           exit 1
         end
 
-        indexing_mode = Configurator.indexing_mode
-        Logger.verbose("I:Indexing mode: #{indexing_mode}")
-        case indexing_mode
-        when 'diff'
-          run_diff_mode(records)
-        when 'atomic'
-          run_atomic_mode(records)
+        index_name = Configurator.index_name
+        index = index(index_name)
+
+        # Update settings
+        update_settings(index)
+
+        # Getting list of objectID in remote and locally
+        remote_ids = remote_object_ids(index)
+        local_ids = local_object_ids(records)
+
+        # Getting list of what to add and what to delete
+        old_records_ids = remote_ids - local_ids
+        new_records_ids = local_ids - remote_ids
+        new_records = records.select do |record|
+          new_records_ids.include?(record[:objectID])
         end
+        update_records(index_name, old_records_ids, new_records)
+
+        Logger.log('I:✔ Indexing complete')
       end
     end
   end

@@ -74,91 +74,24 @@ describe(Jekyll::Algolia::Indexer) do
     it { should eq 'custom_index' }
   end
 
-  describe 'update_records' do
-    let(:index) do
-      double('Algolia::Index', add_objects!: nil, name: 'my_index')
+  describe 'index?' do
+    subject { current.index?('foo') }
+
+    let(:index) { double('Algolia::Index', get_settings: nil) }
+    before do
+      expect(current)
+        .to receive(:index)
+        .and_return(index)
     end
 
-    context 'with a small number of records' do
-      let(:records) { Array.new(10, foo: 'bar') }
-      before { current.update_records(index, records) }
-      it do
-        expect(index)
-          .to have_received(:add_objects!)
-          .with(records)
-          .once
-      end
-    end
-    context 'with a large number of records' do
-      let(:records) { Array.new(2500, foo: 'bar') }
-      before { current.update_records(index, records) }
-      it do
-        expect(index)
-          .to have_received(:add_objects!)
-          .exactly(3).times
-      end
-    end
-    context 'with a custom batch size' do
-      let(:records) { Array.new(2500, foo: 'bar') }
+    it { should eq true }
+
+    context 'when no settings' do
       before do
-        allow(configurator)
-          .to receive(:algolia)
-          .with('indexing_batch_size')
-          .and_return(500)
+        expect(index).to receive(:get_settings).and_raise
       end
-      before { current.update_records(index, records) }
-      it do
-        expect(index)
-          .to have_received(:add_objects!)
-          .exactly(5).times
-      end
-    end
 
-    context 'when running a dry run' do
-      let(:dry_run) { true }
-      let(:records) { Array.new(10, foo: 'bar') }
-
-      it do
-        expect(index)
-          .to_not have_received(:add_objects!)
-          .with(records)
-      end
-    end
-  end
-
-  describe '.delete_records_by_id' do
-    let(:index) do
-      double('Algolia::Index', delete_objects!: nil, name: 'my_index')
-    end
-    let(:ids) { %w[foo bar baz] }
-
-    before { current.delete_records_by_id(index, ids) }
-
-    it do
-      expect(index)
-        .to have_received(:delete_objects!)
-        .with(ids)
-    end
-
-    context 'when running a dry run' do
-      let(:dry_run) { true }
-
-      it do
-        expect(index)
-          .to_not have_received(:delete_objects!)
-          .with(ids)
-      end
-    end
-
-    context 'when deleting zero records' do
-      let(:ids) { [] }
-      before do
-        allow(logger).to receive(:log)
-      end
-      it do
-        expect(logger).to_not have_received(:log)
-        expect(index).to_not have_received(:delete_objects!)
-      end
+      it { should eq false }
     end
   end
 
@@ -204,178 +137,174 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  describe '.run_diff_mode' do
-    let(:local_records) do
-      [
-        { objectID: 'foo' },
-        { objectID: 'bar' }
-      ]
+  describe '.update_settings' do
+    let(:index_name) { 'my_index' }
+    let(:index) do
+      double('Algolia::Index', name: index_name, set_settings!: nil)
     end
-    let(:remote_ids) { %w[foo baz] }
+    let(:dry_run) { false }
+    let(:index_exists) { nil }
+    let(:raw_settings) { nil }
+    let(:settings) { 'settings' }
     before do
-      allow(current)
-        .to receive(:index)
-        .and_return(
-          double('Algolia::Index', new: 'my_index', name: 'my_index')
-        )
-      allow(current).to receive(:remote_object_ids).and_return(remote_ids)
-      allow(current).to receive(:delete_records_by_id)
-      allow(current).to receive(:update_records)
-      allow(current).to receive(:update_settings)
-      allow(configurator).to receive(:settings).and_return('my_settings')
+      allow(configurator)
+        .to receive(:algolia)
+        .with('settings')
+        .and_return(raw_settings)
+      allow(configurator).to receive(:settings).and_return(settings)
+      allow(configurator).to receive(:dry_run).and_return(dry_run)
+      allow(current).to receive(:index?).and_return(index_exists)
+    end
+    before { current.update_settings(index) }
+
+    context 'when index does not exist' do
+      let(:index_exists) { false }
+
+      describe do
+        let(:raw_settings) { nil }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
+      end
+
+      describe do
+        let(:raw_settings) { 'settings' }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
+      end
     end
 
-    before { current.run_diff_mode(local_records) }
+    context 'when index already exists' do
+      let(:index_exists) { true }
 
-    it do
-      expect(current)
-        .to have_received(:delete_records_by_id)
-        .with(anything, ['baz'])
-      expect(current)
-        .to have_received(:update_records)
-        .with(anything, [{ objectID: 'bar' }])
-      expect(current)
-        .to have_received(:update_settings)
-        .with(anything, 'my_settings')
-    end
-
-    context 'nothing changed since last update' do
-      let(:local_records) do
-        [
-          { objectID: 'foo' },
-          { objectID: 'bar' }
-        ]
+      describe do
+        let(:raw_settings) { nil }
+        it { expect(index).to_not have_received(:set_settings!) }
       end
-      let(:remote_ids) { %w[foo bar] }
 
-      before do
-        allow(logger).to receive(:log)
-      end
-      it do
-        expect(logger).to have_received(:log).with(/Nothing to index/)
+      describe do
+        let(:raw_settings) { 'settings' }
+        it { expect(index).to have_received(:set_settings!).with(settings) }
+
+        describe do
+          let(:dry_run) { true }
+          it { expect(index).to_not have_received(:set_settings!) }
+        end
       end
     end
   end
 
-  describe '.rename_index' do
-    before { allow(::Algolia).to receive(:move_index) }
-    before { current.rename_index('foo', 'bar') }
+  describe '.update_records' do
+    let(:index_name) { 'my_index' }
+    let(:old_records_ids) { %w[abc] }
+    let(:new_records) { [{ 'objectID' => 'def' }] }
+    let(:indexing_batch_size) { 1000 }
 
-    it do
-      expect(::Algolia).to have_received(:move_index).with('foo', 'bar')
+    before { allow(::Algolia).to receive(:batch!) }
+    before do
+      allow(configurator)
+        .to receive(:algolia)
+        .with('indexing_batch_size')
+        .and_return(indexing_batch_size)
     end
+    before { current.update_records(index_name, old_records_ids, new_records) }
 
     context 'when running a dry run' do
       let(:dry_run) { true }
-
       it do
         expect(::Algolia)
-          .to_not have_received(:move_index)
+          .to_not have_received(:batch!)
       end
     end
-  end
 
-  describe '.update_settings' do
-    let(:index) { double('Algolia::Index', set_settings: nil) }
-    let(:settings) { { 'foo' => 'bar' } }
-    before { current.update_settings(index, settings) }
-
-    it do
-      expect(index).to have_received(:set_settings).with(settings)
-    end
-
-    context 'when running a dry run' do
-      let(:dry_run) { true }
-
+    context 'when nothing to update' do
+      let(:old_records_ids) { [] }
+      let(:new_records) { [] }
       it do
-        expect(index)
-          .to_not have_received(:set_settings)
+        expect(::Algolia)
+          .to_not have_received(:batch!)
       end
     end
-  end
 
-  describe '.remote_settings' do
-    subject { current.remote_settings(index) }
-
-    let(:index) { double('Algolia::Index').as_null_object }
-    before do
-      expect(index)
-        .to receive(:get_settings)
-        .and_return('custom_settings')
+    it 'should batch all operations' do
+      expect(::Algolia)
+        .to have_received(:batch!)
+        .with([
+                {
+                  action: 'addObject',
+                  indexName: 'my_index',
+                  body: { 'objectID' => 'def' }
+                },
+                {
+                  action: 'deleteObject',
+                  indexName: 'my_index',
+                  body: { objectID: 'abc' }
+                }
+              ])
     end
 
-    it { should eq 'custom_settings' }
-  end
-
-  describe '.run_atomic_mode' do
-    let(:records) do
-      [
-        { 'objectID' => 'foo' },
-        { 'objectID' => 'bar' }
-      ]
-    end
-    let(:remote_settings) { { 'foo' => 'bar', 'bar' => 'baz' } }
-    let(:local_settings) { { 'foo' => 'new_bar', 'baz' => 'deadbeef' } }
-    let(:index_name) { 'my_index' }
-    let(:index) { '::my_index' }
-    let(:index_tmp_name) { 'my_index_tmp' }
-    let(:index_tmp) { '::my_index_tmp' }
-
-    before do
-      allow(configurator).to receive(:index_name).and_return(index_name)
-      allow(configurator).to receive(:settings).and_return(local_settings)
-      allow(current).to receive(:index)
-        .with(index_name).and_return(index)
-      allow(current).to receive(:index)
-        .with(index_tmp_name).and_return(index_tmp)
-      allow(current).to receive(:remote_settings).and_return(remote_settings)
-      allow(current).to receive(:update_records)
-      allow(current).to receive(:update_settings)
-      allow(current).to receive(:rename_index)
-    end
-
-    before { current.run_atomic_mode(records) }
-
-    it do
-      expect(current)
-        .to have_received(:update_records)
-        .with(index_tmp, records)
-      expect(current)
-        .to have_received(:update_settings)
-        .with(index_tmp, 'foo' => 'new_bar',
-                         'bar' => 'baz',
-                         'baz' => 'deadbeef')
-      expect(current)
-        .to have_received(:rename_index)
-        .with(index_tmp_name, index_name)
+    context 'split in smaller batches if too many operations' do
+      let(:indexing_batch_size) { 1 }
+      it do
+        expect(::Algolia)
+          .to have_received(:batch!)
+          .ordered
+          .with([
+                  {
+                    action: 'addObject',
+                    indexName: 'my_index',
+                    body: { 'objectID' => 'def' }
+                  }
+                ])
+        expect(::Algolia)
+          .to have_received(:batch!)
+          .ordered
+          .with([
+                  {
+                    action: 'deleteObject',
+                    indexName: 'my_index',
+                    body: { objectID: 'abc' }
+                  }
+                ])
+      end
     end
   end
 
   describe '.run' do
-    let(:indexing_mode) { 'diff' }
+    let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
+    let(:remote_ids) { %w[foo baz] }
+    let(:settings) { 'settings' }
+    let(:index_name) { 'my_index' }
     before do
+      allow(configurator).to receive(:settings).and_return(settings)
+      allow(configurator).to receive(:index_name).and_return(index_name)
       allow(current).to receive(:init)
-      allow(current).to receive(:run_diff_mode)
-      allow(current).to receive(:run_atomic_mode)
-      allow(configurator).to receive(:indexing_mode).and_return(indexing_mode)
+      allow(current).to receive(:index).and_return('my_index')
+      allow(current).to receive(:update_settings)
+      allow(current).to receive(:remote_object_ids).and_return(remote_ids)
+      allow(current).to receive(:update_records)
     end
 
     context 'with records' do
-      let(:records) { [{ 'objectID' => 'foo' }, { 'objectID' => 'bar' }] }
-
       before { current.run(records) }
 
       it { expect(current).to have_received(:init) }
-
-      context 'when in diff mode' do
-        let(:indexing_mode) { 'diff' }
-        it { expect(current).to have_received(:run_diff_mode) }
-        it { expect(current).to_not have_received(:run_atomic_mode) }
+      it do
+        expect(current)
+          .to have_received(:update_settings)
+          .with('my_index', settings)
       end
-      context 'when in atomic mode' do
-        let(:indexing_mode) { 'atomic' }
-        it { expect(current).to have_received(:run_atomic_mode) }
-        it { expect(current).to_not have_received(:run_diff_mode) }
+      it do
+        expect(current)
+          .to have_received(:update_records)
+          .with(index_name, ['baz'], [{ objectID: 'bar' }])
       end
     end
 

@@ -130,31 +130,6 @@ describe(Jekyll::Algolia::ErrorHandler) do
       it { should include(details: { 'application_id' => 'MY_APP_ID' }) }
     end
 
-    context 'with no access to the _tmp index' do
-      before do
-        allow(configurator)
-          .to receive(:index_name)
-          .and_return('my_index')
-        allow(configurator)
-          .to receive(:application_id)
-          .and_return('MY_APP_ID')
-      end
-      let(:message) do
-        '403: Cannot PUT to '\
-        'https://My_APP_ID.algolia.net/1/indexes/my_index_tmp/settings: '\
-        '{"message":"Index not allowed with this API key","status":403} (403)'
-      end
-
-      it { should include(name: 'invalid_credentials_for_tmp_index') }
-      it do
-        should include(details: {
-                         'index_name' => 'my_index',
-                         'index_name_tmp' => 'my_index_tmp',
-                         'application_id' => 'MY_APP_ID'
-                       })
-      end
-    end
-
     context 'with wrong API key' do
       before do
         allow(configurator)

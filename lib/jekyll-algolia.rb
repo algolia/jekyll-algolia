@@ -33,6 +33,8 @@ module Jekyll
 
       exit 1 unless Configurator.assert_valid_credentials
 
+      Configurator.warn_of_deprecated_options
+
       if Configurator.dry_run?
         Logger.log('W:==== THIS IS A DRY RUN ====')
         Logger.log('W:  - No records will be pushed to your index')
@@ -72,9 +74,10 @@ module Jekyll
 
     # Public: Get access to the time at which the command was run
     #
-    # Jekyll will override some date with the current time, and we'll need to
-    # keep them as nil, so we have to compare to this date to assume it has been
-    # overwritten
+    # Jekyll will always set the updated time of pages to the time of the build
+    # run. The plugin needs those values to stay at nil if they did not change,
+    # so we'll keep track of the time at build time and revert any page build at
+    # that time to nil.
     def self.start_time
       @start_time
     end

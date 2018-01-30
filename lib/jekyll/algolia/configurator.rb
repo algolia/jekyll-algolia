@@ -12,7 +12,6 @@ module Jekyll
         'files_to_exclude' => nil,
         'nodes_to_index' => 'p',
         'indexing_batch_size' => 1000,
-        'indexing_mode' => 'diff',
         'settings' => {
           'distinct' => true,
           'attributeForDistinct' => 'url',
@@ -129,18 +128,6 @@ module Jekyll
         ALGOLIA_DEFAULTS['settings'].merge(user_settings)
       end
 
-      # Public: Return the current indexing mode
-      #
-      # Default mode is `diff`, but users can configure their own by updating
-      # the `indexing_mode` config in _config.yml. The only other authorized
-      # value is `atomic`. If an unrecognized mode is defined, it defaults to
-      # `diff`.
-      def self.indexing_mode
-        mode = algolia('indexing_mode') || ALGOLIA_DEFAULTS['indexing_mode']
-        return 'diff' unless %w[diff atomic].include?(mode)
-        mode
-      end
-
       # Public: Check that all credentials are set
       #
       # Returns true if everything is ok, false otherwise. Will display helpful
@@ -196,6 +183,20 @@ module Jekyll
         value = get('dry_run')
         return true if value == true
         false
+      end
+
+      # Public: Check for any deprecated config option and warn the user
+      def self.warn_of_deprecated_options
+        # indexing_mode is no longer used
+        return if algolia('indexing_mode').nil?
+
+        # rubocop:disable Metrics/LineLength
+        Logger.log('I:')
+        Logger.log('W:[jekyll-algolia] You are using the algolia.indexing_mode option which has been deprecated in v1.1')
+        Logger.log('I:    Indexing is now always using an atomic diff algorithm.')
+        Logger.log('I:    This option is no longer necessary, you can remove it from your _config.yml')
+        Logger.log('I:')
+        # rubocop:enable Metrics/LineLength
       end
     end
   end

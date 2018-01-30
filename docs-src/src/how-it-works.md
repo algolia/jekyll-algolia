@@ -5,6 +5,12 @@ layout: content-with-menu.pug
 
 # How does this work?
 
+This page will give you a bit more insight about how the internals of the plugin
+are working. This should give you more context to better understand the various
+options you can configure.
+
+## Extracting data
+
 The plugin will work like a `jekyll build` run, but instead of writing `.html`
 files to disk, it will push content to Algolia. It will go through each file
 Jekyll would have processed in a regular build: pages, posts and collections.
@@ -53,16 +59,26 @@ front-matter). Specific data is the paragraph content, and information
 about its position in the page (where its situated in the hierarchy of headings
 in the page).
 
-Once displayed, results are grouped so only the best matching paragraph of each
-page is returned for a specific query. This greatly improves the perceived
-relevance of the search results.
+Using the [distinct setting][1] of the Algolia API, only the best matching
+paragraph of each page is returned for a specific query. This greatly improves
+the perceived relevance of the search results as you can highlight specifically
+the part that was matching.
 
-Because the plugin is splitting each page into smaller chunks, it can be hard to get
-an estimate of how many records will actually be pushed. The plugin tries to be
-smart and consume as less operations as possible, but you can always run it in
-`--dry-run` mode to better understand what it would do.
+## Pushing data
 
-![jekyll algolia dry run example][1]
+The plugin tries to be smart by using as less operations as possible, to be
+mindful of your Algolia quota. Whenever you run `jekyll algolia`, only records
+that changed since your last push will be updated.
 
-[1]: ./assets/images/dry-run.gif
+This is made possible because each record is attributed a unique `objectID`,
+computed as a hash of the actual content of the record. Whenever the content of
+the record changes, its `objectID` will change as well. This allows us to compare
+what is current available in your index and what is about to be pushed, to only
+update what actually changed.
 
+Previous outdated records will be deleted, and new updated records will be added
+instead. All those operations are grouped into a batch call, making sure that
+the changes are done atomically: your index will never be in an inconsistent
+state where records are only partially updated.
+
+[1]: https://www.algolia.com/doc/guides/ranking/distinct/?language=ruby#distinct-to-index-large-records

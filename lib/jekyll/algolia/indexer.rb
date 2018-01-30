@@ -101,25 +101,24 @@ module Jekyll
       # update
       # Does nothing in dry run mode
       def self.update_records(index_name, old_records_ids, new_records)
+        # Stop if nothing to change
+        if old_records_ids.empty? && new_records.empty?
+          Logger.log('I:Nothing to index. Your content is already up to date.')
+          return
+        end
+
+        Logger.log("I:Updating records in index #{index_name}...")
         Logger.log("I:Records to delete: #{old_records_ids.length}")
         Logger.log("I:Records to add:    #{new_records.length}")
         return if Configurator.dry_run?
 
-        operations = []
+        operations = new_records.map do |new_record|
+          { action: 'addObject', indexName: index_name, body: new_record }
+        end
         old_records_ids.each do |object_id|
           operations << {
-            action: 'deleteObject',
-            indexName: index_name,
-            body: {
-              objectID: object_id
-            }
-          }
-        end
-        new_records.each do |new_record|
-          operations << {
-            action: 'addObject',
-            indexName: index_name,
-            body: new_record
+            action: 'deleteObject', indexName: index_name,
+            body: { objectID: object_id }
           }
         end
 
@@ -140,10 +139,8 @@ module Jekyll
       def self.run(records)
         init
 
-        record_count = records.length
-
         # Indexing zero record is surely a misconfiguration
-        if record_count.zero?
+        if records.length.zero?
           files_to_exclude = Configurator.algolia('files_to_exclude').join(', ')
           Logger.known_message(
             'no_records_found',
@@ -166,18 +163,8 @@ module Jekyll
         # Getting list of what to add and what to delete
         old_records_ids = remote_ids - local_ids
         new_records_ids = local_ids - remote_ids
-
-        # Stop if nothing to change
-        if old_records_ids.empty? && new_records_ids.empty?
-          Logger.log('I:Nothing to index. Your content is already up to date.')
-          return
-        end
-
-        Logger.log("I:Updating records in index #{index_name}...")
-        new_records = []
-        records.each do |record|
-          next unless new_records_ids.include?(record[:objectID])
-          new_records << record
+        new_records = records.select do |record|
+          new_records_ids.include?(record[:objectID])
         end
         update_records(index_name, old_records_ids, new_records)
 

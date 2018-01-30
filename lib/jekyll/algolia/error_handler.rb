@@ -47,7 +47,6 @@ module Jekyll
       def self.identify(error, context = {})
         known_errors = %w[
           unknown_application_id
-          invalid_credentials_for_tmp_index
           invalid_credentials
           record_too_big
           unknown_settings
@@ -154,29 +153,6 @@ module Jekyll
         app_id = matches[1].gsub(/-dsn$/, '')
 
         { 'application_id' => app_id }
-      end
-
-      # Public: Check if credentials specifically can't access the _tmp index
-      #
-      # _context - Not used
-      #
-      # If the error happens on a _tmp folder, it might mean that the key does
-      # not have access to the _tmp indices and the error message will reflect
-      # that.
-      def self.invalid_credentials_for_tmp_index?(error, _context = {})
-        details = error_hash(error.message)
-
-        index_name_tmp = details['index_name']
-        if details['message'] != 'Index not allowed with this API key' ||
-           index_name_tmp !~ /_tmp$/
-          return false
-        end
-
-        {
-          'application_id' => Configurator.application_id,
-          'index_name' => Configurator.index_name,
-          'index_name_tmp' => index_name_tmp
-        }
       end
 
       # Public: Check if the credentials are working

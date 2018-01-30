@@ -158,19 +158,28 @@ describe(Jekyll::Algolia::Indexer) do
       end
     end
 
+    context 'when nothing to update' do
+      let(:old_records_ids) { [] }
+      let(:new_records) { [] }
+      it do
+        expect(::Algolia)
+          .to_not have_received(:batch!)
+      end
+    end
+
     it 'should batch all operations' do
       expect(::Algolia)
         .to have_received(:batch!)
         .with([
                 {
-                  action: 'deleteObject',
-                  indexName: 'my_index',
-                  body: { objectID: 'abc' }
-                },
-                {
                   action: 'addObject',
                   indexName: 'my_index',
                   body: { 'objectID' => 'def' }
+                },
+                {
+                  action: 'deleteObject',
+                  indexName: 'my_index',
+                  body: { objectID: 'abc' }
                 }
               ])
     end
@@ -183,9 +192,9 @@ describe(Jekyll::Algolia::Indexer) do
           .ordered
           .with([
                   {
-                    action: 'deleteObject',
+                    action: 'addObject',
                     indexName: 'my_index',
-                    body: { objectID: 'abc' }
+                    body: { 'objectID' => 'def' }
                   }
                 ])
         expect(::Algolia)
@@ -193,9 +202,9 @@ describe(Jekyll::Algolia::Indexer) do
           .ordered
           .with([
                   {
-                    action: 'addObject',
+                    action: 'deleteObject',
                     indexName: 'my_index',
-                    body: { 'objectID' => 'def' }
+                    body: { objectID: 'abc' }
                   }
                 ])
       end
@@ -230,14 +239,6 @@ describe(Jekyll::Algolia::Indexer) do
         expect(current)
           .to have_received(:update_records)
           .with(index_name, ['baz'], [{ objectID: 'bar' }])
-      end
-
-      context 'when nothing changed' do
-        let(:remote_ids) { %w[foo bar] }
-        it do
-          expect(current)
-            .to_not have_received(:update_records)
-        end
       end
     end
 

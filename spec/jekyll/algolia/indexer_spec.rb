@@ -280,10 +280,8 @@ describe(Jekyll::Algolia::Indexer) do
   describe '.run' do
     let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
     let(:remote_ids) { %w[foo baz] }
-    let(:settings) { 'settings' }
     let(:index_name) { 'my_index' }
     before do
-      allow(configurator).to receive(:settings).and_return(settings)
       allow(configurator).to receive(:index_name).and_return(index_name)
       allow(current).to receive(:init)
       allow(current).to receive(:index).and_return('my_index')
@@ -299,7 +297,7 @@ describe(Jekyll::Algolia::Indexer) do
       it do
         expect(current)
           .to have_received(:update_settings)
-          .with('my_index', settings)
+          .with('my_index')
       end
       it do
         expect(current)

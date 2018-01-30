@@ -63,6 +63,8 @@ describe(Jekyll::Algolia::Extractor) do
         before do
           allow(configurator)
             .to receive(:algolia)
+          allow(configurator)
+            .to receive(:algolia)
             .with('nodes_to_index')
             .and_return('div')
         end

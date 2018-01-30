@@ -5,6 +5,7 @@ require 'spec_helper'
 
 describe(Jekyll::Algolia::Configurator) do
   let(:current) { Jekyll::Algolia::Configurator }
+  let(:logger) { Jekyll::Algolia::Logger }
   let(:config) { {} }
   before do
     allow(Jekyll::Algolia).to receive(:config).and_return(config)
@@ -231,34 +232,6 @@ describe(Jekyll::Algolia::Configurator) do
     end
   end
 
-  describe 'indexing_mode' do
-    subject { current.indexing_mode }
-
-    before do
-      allow(current)
-        .to receive(:algolia)
-        .with('indexing_mode')
-        .and_return(indexing_mode)
-    end
-
-    context 'with default values' do
-      let(:indexing_mode) { nil }
-      it { should eq 'diff' }
-    end
-    context 'with diff selected' do
-      let(:indexing_mode) { 'diff' }
-      it { should eq 'diff' }
-    end
-    context 'with atomic selected' do
-      let(:indexing_mode) { 'atomic' }
-      it { should eq 'atomic' }
-    end
-    context 'with an invalid mode selected' do
-      let(:indexing_mode) { 'chunky_bacon' }
-      it { should eq 'diff' }
-    end
-  end
-
   describe 'dry_run?' do
     subject { current.dry_run? }
 
@@ -302,6 +275,34 @@ describe(Jekyll::Algolia::Configurator) do
     context 'when passed invalid value' do
       let(:value) { 'chunky bacon' }
       it { should eq false }
+    end
+  end
+
+  describe 'warn_of_deprecated_options' do
+    context 'using indexing_mode' do
+      before do
+        allow(current)
+          .to receive(:algolia)
+          .with('indexing_mode')
+          .and_return(indexing_mode)
+      end
+
+      context 'with no value' do
+        let(:indexing_mode) { nil }
+        before do
+          expect(logger).to_not receive(:log)
+        end
+        it { current.warn_of_deprecated_options }
+      end
+
+      context 'with a deprecated value' do
+        let(:indexing_mode) { 'atomic' }
+        before do
+          allow(logger).to receive(:log)
+          expect(logger).to receive(:log).with(/^W/).at_least(:once)
+        end
+        it { current.warn_of_deprecated_options }
+      end
     end
   end
 end

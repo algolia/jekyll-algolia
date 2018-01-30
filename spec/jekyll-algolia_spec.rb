@@ -4,15 +4,17 @@
 require 'spec_helper'
 
 describe(Jekyll::Algolia) do
+  let(:configurator) { Jekyll::Algolia::Configurator }
   let(:current) { Jekyll::Algolia }
-  let(:indexer) { Jekyll::Algolia::Indexer }
-  let(:hooks) { Jekyll::Algolia::Hooks }
   let(:extractor) { Jekyll::Algolia::Extractor }
+  let(:logger) { Jekyll::Algolia::Logger }
+  let(:hooks) { Jekyll::Algolia::Hooks }
+  let(:indexer) { Jekyll::Algolia::Indexer }
 
   # Suppress Jekyll log about not having a config file
   before do
     allow(Jekyll.logger).to receive(:warn)
-    allow(Jekyll::Algolia::Logger).to receive(:log)
+    allow(logger).to receive(:log)
   end
 
   describe '.init' do
@@ -22,7 +24,7 @@ describe(Jekyll::Algolia) do
       subject { current.init(config) }
 
       before do
-        allow(Jekyll::Algolia::Configurator)
+        allow(configurator)
           .to receive(:assert_valid_credentials)
           .and_return(true)
       end
@@ -33,12 +35,17 @@ describe(Jekyll::Algolia) do
       it 'should make the site accessible from the outside' do
         expect(subject.site.config).to include(config)
       end
+      it 'should check for deprecation warnings' do
+        expect(configurator).to receive(:warn_of_deprecated_options)
+
+        current.init(config)
+      end
     end
 
     context 'with invalid Algolia credentials' do
       subject { -> { current.init(config) } }
       before do
-        allow(Jekyll::Algolia::Configurator)
+        allow(configurator)
           .to receive(:assert_valid_credentials)
           .and_return(false)
       end

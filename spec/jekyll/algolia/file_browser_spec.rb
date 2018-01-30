@@ -5,6 +5,7 @@ require 'spec_helper'
 
 describe(Jekyll::Algolia::FileBrowser) do
   let(:current) { Jekyll::Algolia::FileBrowser }
+  let(:configurator) { Jekyll::Algolia::Configurator }
   let(:site) { init_new_jekyll_site }
 
   # Suppress Jekyll log about reading the config file
@@ -132,7 +133,9 @@ describe(Jekyll::Algolia::FileBrowser) do
 
     context 'with custom config' do
       before do
-        allow(Jekyll::Algolia::Configurator)
+        allow(configurator)
+          .to receive(:algolia)
+        allow(configurator)
           .to receive(:algolia)
           .with('extensions_to_index')
           .and_return('html,dhtml')

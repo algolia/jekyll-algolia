@@ -94,3 +94,232 @@
     width: 45px !important;
     overflow: hidden !important; } }
 
+
+
+/**
+ * Simple search input design
+ * Make a search input as simple as possible
+ * Crossbrowser & with themes
+ *
+ * Author: @lukyvj
+ *
+ * API:
+ *
+ * $regularBackground: rgba(255,255,255,0.1),
+ * $regularColor: #fff,
+ *
+ * $lightBackground: rgba(0,0,0,0.1),
+ * $lightColor: #000,
+ *
+ * $darkBackground: rgba(255,255,255,0.2),
+ * $darkColor: #FFF,
+ *
+ * $buttonWidth: 24px,
+ * $buttonHeight: 24px,
+ *
+ * $expandedWidth: 200px
+ */
+
+ @keyframes appear {
+  100% {
+    opacity: 1;
+  }
+ }
+/**
+ * Mixins
+ *
+ */
+@mixin placeholder {
+  &::-webkit-input-placeholder {@content}
+  &:-moz-placeholder           {@content}
+  &::-moz-placeholder          {@content}
+  &:-ms-input-placeholder      {@content}
+}
+
+@mixin simpleSearchInput(
+  $regularBackground: rgba(255,255,255,0.1),
+  $regularColor: #fff,
+
+  $lightBackground: rgba(0,0,0,0.1),
+  $lightColor: #000,
+
+  $darkBackground: rgba(255,255,255,0.2),
+  $darkColor: #FFF,
+
+  $buttonWidth: 24px,
+  $buttonHeight: 26px,
+
+  $expandedWidth: 200px
+) {
+  .search-holder {
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  input[type="search"] {
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    padding: 7px 28px 7px 10px;
+    border-radius: 4px;
+    background: $regularBackground !important;
+    color: $regularColor;
+    color: rgba($regularColor,0.5);
+    font-size: 13px !important;
+    line-height: 1.35;
+    font-weight: 400;
+    width: 145px;
+    transition: width 0.1s ease, background 0.1s ease, color 0.1s ease;
+    will-change: width, background, color;
+
+    @include placeholder {
+      color: rgba($regularColor,0.5);
+    }
+
+
+    @media (max-width: $screen-sm) {
+      width: 100px;
+
+      &:focus,
+      &:active {
+        width: 100px !important
+      }
+    }
+
+
+
+    &:focus,
+    &:active {
+      width: $expandedWidth;
+      background: rgba($regularColor, 1) !important;
+      color: rgba(darken($regularColor, 75%),0.6);
+      @include placeholder {
+        color: rgba(darken($regularColor, 75%),0.6);
+      }
+
+      &~ button svg {
+        stroke: rgba(darken($regularColor, 75%),0.5);
+      }
+    }
+
+    // Themes
+    [data-theme="light"] & {
+      background: $lightBackground !important;
+      color: $lightColor;
+      color: rgba($lightColor,0.5);
+      @include placeholder {
+        color: rgba($lightColor,0.5);
+      }
+
+      &~ button {
+        svg {
+          stroke: rgba($lightColor,0.5)
+        }
+      }
+
+      &:focus,
+      &:active {
+        background: rgba(#46437c, 1) !important;
+        color: rgba(lighten(#46437c, 95%),1);
+        @include placeholder {
+          color: rgba(lighten(#46437c, 95%),1);
+        }
+
+        &~ button svg {
+          stroke: rgba(lighten(#46437c, 95%),1);
+        }
+      }
+    }
+
+    [data-theme="dark"] & {
+      background: $darkBackground !important;
+      color: $darkColor;
+      color: rgba($darkColor,0.6);
+      @include placeholder {
+        color: rgba($darkColor,0.6);
+      }
+
+      &~ button {
+        svg {
+          stroke: rgba($darkColor,0.6)
+        }
+      }
+
+      &:focus,
+      &:active {
+        background: rgba($darkColor, 1) !important;
+        color: rgba(darken($darkColor, 95%),0.6);
+        @include placeholder {
+          color: rgba(darken($darkColor, 95%),0.6);
+        }
+
+        &~ button svg {
+          stroke: rgba(darken($darkColor, 95%),0.5);
+        }
+      }
+    }
+  }
+
+  .algolia-autocomplete ~ button#search {
+    display: inline-block;
+    appearance: none;
+    border: none;
+    background: transparent;
+    outline: none;
+    position: relative;
+    width: $buttonWidth;
+    height: $buttonHeight;
+    top: 10px;
+    left: -$buttonWidth - 4px;
+    text-align: center;
+    line-height: $buttonHeight;
+    margin: 0;
+    opacity: 1 !important;
+    display: inline-block !important;
+    will-change: opacity;
+
+    svg {
+      stroke: rgba($regularColor, 0.6)
+    }
+  }
+
+  .algolia-autocomplete.opened ~ button#search {
+    svg > g{
+      stroke: rgba(white, 0.6) !important
+    }
+  }
+
+  @content
+}
+/**
+ * Style input
+*/
+$params: (
+  regularBackground: rgba(255,255,255,0.1),
+  regularColor: #fff,
+  lightBackground: rgba(0,0,0,0.1),
+  lightColor: #000,
+  darkBackground: rgba(255,255,255,0.2),
+  darkColor: #FFF,
+  buttonWidth: 28px,
+  buttonHeight: 32px,
+  expandedWidth: 180px
+);
+@include simpleSearchInput($params...) {}
+
+.algolia-autocomplete .ds-dropdown-menu {
+  min-width: 430px;
+  max-width: 430px;
+}
+.algolia-autocomplete .algolia-docsearch-suggestion--wrapper {
+  padding: 0;
+}
+
+.algolia-autocomplete.algolia-autocomplete-right .ds-dropdown-menu:before {
+  left: 80px;
+}
+
+.algolia-autocomplete .algolia-docsearch-suggestion--text {
+  font-weight: 500;
+}

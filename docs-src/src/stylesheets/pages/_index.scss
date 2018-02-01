@@ -322,13 +322,11 @@
     animation-direction: reverse
   }
 
-  &.animate {
-    will-change: transform;
-    animation-name: floating;
-    animation-duration: 10s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-  }
+  will-change: transform;
+  animation-name: floating;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 
   @media (max-width: $screen-sm) {
     animation: none

@@ -11,7 +11,6 @@ module Jekyll
       # Public: Extract records from the file
       #
       # file - The Jekyll file to process
-      # TOTEST
       def self.run(file)
         # Getting all hierarchical nodes from the HTML input
         raw_records = extract_raw_records(file.content)

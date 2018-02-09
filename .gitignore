@@ -3,7 +3,7 @@ pkg/
 coverage/
 docs-dev/
 gemfiles/*.lock
-spec/fixtures/*/_site
+spec/site/_site
 
 
 .DS_Store

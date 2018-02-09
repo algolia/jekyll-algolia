@@ -55,8 +55,8 @@ Once you have your credentials, you should define your `application_id` and
 # _config.yml
 
 algolia:
-  application_id: 'your_application_id'
-  index_name:     'your_index_name'
+  application_id: your_application_id
+  index_name:     your_index_name
 ```
 
 ## Usage

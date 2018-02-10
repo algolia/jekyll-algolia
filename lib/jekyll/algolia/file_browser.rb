@@ -95,7 +95,7 @@ module Jekyll
           end
         end
 
-        excluded_files.include?(file.path)
+        excluded_files.include?(path_from_root(file))
       end
 
       # Public: Check if the file has been excluded by running a custom user

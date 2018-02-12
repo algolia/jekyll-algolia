@@ -14,6 +14,11 @@ describe(Jekyll::Algolia::Utils) do
       let(:expected) { 'This is content' }
       it { should eq expected }
     end
+    context 'with nil content' do
+      let(:html) { nil }
+      let(:expected) { nil }
+      it { should eq expected }
+    end
     context 'with trailing spaces' do
       let(:html) { '<p>This is content</p>      ' }
       let(:expected) { 'This is content' }

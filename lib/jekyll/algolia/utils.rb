@@ -6,6 +6,19 @@ module Jekyll
   module Algolia
     # Generic language-wide utils
     module Utils
+      # Public: Allow redefining an instance method on the fly with a new one
+      #
+      # instance - The instance to overwrite
+      # method - The method symbol to overwrite
+      # block - The new block to use for replacing (as a proc)
+      #
+      # Solution found on
+      # https://stackoverflow.com/questions/803020/redefining-a-single-ruby-method-on-a-single-instance-with-a-lambda/16631789
+      def self.monkey_patch(instance, method, block)
+        metaclass = class << instance; self; end
+        metaclass.send(:define_method, method, block)
+      end
+
       # Public: Convert a hash with string keys to a hash with symbol keys
       #
       # hash - The input hash, with string keys
@@ -17,6 +30,7 @@ module Jekyll
       #
       # html - String representation of the HTML node
       def self.html_to_text(html)
+        return nil if html.nil?
         text = Nokogiri::HTML(html).text
         text.tr("\n", ' ').squeeze(' ').strip
       end

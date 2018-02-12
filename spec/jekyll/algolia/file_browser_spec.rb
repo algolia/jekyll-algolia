@@ -248,6 +248,29 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 
+  describe '.excerpt_raw' do
+    let(:file) { double('File', data: { 'excerpt' => excerpt }) }
+    let(:excerpt) { double('Excerpt') }
+
+    context 'valid excerpt' do
+      subject { current.excerpt_raw(file) }
+      before do
+        allow(excerpt).to receive(:to_s).and_return('foo')
+      end
+
+      it { should eq 'foo' }
+    end
+
+    context 'invalid excerpt' do
+      subject { current.excerpt_raw(file) }
+      before do
+        allow(excerpt).to receive(:to_s).and_raise
+      end
+
+      it { should eq nil }
+    end
+  end
+
   describe '.excerpt_html' do
     let(:expected) do
       '<p>This is the first paragraph. It is especially long because we '\
@@ -256,17 +279,39 @@ describe(Jekyll::Algolia::FileBrowser) do
 
     subject { current.excerpt_html(file) }
 
-    context 'with a page' do
-      let(:file) { site.__find_file('excerpt.md') }
-      it { should eq nil }
+    context 'with real files' do
+      context 'with a page' do
+        let(:file) { site.__find_file('excerpt.md') }
+        it { should eq nil }
+      end
+      context 'with a post' do
+        let(:file) { site.__find_file('-post-with-excerpt.md') }
+        it { should eq expected }
+      end
+      context 'with a collection' do
+        let(:file) { site.__find_file('collection-item-with-excerpt.md') }
+        it { should eq expected }
+      end
     end
-    context 'with a post' do
-      let(:file) { site.__find_file('-post-with-excerpt.md') }
-      it { should eq expected }
-    end
-    context 'with a collection' do
-      let(:file) { site.__find_file('collection-item-with-excerpt.md') }
-      it { should eq expected }
+
+    context 'with mock excerpt' do
+      let(:file) { double('File') }
+      before do
+        allow(current).to receive(:excerpt_raw).and_return(raw)
+      end
+
+      describe 'should return the excerpt as returned by Jekyll' do
+        let(:raw) { 'raw' }
+        it { should eq 'raw' }
+      end
+      describe 'empty excerpt are treated as nil' do
+        let(:raw) { '' }
+        it { should eq nil }
+      end
+      describe do
+        let(:raw) { nil }
+        it { should eq nil }
+      end
     end
   end
 

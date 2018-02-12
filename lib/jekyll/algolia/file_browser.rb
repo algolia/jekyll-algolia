@@ -233,14 +233,32 @@ module Jekyll
         date.to_i
       end
 
+      # Public: Returns the raw excerpt of a file, directly as returned by
+      # Jekyll. Swallow any error that could occur when reading.
+      #
+      # file - The Jekyll file
+      #
+      # This might throw an exception if the excerpt is invalid. We also
+      # silence all logger output as Jekyll is quite verbose and will display
+      # the potential Liquid error in the terminal, even if we catch the actual
+      # error.
+      def self.excerpt_raw(file)
+        Logger.silent do
+          return file.data['excerpt'].to_s
+        end
+      rescue StandardError
+        return nil
+      end
+
       # Public: Returns the HTML version of the excerpt
       #
       # file - The Jekyll file
       #
       # Only collections (including posts) have an excerpt. Pages don't.
       def self.excerpt_html(file)
-        excerpt = file.data['excerpt']
+        excerpt = excerpt_raw(file)
         return nil if excerpt.nil?
+        return nil if excerpt.empty?
         excerpt.to_s.tr("\n", ' ').strip
       end
 
@@ -251,7 +269,6 @@ module Jekyll
       # Only collections (including posts) have an excerpt. Pages don't.
       def self.excerpt_text(file)
         html = excerpt_html(file)
-        return nil if html.nil?
         Utils.html_to_text(html)
       end
 

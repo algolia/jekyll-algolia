@@ -1,9 +1,29 @@
 # frozen_string_literal: true
 
+
 module Jekyll
   module Algolia
     # Display helpful error messages
     module Logger
+      # Public: Silence all Jekyll log output in this block
+      # Usage:
+      #   Logger.silence do
+      #     # whatever Jekyll code here
+      #   end
+      #
+      # This is especially useful when Jekyll is too talkative about what is
+      # loggued. It works by redefining Jekyll.logger.write to a noop
+      # temporarily and re-attributing the original method once finished.
+      def self.silent
+        initial_method = Jekyll.logger.method(:write)
+        Utils.monkey_patch(Jekyll.logger, :write, proc { |*args| })
+        begin
+          yield
+        ensure
+          Utils.monkey_patch(Jekyll.logger, :write, initial_method)
+        end
+      end
+
       # Public: Displays a log line
       #
       # line - Line to display. Expected to be of the following format:

@@ -5,25 +5,22 @@ E: the {size_limit} size limit.
 W:
 W: The plugin will create one record for each element matching your
 W: `nodes_to_index` value (currently set to "{nodes_to_index}"). Each record
-W: should not weight more than {size_limit}. One of your records weights {size} 
-W: and has been rejected.
+W: should not weight more than {size_limit}. 
+W: One of your records weights {size} and has been rejected.
 W:
-W: Here are more information about the rejected record:
-W: 
 W: objectID: {object_id}
 W: title:    {object_title}
 W: url:      {object_url}
 W:
+W: Most probable keys causing the issue:
+W:    {probable_wrong_keys}
+W:
 W: Complete log of the record has been extracted to:
 W:    {record_log_path}
-W:
-W: Most probable keys causing the issue:
-W:    {object_hint}
 W: 
 I: This issue can be caused by malformed HTML preventing the parser to correctly
 I: grab the content of the nodes. Double check that the page actually renders 
 I: correctly with a regular `jekyll build`.
-I:
 I:
 I: If you're having trouble solving this issue, feel free to file a bug on
 I: GitHub, ideally with a link to a repository where we can reproduce the issue.

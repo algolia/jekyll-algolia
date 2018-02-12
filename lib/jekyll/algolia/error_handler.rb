@@ -18,7 +18,6 @@ module Jekyll
       # happened to the display
       def self.stop(error, context = {})
         Logger.verbose("E:[jekyll-algolia] Raw error: #{error}")
-        Logger.verbose("E:[jekyll-algolia] Context: #{context}")
 
         identified_error = identify(error, context)
 
@@ -172,9 +171,27 @@ module Jekyll
         }
       end
 
+      # Public: Returns a string explaining which attributes are the largest in
+      # the record
+      #
+      # record - The record hash to analyze
+      #
+      # This will be used on the `record_too_big` error, to guide users in
+      # finding which record is causing trouble
+      def self.readable_largest_record_keys(record)
+        keys = Hash[record.map { |key, value| [key, value.to_s.length] }]
+        largest_keys = keys.sort_by { |_, value| value }.reverse[0..2]
+        output = []
+        largest_keys.each do |key, size|
+          size = Filesize.from("#{size} B").to_s('Kb')
+          output << "#{key} (#{size})"
+        end
+        output.join(', ')
+      end
+
       # Public: Check if the sent records are not too big
       #
-      # context[:records] - list of records to push
+      # context[:records] - list of records sent in the batch
       #
       # Records cannot weight more that 10Kb. If we're getting this error it
       # means that one of the records is too big, so we'll try to give
@@ -187,17 +204,25 @@ module Jekyll
 
         # Getting the record size
         size, = /.*size=(.*) bytes.*/.match(message).captures
-        size = Filesize.from("#{size} B").pretty
+        size = Filesize.from("#{size} B").to_s('Kb')
         object_id = details['objectID']
 
         # Getting record details
         record = Utils.find_by_key(context[:records], :objectID, object_id)
+        probable_wrong_keys = readable_largest_record_keys(record)
+
+        # Writing the full record to disk for inspection
+        record_log_path = Logger.write_to_file(
+          "jekyll-algolia-record-too-big-#{object_id}.log",
+          JSON.pretty_generate(record)
+        )
 
         {
           'object_id' => object_id,
           'object_title' => record[:title],
           'object_url' => record[:url],
-          'object_hint' => record[:content][0..100],
+          'probable_wrong_keys' => probable_wrong_keys,
+          'record_log_path' => record_log_path,
           'nodes_to_index' => Configurator.algolia('nodes_to_index'),
           'size' => size,
           'size_limit' => '10 Kb'

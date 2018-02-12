@@ -93,5 +93,22 @@ describe(Jekyll::Algolia::Logger) do
       end
     end
   end
+
+  describe '.write_to_file' do
+    let(:filename) { 'output.log' }
+    let(:content) { 'content' }
+    let(:source) { '/source/' }
+
+    before do
+      expect(configurator)
+        .to receive(:get).with('source').and_return(source)
+      expect(File).to receive(:write)
+        .with('/source/output.log', content)
+    end
+
+    subject { current.write_to_file(filename, content) }
+
+    it { should eq '/source/output.log' }
+  end
 end
 # rubocop:enable Metrics/BlockLength

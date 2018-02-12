@@ -52,6 +52,16 @@ module Jekyll
         log(line)
       end
 
+      # Public: Write the specified content to a file in the source directory
+      #
+      # filename - the file basename
+      # content - the actual content of the file
+      def self.write_to_file(filename, content)
+        filepath = File.join(Configurator.get('source'), filename)
+        File.write(filepath, content)
+        filepath
+      end
+
       # Public: Displays a helpful error message for one of the knows errors
       #
       # message_id: A string identifying a know message

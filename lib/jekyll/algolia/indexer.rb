@@ -151,7 +151,10 @@ module Jekyll
           begin
             ::Algolia.batch!(slice)
           rescue StandardError => error
-            ErrorHandler.stop(error)
+            records = slice.map do |record|
+              record[:body]
+            end
+            ErrorHandler.stop(error, records: records)
           end
         end
       end

@@ -94,6 +94,17 @@ describe(Jekyll::Algolia::ErrorHandler) do
     end
   end
 
+  describe '.readable_largest_record_keys' do
+    let(:record) { { foo: foo, bar: bar, baz: baz, small: 'xxx' } }
+    let(:foo) { 'x' * 1000 }
+    let(:bar) { 'x' * 10_000 }
+    let(:baz) { 'x' * 100_000 }
+
+    subject { current.readable_largest_record_keys(record) }
+
+    it { should eq 'baz (100.00 Kb), bar (10.00 Kb), foo (1.00 Kb)' }
+  end
+
   describe '.identify' do
     subject { current.identify(error, context) }
 
@@ -156,7 +167,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
         '400: Cannot POST to '\
         'https://MY_APP_ID.algolia.net/1/indexes/my_index/batch: '\
         '{"message":"Record at the position 3 '\
-        'objectID=deadbeef is too big size=1091966 bytes. '\
+        'objectID=deadbeef is too big size=109196 bytes. '\
         'Contact us if you need an extended quota","position":3,'\
         '"objectID":"deadbeef","status":400} (400)'
       end
@@ -167,28 +178,37 @@ describe(Jekyll::Algolia::ErrorHandler) do
             title: 'Page title',
             url: '/path/to/file.ext',
             # rubocop:disable Metrics/LineLength
-            content: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as wel so we will cut it at 100 characters.'
+            content: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as well so we will cut it at 100 characters.'
             # rubocop:enable Metrics/LineLength
           },
           { objectID: 'foo' }
         ] }
       end
+      let(:record_log_path) { '/source/output.log' }
+      let(:probable_wrong_keys) { 'foo, bar, baz' }
       before do
         allow(configurator)
           .to receive(:algolia)
           .with('nodes_to_index')
           .and_return('p,li,foo')
+        expect(logger)
+          .to receive(:write_to_file)
+          .and_return(record_log_path)
+        expect(current)
+          .to receive(:readable_largest_record_keys)
+          .and_return(probable_wrong_keys)
       end
 
       it { should include(name: 'record_too_big') }
+
       it do
         details = subject[:details]
         expect(details).to include('object_id' => 'deadbeef')
         expect(details).to include('object_title' => 'Page title')
         expect(details).to include('object_url' => '/path/to/file.ext')
-        expect(details['object_hint']).to match(/^A very long text/)
-        expect(details['object_hint']).to match(/.{0,100}/)
-        expect(details).to include('size' => '1.04 MiB')
+        expect(details).to include('record_log_path' => record_log_path)
+        expect(details).to include('probable_wrong_keys' => probable_wrong_keys)
+        expect(details).to include('size' => '109.20 Kb')
         expect(details).to include('size_limit' => '10 Kb')
         expect(details).to include('nodes_to_index' => 'p,li,foo')
       end

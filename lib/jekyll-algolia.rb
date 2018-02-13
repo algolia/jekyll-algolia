@@ -91,14 +91,15 @@ module Jekyll
         files = []
         Logger.log('I:Extracting records...')
         each_site_file do |file|
+          path = FileBrowser.relative_path(file)
+
           # Skip files that should not be indexed
           is_indexable = FileBrowser.indexable?(file)
           unless is_indexable
-            Logger.verbose("W:Skipping #{file.path}")
+            Logger.verbose("W:Skipping #{path}")
             next
           end
 
-          path = FileBrowser.path_from_root(file)
           Logger.verbose("I:Extracting records from #{path}")
           file_records = Extractor.run(file)
 

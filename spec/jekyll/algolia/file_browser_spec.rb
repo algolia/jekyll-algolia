@@ -17,6 +17,46 @@ describe(Jekyll::Algolia::FileBrowser) do
       .and_return(true)
   end
 
+  describe '.absolute_path' do
+    subject { current.absolute_path(file) }
+
+    let(:file) { double('Jekyll::File', path: path) }
+
+    context 'with an absolute path' do
+      let(:path) { '/absolute/path/to/file.ext' }
+      it { should eq path }
+    end
+    context 'with an relative path path' do
+      let(:path) { 'file.ext' }
+      let(:source) { '/path/to/jekyll/source/' }
+      before do
+        allow(configurator).to receive(:get)
+        expect(configurator).to receive(:get).with('source').and_return(source)
+      end
+      it { should eq '/path/to/jekyll/source/file.ext' }
+    end
+  end
+
+  describe '.relative_path' do
+    subject { current.relative_path(file) }
+
+    let(:file) { double('Jekyll::File', path: path) }
+    let(:source) { '/path/to/jekyll/' }
+
+    before do
+      allow(configurator).to receive(:get).with('source').and_return(source)
+    end
+
+    context 'with an absolute path' do
+      let(:path) { '/path/to/jekyll/file.ext' }
+      it { should eq 'file.ext' }
+    end
+    context 'with an relative path path' do
+      let(:path) { 'file.ext' }
+      it { should eq path }
+    end
+  end
+
   describe '.indexable?' do
     subject { current.indexable?(file) }
 
@@ -179,6 +219,53 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
     context 'when testing a file excluded from a custom hook' do
       let(:file) { site.__find_file('excluded-from-hook.html') }
+      it { should eq true }
+    end
+  end
+
+  describe '.excluded_from_config?' do
+    subject { current.excluded_from_config?(file) }
+    before do
+      allow(configurator).to receive(:algolia)
+      expect(configurator)
+        .to receive(:algolia)
+        .with('files_to_exclude')
+        .and_return(files_to_exclude)
+    end
+
+    context 'file in root' do
+      let(:file) { site.__find_file('excluded.html') }
+      let(:files_to_exclude) { ['excluded.html'] }
+      it { should eq true }
+    end
+    context 'file in subdir' do
+      let(:file) { site.__find_file('excluded_dir/file.html') }
+      let(:files_to_exclude) { ['excluded_dir/file.html'] }
+      it { should eq true }
+    end
+    context 'whole subdir' do
+      let(:file) { site.__find_file('excluded_dir/file.html') }
+      let(:files_to_exclude) { ['excluded_dir/*'] }
+      it { should eq true }
+    end
+    context 'file with starting ./' do
+      let(:file) { site.__find_file('excluded.html') }
+      let(:files_to_exclude) { ['./excluded.html'] }
+      it { should eq true }
+    end
+    context 'pattern in root' do
+      let(:file) { site.__find_file('excluded.html') }
+      let(:files_to_exclude) { ['*.html'] }
+      it { should eq true }
+    end
+    context 'pattern in root starting with ./' do
+      let(:file) { site.__find_file('excluded.html') }
+      let(:files_to_exclude) { ['./*.html'] }
+      it { should eq true }
+    end
+    context 'pattern in root starting with ./' do
+      let(:file) { site.__find_file('excluded.html') }
+      let(:files_to_exclude) { ['./*.html'] }
       it { should eq true }
     end
   end
@@ -511,23 +598,6 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should include(title: 'Collection Item') }
         it { should include(url: '/my-collection/collection-item.html') }
       end
-    end
-  end
-
-  describe '.path_from_root' do
-    subject { current.path_from_root(file) }
-
-    context 'with a page' do
-      let(:file) { site.__find_file('about.md') }
-      it { should eq 'about.md' }
-    end
-    context 'with a post' do
-      let(:file) { site.__find_file('_posts/2015-07-03-test-post-again.md') }
-      it { should eq '_posts/2015-07-03-test-post-again.md' }
-    end
-    context 'with a collection element' do
-      let(:file) { site.__find_file('_my-collection/collection-item.html') }
-      it { should eq '_my-collection/collection-item.html' }
     end
   end
 end

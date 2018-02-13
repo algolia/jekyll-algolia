@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'algolia_html_extractor'
+require 'pathname'
 
 module Jekyll
   module Algolia
@@ -20,6 +21,35 @@ module Jekyll
       # We don't index static assets (js, css, images)
       def self.static_file?(file)
         file.is_a?(Jekyll::StaticFile)
+      end
+
+      # Public: Return the absolute path of a Jekyll file
+      #
+      # file - The Jekyll file to inspect
+      #
+      # Jekyll handles the .path property of some files as relative to the root
+      # (pages) or as an absolute paths (posts and static assets). We make sure
+      # we have a consistent way of accessing it
+      def self.absolute_path(file)
+        pathname = Pathname.new(file.path)
+        return pathname.cleanpath.to_s if pathname.absolute?
+
+        File.join(Configurator.get('source'), file.path)
+      end
+
+      # Public: Return the path of a Jekyll file relative to the Jekyll source
+      #
+      # file - The Jekyll file to inspect
+      #
+      # Jekyll handles the .path property of some files as relative to the root
+      # (pages) or as an absolute paths (posts and static assets). We make sure
+      # we have a consistent way of accessing it
+      def self.relative_path(file)
+        pathname = Pathname.new(file.path)
+        return file.path if pathname.relative?
+
+        jekyll_source = Pathname.new(Configurator.get('source'))
+        pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
 
       # Public: Check if the file is a 404 error page
@@ -86,16 +116,19 @@ module Jekyll
       # file - The Jekyll file
       def self.excluded_from_config?(file)
         excluded_patterns = Configurator.algolia('files_to_exclude')
-        excluded_files = []
+        jekyll_source = Configurator.get('source')
 
         # Transform the glob patterns into a real list of files
-        Dir.chdir(Configurator.get('source')) do
+        excluded_files = []
+        Dir.chdir(jekyll_source) do
           excluded_patterns.each do |pattern|
-            excluded_files += Dir.glob(pattern)
+            Dir.glob(pattern).each do |match|
+              excluded_files << File.expand_path(match)
+            end
           end
         end
 
-        excluded_files.include?(path_from_root(file))
+        excluded_files.include?(absolute_path(file))
       end
 
       # Public: Check if the file has been excluded by running a custom user
@@ -104,18 +137,6 @@ module Jekyll
       # file - The Jekyll file
       def self.excluded_from_hook?(file)
         Hooks.should_be_excluded?(file.path)
-      end
-
-      # Public: Return the path to the original file, relative from the Jekyll
-      # source
-      #
-      # file - The Jekyll file
-      #
-      # Pages have their .path property relative to the source, but collections
-      # (including posts) have an absolute file path.
-      def self.path_from_root(file)
-        source = Configurator.get('source')
-        file.path.gsub(%r{^#{source}/}, '')
       end
 
       # Public: Check if the file should be indexed

@@ -14,18 +14,29 @@
 
 ## I want to report a bug:
 
-**What is the current behavior?**
+### What is the current behavior?
 
-**What is your expected behavior?**
+### What is your expected behavior?
 
-**Steps to reproduce the issue:**
-<!-- If you have a repo we can clone to try, or a screenshot, that is even
-better! --> 
+### Git repository to reproduce the issue:
+<!-- 
+  This will greatly help us reproduce the issue and fix it quickly.
+  If you don't have one or can't share it, screenshots or terminal output will
+  be very helpful.
+--> 
+
+### Ruby version used:
+<!-- `ruby -v` should give you this information -->
+
+### Jekyll version used:
+<!-- `bundle exec jekyll -v` should give you this one -->
+
+
 
 ## I want to suggest a feature:
 
-**What is your use case for such a feature?**
+### What is your use case for such a feature?
 <!-- The more you can tell us about WHY you want to do this, the easier is will be for us to tell you HOW to do it. -->
 
-**What is your proposed API? Is this a new option? A new behavior?**
+### What is your proposed API? Is this a new option? A new behavior?
 

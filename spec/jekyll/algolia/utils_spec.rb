@@ -58,6 +58,47 @@ describe(Jekyll::Algolia::Utils) do
     end
   end
 
+  describe '.instance_of?' do
+    subject { current.instance_of?(input, classname) }
+
+    context do
+      let(:input) { 'foo' }
+      let(:classname) { 'String' }
+      it { should eq true }
+    end
+    context do
+      let(:input) { 42 }
+      let(:classname) { 'String' }
+      it { should eq false }
+    end
+    context do
+      let(:input) { 'foo' }
+      let(:classname) { 'Foo' }
+      it { should eq false }
+    end
+    context do
+      let(:input) { 'foo' }
+      let(:classname) { 'Foo::SubFoo' }
+      it { should eq false }
+    end
+    context do
+      let(:input) { Foo.new   }
+      let(:classname) { 'Foo' }
+      before do
+        stub_const 'Foo', Class.new
+      end
+      it { should eq true }
+    end
+    context do
+      let(:input) { Foo::SubFoo.new   }
+      let(:classname) { 'Foo::SubFoo' }
+      before do
+        stub_const 'Foo::SubFoo', Class.new
+      end
+      it { should eq true }
+    end
+  end
+
   describe '.compact_empty' do
     subject { current.compact_empty(input) }
 

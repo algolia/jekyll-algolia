@@ -26,6 +26,17 @@ module Jekyll
         Hash[hash.map { |key, value| [key.to_sym, value] }]
       end
 
+      # Public: Check if a variable is an instance of a specific class
+      #
+      # input - the variable to test
+      # classname - the string representation of the class
+      def self.instance_of?(input, classname)
+        return input.instance_of? Object.const_get(classname)
+      rescue StandardError
+        # The class might not even exist
+        return false
+      end
+
       # Public: Convert an HTML string to its content only
       #
       # html - String representation of the HTML node

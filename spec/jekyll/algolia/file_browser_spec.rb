@@ -508,9 +508,29 @@ describe(Jekyll::Algolia::FileBrowser) do
         should_not include(:date)
       end
     end
-    describe 'should not contain some specific keys' do
+    describe 'should not contain the excerpt' do
       let(:file) { site.__find_file('html.html') }
       it { should_not include(:excerpt) }
+    end
+
+    context 'jekyll-asciidoc compatibility' do
+      context do
+        let(:data) { { 'document' => 'foo' } }
+        let(:file) { double('Jekyll::File', data: data) }
+        it do
+          should include(document: 'foo')
+        end
+      end
+      context do
+        let(:data) { { 'document' => Asciidoctor::Document.new } }
+        let(:file) { double('Jekyll::File', data: data) }
+        before do
+          stub_const('Asciidoctor::Document', Class.new)
+        end
+        it do
+          should_not include(:document)
+        end
+      end
     end
   end
 

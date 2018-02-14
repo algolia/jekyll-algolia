@@ -197,8 +197,16 @@ module Jekyll
           data.delete(key) if respond_to?(key)
         end
 
-        # Also delete keys we manually handle
+        # Excerpt needs a special handling
         data.delete('excerpt')
+
+        # jekyll-asciidoc adds a document key to each page. Once converted to
+        # a string representation, it contains a random number, causing the
+        # object hash to change on each run. This causes the diff method to
+        # fail, so we discard this key.
+        if Utils.instance_of?(data['document'], 'Asciidoctor::Document')
+          data.delete('document')
+        end
 
         # Convert all keys to symbols
         data = Utils.keys_to_symbols(data)

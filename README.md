@@ -1,10 +1,12 @@
 # Jekyll Algolia Plugin
 
-[![Gem Version][1]](http://badge.fury.io/rb/jekyll-algolia) [![Build
-Status][2]](https://travis-ci.org/algolia/jekyll-algolia) [![Coverage
-Status][3]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
-[![Code Climate][4]](https://codeclimate.com/github/algolia/jekyll-algolia)
-![Jekyll >= 3.6.0][5] ![Ruby >= 2.3.0][6]
+[![gem version][1]](https://rubygems.org/gems/jekyll-algolia)
+![ruby][2]
+![jekyll][3]
+[![build master][4]](https://travis-ci.org/algolia/jekyll-algolia)
+[![coverage master][5]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
+[![build develop][6]](https://travis-ci.org/algolia/jekyll-algolia)
+[![coverage develop][7]](https://coveralls.io/github/algolia/jekyll-algolia?branch=develop)
 
 Add fast and relevant search to your Jekyll site.
 
@@ -44,8 +46,8 @@ You need to provide certain Algolia credentials for this plugin to *index* your
 site.
 
 *If you don't yet have an Algolia account, you can open a free [Community plan
-here][7]. Once signed in, you can get your credentials from
-[your dashboard][8].*
+here][8]. Once signed in, you can get your credentials from
+[your dashboard][9].*
 
 Once you have your credentials, you should define your `application_id` and
 `index_name` inside your `_config.yml` file like this:
@@ -71,17 +73,18 @@ Note that `ALGOLIA_API_KEY` should be set to your admin API key.
 
 # Thanks
 
-Thanks to [Anatoliy Yastreb][9] for a [great tutorial][10] on creating Jekyll
+Thanks to [Anatoliy Yastreb][10] for a [great tutorial][11] on creating Jekyll
 plugins.
 
 
 [1]: https://badge.fury.io/rb/jekyll-algolia.svg
-[2]: https://travis-ci.org/algolia/jekyll-algolia.svg?branch=master
-[3]: https://coveralls.io/repos/algolia/jekyll-algolia/badge.svg?branch=master&service=github
-[4]: https://codeclimate.com/github/algolia/jekyll-algolia/badges/gpa.svg
-[5]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.0-green.svg
-[6]: https://img.shields.io/badge/ruby-%3E%3D%202.3.0-green.svg
-[7]: https://www.algolia.com/users/sign_up/hacker
-[8]: https://www.algolia.com/licensing
-[9]: https://github.com/ayastreb/
-[10]: https://ayastreb.me/writing-a-jekyll-plugin/
+[2]: https://img.shields.io/badge/ruby-%3E%3D%202.3.0-green.svg
+[3]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.0-green.svg
+[4]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Amaster&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Dmaster
+[5]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Amaster&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Dmaster
+[6]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Adevelop&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
+[7]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Adevelop&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
+[8]: https://www.algolia.com/users/sign_up/hacker
+[9]: https://www.algolia.com/licensing
+[10]: https://github.com/ayastreb/
+[11]: https://ayastreb.me/writing-a-jekyll-plugin/

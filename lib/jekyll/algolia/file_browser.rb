@@ -34,7 +34,7 @@ module Jekyll
         pathname = Pathname.new(file.path)
         return pathname.cleanpath.to_s if pathname.absolute?
 
-        File.join(Configurator.get('source'), file.path)
+        File.expand_path(File.join(Configurator.get('source'), file.path))
       end
 
       # Public: Return the path of a Jekyll file relative to the Jekyll source

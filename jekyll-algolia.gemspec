@@ -31,6 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'coveralls', '~> 0.8'
   gem.add_development_dependency 'flay', '~> 2.6'
   gem.add_development_dependency 'flog', '~> 4.3'
+  gem.add_development_dependency 'guard', '~> 2.14'
   gem.add_development_dependency 'guard-rspec', '~> 4.6'
   gem.add_development_dependency 'jekyll-paginate', '~> 1.1'
   gem.add_development_dependency 'rake', '~> 12.3'

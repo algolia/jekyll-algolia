@@ -24,27 +24,30 @@ describe(Jekyll::Algolia::FileBrowser) do
     subject { current.absolute_path(file) }
 
     let(:file) { double('Jekyll::File', path: path) }
+    let(:source) { '/path/to/jekyll/' }
 
-    context 'with an absolute path' do
+    before do
+      allow(configurator).to receive(:get)
+      allow(configurator).to receive(:get).with('source').and_return(source)
+    end
+
+    context 'with an absolute path and absolute source' do
       let(:path) { '/absolute/path/to/file.ext' }
       it { should eq path }
     end
-    context 'with an relative path' do
+    context 'with an relative path and absolute source' do
       let(:path) { 'file.ext' }
       let(:source) { '/path/to/jekyll/source/' }
-      before do
-        allow(configurator).to receive(:get)
-        expect(configurator).to receive(:get).with('source').and_return(source)
-      end
       it { should eq '/path/to/jekyll/source/file.ext' }
     end
-    context 'with a relative source' do
+    context 'with a absolute path and relative source' do
+      let(:path) { "#{Dir.pwd}/file.ext" }
+      let(:source) { '.' }
+      it { should eq path }
+    end
+    context 'with a relative path and relative source' do
       let(:path) { 'file.ext' }
       let(:source) { '.' }
-      before do
-        allow(configurator).to receive(:get)
-        expect(configurator).to receive(:get).with('source').and_return(source)
-      end
       it { should eq "#{Dir.pwd}/file.ext" }
     end
   end
@@ -59,13 +62,23 @@ describe(Jekyll::Algolia::FileBrowser) do
       allow(configurator).to receive(:get).with('source').and_return(source)
     end
 
-    context 'with an absolute path' do
+    context 'with an absolute path and absolute source' do
       let(:path) { '/path/to/jekyll/file.ext' }
       it { should eq 'file.ext' }
     end
-    context 'with an relative path path' do
+    context 'with a relative path and absolute source' do
       let(:path) { 'file.ext' }
       it { should eq path }
+    end
+    context 'with and absolute path and relative source' do
+      let(:path) { "#{Dir.pwd}/file.ext" }
+      let(:source) { '.' }
+      it { should eq 'file.ext' }
+    end
+    context 'with and relatrive path and relative source' do
+      let(:path) { 'file.ext' }
+      let(:source) { '.' }
+      it { should eq 'file.ext' }
     end
   end
 

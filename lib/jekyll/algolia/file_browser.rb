@@ -48,7 +48,9 @@ module Jekyll
         pathname = Pathname.new(file.path)
         return file.path if pathname.relative?
 
-        jekyll_source = Pathname.new(Configurator.get('source'))
+        jekyll_source = Pathname.new(
+          File.expand_path(Configurator.get('source'))
+        )
         pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
 

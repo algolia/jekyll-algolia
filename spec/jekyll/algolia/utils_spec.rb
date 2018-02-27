@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::Utils) do
   let(:current) { Jekyll::Algolia::Utils }
 
@@ -151,6 +151,66 @@ describe(Jekyll::Algolia::Utils) do
     context 'with an existing value' do
       let(:items) { [{ 'key' => 'value' }] }
       it { should include('key' => 'value') }
+    end
+  end
+
+  describe '.jsonify' do
+    subject { current.jsonify(item) }
+
+    context 'with a string' do
+      let(:item) { 'foo' }
+      it { should eq 'foo' }
+    end
+    context 'with a number' do
+      let(:item) { 42 }
+      it { should eq 42 }
+    end
+    context 'with a boolean (true)' do
+      let(:item) { true }
+      it { should eq true }
+    end
+    context 'with a boolean (false)' do
+      let(:item) { false }
+      it { should eq false }
+    end
+    context 'with an array' do
+      let(:item) { %w[foo bar] }
+      it { should eq %w[foo bar] }
+    end
+    context 'with a recursive array' do
+      let(:item) { ['foo', ['bar']] }
+      it { should eq ['foo', ['bar']] }
+    end
+    context 'with an object' do
+      let(:item) { { foo: 'bar' } }
+      it { should eq item }
+    end
+    context 'with a recursive object' do
+      let(:item) { { foo: { bar: 'baz' } } }
+      it { should eq item }
+    end
+    context 'with a stringifiable custom object' do
+      let(:item) { double('Custom::Object', to_s: 'foo') }
+      it { should eq 'foo' }
+    end
+    context 'with a non-stringifiable custom object' do
+      let(:item) do
+        # rubocop:disable Style/EvalWithLocation
+        fake_object = double('Custom::Object')
+        fake_object.instance_eval('undef :to_s')
+        fake_object
+        # rubocop:enable Style/EvalWithLocation
+      end
+      it { should eq nil }
+    end
+    fcontext 'with an asciidoc object' do
+      let(:to_s) do
+        # rubocop:disable Metrics/LineLength
+        '#<Asciidoctor::Document@33306360 {doctype: "article", doctitle: nil, blocks: 11}>'
+        # rubocop:enable Metrics/LineLength
+      end
+      let(:item) { double('Custom::Object', to_s: to_s) }
+      it { should eq nil }
     end
   end
 end

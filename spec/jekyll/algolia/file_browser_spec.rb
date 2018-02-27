@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::FileBrowser) do
   let(:current) { Jekyll::Algolia::FileBrowser }
   let(:configurator) { Jekyll::Algolia::Configurator }
@@ -440,26 +440,6 @@ describe(Jekyll::Algolia::FileBrowser) do
     describe 'should not contain the excerpt' do
       let(:file) { site.__find_file('html.html') }
       it { should_not include(:excerpt) }
-    end
-
-    context 'jekyll-asciidoc compatibility' do
-      context do
-        let(:data) { { 'document' => 'foo' } }
-        let(:file) { double('Jekyll::File', data: data) }
-        it do
-          should include(document: 'foo')
-        end
-      end
-      context do
-        let(:data) { { 'document' => Asciidoctor::Document.new } }
-        let(:file) { double('Jekyll::File', data: data) }
-        before do
-          stub_const('Asciidoctor::Document', Class.new)
-        end
-        it do
-          should_not include(:document)
-        end
-      end
     end
   end
 

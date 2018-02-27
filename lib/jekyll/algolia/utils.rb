@@ -88,6 +88,38 @@ module Jekyll
           item[key] == value
         end
       end
+
+      # Public: Convert an object into an object that can easily be converted to
+      # JSON, to be stored as a record
+      #
+      # item - The object to convert
+      #
+      # It will keep any string, number, boolean,boolean,array or nested object,
+      # but will try to stringify other objects, excluding the one that contain
+      # a unique identifier once serialized.
+      def self.jsonify(item)
+        # Simple types
+        return item if item.nil?
+        return item if item.is_a? TrueClass
+        return item if item.is_a? FalseClass
+        return item if item.is_a? Integer
+        return item if item.is_a? String
+
+        # Recursive types
+        return item.map { |value| jsonify(value) } if item.is_a?(Array)
+        if item.is_a?(Hash)
+          return item.map { |key, value| [key, jsonify(value)] }.to_h
+        end
+
+        # Can't be stringified, discard it
+        return nil unless item.respond_to?(:to_s)
+
+        # Discard also if is a serialized version with unique identifier
+        stringified = item.to_s
+        return nil if match?(stringified, /#<[^ ].*@[0-9]* .*>/)
+
+        stringified
+      end
     end
   end
 end

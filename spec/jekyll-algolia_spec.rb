@@ -29,9 +29,6 @@ describe(Jekyll::Algolia) do
           .and_return(true)
       end
 
-      it 'should make the config accessible from the outside' do
-        expect(subject.config).to include(config)
-      end
       it 'should make the site accessible from the outside' do
         expect(subject.site.config).to include(config)
       end

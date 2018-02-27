@@ -8,8 +8,11 @@ describe(Jekyll::Algolia::FileBrowser) do
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:site) { init_new_jekyll_site }
 
-  # Suppress Jekyll log about reading the config file
-  before { allow(Jekyll.logger).to receive(:info) }
+  # Suppress Jekyll logging
+  before do
+    allow(Jekyll.logger).to receive(:info)
+    allow(Jekyll.logger).to receive(:warn)
+  end
   # Do not exit on wrong Algolia configuration
   before do
     allow(Jekyll::Algolia::Configurator)
@@ -73,16 +76,8 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:file) { site.__find_file('png.png') }
       it { should eq false }
     end
-    context 'with a 404 file' do
-      let(:file) { site.__find_file('404.html') }
-      it { should eq false }
-    end
     context 'with a pagination page' do
       let(:file) { site.__find_file('blog/pages/2/index.html') }
-      it { should eq false }
-    end
-    context 'with a file excluded by the config' do
-      let(:file) { site.__find_file('excluded.html') }
       it { should eq false }
     end
     context 'with a file excluded by a hook' do
@@ -114,20 +109,6 @@ describe(Jekyll::Algolia::FileBrowser) do
     context 'with an html page' do
       let(:file) { site.__find_file('html.html') }
       it { should eq false }
-    end
-  end
-
-  describe '.is_404?' do
-    subject { current.is_404?(file) }
-
-    context 'with an HTML file' do
-      let(:file) { site.__find_file('404.html') }
-      it { should eq true }
-    end
-
-    context 'with a markdown file' do
-      let(:file) { site.__find_file('404.md') }
-      it { should eq true }
     end
   end
 
@@ -202,80 +183,6 @@ describe(Jekyll::Algolia::FileBrowser) do
         let(:file) { site.__find_file('md.md') }
         it { should eq false }
       end
-    end
-  end
-
-  describe '.excluded_by_user?' do
-    subject { current.excluded_by_user?(file) }
-
-    context 'when testing a regular file' do
-      let(:file) { site.__find_file('html.html') }
-      it { should eq false }
-    end
-    context 'when testing a file excluded from config' do
-      let(:file) { site.__find_file('excluded.html') }
-      it { should eq true }
-      context 'when using a glob' do
-        context 'with a matching file' do
-          let(:file) { site.__find_file('excluded_dir/file.html') }
-          it { should eq true }
-        end
-        context 'with a non-matching file' do
-          let(:file) { site.__find_file('excluded_dir/file.md') }
-          it { should eq false }
-        end
-      end
-    end
-    context 'when testing a file excluded from a custom hook' do
-      let(:file) { site.__find_file('excluded-from-hook.html') }
-      it { should eq true }
-    end
-  end
-
-  describe '.excluded_from_config?' do
-    subject { current.excluded_from_config?(file) }
-    before do
-      allow(configurator).to receive(:algolia)
-      expect(configurator)
-        .to receive(:algolia)
-        .with('files_to_exclude')
-        .and_return(files_to_exclude)
-    end
-
-    context 'file in root' do
-      let(:file) { site.__find_file('excluded.html') }
-      let(:files_to_exclude) { ['excluded.html'] }
-      it { should eq true }
-    end
-    context 'file in subdir' do
-      let(:file) { site.__find_file('excluded_dir/file.html') }
-      let(:files_to_exclude) { ['excluded_dir/file.html'] }
-      it { should eq true }
-    end
-    context 'whole subdir' do
-      let(:file) { site.__find_file('excluded_dir/file.html') }
-      let(:files_to_exclude) { ['excluded_dir/*'] }
-      it { should eq true }
-    end
-    context 'file with starting ./' do
-      let(:file) { site.__find_file('excluded.html') }
-      let(:files_to_exclude) { ['./excluded.html'] }
-      it { should eq true }
-    end
-    context 'pattern in root' do
-      let(:file) { site.__find_file('excluded.html') }
-      let(:files_to_exclude) { ['*.html'] }
-      it { should eq true }
-    end
-    context 'pattern in root starting with ./' do
-      let(:file) { site.__find_file('excluded.html') }
-      let(:files_to_exclude) { ['./*.html'] }
-      it { should eq true }
-    end
-    context 'pattern in root starting with ./' do
-      let(:file) { site.__find_file('excluded.html') }
-      let(:files_to_exclude) { ['./*.html'] }
-      it { should eq true }
     end
   end
 

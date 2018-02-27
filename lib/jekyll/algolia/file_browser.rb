@@ -52,20 +52,6 @@ module Jekyll
         pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
 
-      # Public: Check if the file is a 404 error page
-      #
-      # file - The Jekyll file
-      #
-      # 404 pages are not Jekyll defaults but a convention adopted by GitHub
-      # pages. We don't want to index those.
-      # Source: https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
-      #
-      # rubocop:disable Naming/PredicateName
-      def self.is_404?(file)
-        File.basename(file.path, File.extname(file.path)) == '404'
-      end
-      # rubocop:enable Naming/PredicateName
-
       # Public: Check if the page is a pagination page
       #
       # file - The Jekyll file
@@ -99,16 +85,6 @@ module Jekyll
         extensions = Configurator.algolia('extensions_to_index')
         extname = File.extname(file.path)[1..-1]
         extensions.include?(extname)
-      end
-
-      # Public: Check if the file has been excluded by the user
-      #
-      # file - The Jekyll file
-      #
-      # Files can be excluded either by setting the `files_to_exclude` option,
-      # or by defining a custom hook
-      def self.excluded_by_user?(file)
-        excluded_from_config?(file) || excluded_from_hook?(file)
       end
 
       # Public: Check if the file has been excluded by `files_to_exclude`
@@ -147,10 +123,9 @@ module Jekyll
       # all the static assets, only keep the actual content.
       def self.indexable?(file)
         return false if static_file?(file)
-        return false if is_404?(file)
         return false if pagination_page?(file)
         return false unless allowed_extension?(file)
-        return false if excluded_by_user?(file)
+        return false if excluded_from_hook?(file)
 
         true
       end

@@ -10,8 +10,11 @@ describe(Jekyll::Algolia::Extractor) do
   let(:current) { Jekyll::Algolia::Extractor }
   let(:site) { init_new_jekyll_site }
 
-  # Suppress Jekyll log about reading the config file
-  before { allow(Jekyll.logger).to receive(:info) }
+  # Suppress Jekyll log
+  before do
+    allow(Jekyll.logger).to receive(:info)
+    allow(Jekyll.logger).to receive(:warn)
+  end
   # Do not exit on wrong Algolia configuration
   before do
     allow(Jekyll::Algolia::Configurator)

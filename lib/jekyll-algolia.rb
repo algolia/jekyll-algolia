@@ -17,8 +17,6 @@ module Jekyll
     require 'jekyll/algolia/extractor'
     require 'jekyll/algolia/indexer'
 
-    @config = {}
-
     # Public: Init the Algolia module
     #
     # config - A hash of Jekyll config option (merge of _config.yml options and
@@ -27,9 +25,9 @@ module Jekyll
     # The gist of the plugin works by instanciating a Jekyll site,
     # monkey-patching its `write` method and building it.
     def self.init(config = {})
-      @config = config
       @start_time = Time.now
-      @site = Jekyll::Algolia::Site.new(@config)
+      config = Configurator.init(config).config
+      @site = Jekyll::Algolia::Site.new(config)
 
       exit 1 unless Configurator.assert_valid_credentials
 
@@ -55,14 +53,6 @@ module Jekyll
     def self.run
       Logger.log('I:Processing site...')
       @site.process
-    end
-
-    # Public: Get access to the Jekyll config
-    #
-    # All other classes will need access to this config, so we make it publicly
-    # accessible
-    def self.config
-      @config
     end
 
     # Public: Get access to the Jekyll site

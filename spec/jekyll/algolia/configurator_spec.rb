@@ -8,7 +8,70 @@ describe(Jekyll::Algolia::Configurator) do
   let(:logger) { Jekyll::Algolia::Logger }
   let(:config) { {} }
   before do
-    allow(Jekyll::Algolia).to receive(:config).and_return(config)
+    allow(current).to receive(:config).and_return(config)
+  end
+
+  describe '.init' do
+    let(:config) { {} }
+    let(:default_exclude) { 'files_excluded_from_render' }
+
+    before do
+      allow(current)
+        .to receive(:files_excluded_from_render)
+        .and_return(default_exclude)
+    end
+
+    subject { current.init(config).config }
+
+    describe 'should override the exclude key' do
+      it { should include('exclude' => 'files_excluded_from_render') }
+    end
+  end
+
+  describe '.files_excluded_from_render' do
+    subject { current.files_excluded_from_render }
+
+    before do
+      allow(current).to receive(:get)
+      expect(current).to receive(:get).with('exclude').and_return(exclude)
+      allow(current).to receive(:algolia)
+      expect(current)
+        .to receive(:algolia)
+        .with('files_to_exclude')
+        .and_return(algolia_exclude)
+    end
+
+    describe 'should merge main exclude and algolia exclude' do
+      let(:exclude) { %w[foo bar] }
+      let(:algolia_exclude) { ['baz'] }
+
+      it { should include 'foo' }
+      it { should include 'bar' }
+      it { should include 'baz' }
+    end
+
+    describe 'should use the algolia exclude if no main one' do
+      let(:exclude) { nil }
+      let(:algolia_exclude) { ['baz'] }
+
+      it { should include 'baz' }
+    end
+
+    describe 'should use the main exclude if no algolia one' do
+      let(:exclude) { %w[foo bar] }
+      let(:algolia_exclude) { nil }
+
+      it { should include 'foo' }
+      it { should include 'bar' }
+    end
+
+    describe 'should always exclude 404 pages' do
+      let(:exclude) { nil }
+      let(:algolia_exclude) { nil }
+
+      it { should include '404.html' }
+      it { should include '404.md' }
+    end
   end
 
   describe '.get' do

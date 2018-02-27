@@ -6,6 +6,8 @@ module Jekyll
     module Configurator
       include Jekyll::Algolia
 
+      @config = {}
+
       # Algolia default values
       ALGOLIA_DEFAULTS = {
         'extensions_to_index' => nil,
@@ -56,13 +58,33 @@ module Jekyll
         }
       }.freeze
 
+      # Public: Init the configurator with the Jekyll config
+      #
+      # config - The config passed by the `jekyll algolia` command
+      #
+      # This will allow us to have a local version of the config that we can
+      # read
+      def self.init(config)
+        @config = config
+        config['exclude'] = files_excluded_from_render
+
+        self
+      end
+
+      # Public: Access to the global configuration object
+      #
+      # This is a method around @config so we can mock it in the tests
+      def self.config
+        @config
+      end
+
       # Public: Get the value of a specific Jekyll configuration option
       #
       # key - Key to read
       #
       # Returns the value of this configuration option, nil otherwise
       def self.get(key)
-        Jekyll::Algolia.config[key]
+        config[key]
       end
 
       # Public: Get the value of a specific Algolia configuration option, or
@@ -183,6 +205,25 @@ module Jekyll
         value = get('dry_run')
         return true if value == true
         false
+      end
+
+      # Public: List of files to exclude from the Jekyll build
+      #
+      # We skip all files usually ignored by Jekyll, plus any file that should
+      # not be indexed.
+      def self.files_excluded_from_render
+        site_exclude = get('exclude') || []
+        algolia_exclude = algolia('files_to_exclude') || []
+
+        excluded_files = site_exclude + algolia_exclude
+
+        # 404 pages are not Jekyll defaults but a convention adopted by GitHub
+        # pages. We don't want to index those.
+        # https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
+        excluded_files << '404.html'
+        excluded_files << '404.md'
+
+        excluded_files
       end
 
       # Public: Check for any deprecated config option and warn the user

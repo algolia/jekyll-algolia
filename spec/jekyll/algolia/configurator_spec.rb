@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::Configurator) do
   let(:current) { Jekyll::Algolia::Configurator }
   let(:logger) { Jekyll::Algolia::Logger }
@@ -12,19 +12,40 @@ describe(Jekyll::Algolia::Configurator) do
   end
 
   describe '.init' do
-    let(:config) { {} }
+    let(:user_config) { {} }
     let(:default_exclude) { 'files_excluded_from_render' }
 
     before do
+      allow(current).to receive(:config).and_call_original
       allow(current)
         .to receive(:files_excluded_from_render)
         .and_return(default_exclude)
     end
 
-    subject { current.init(config).config }
+    subject { current.init(user_config).config }
 
     describe 'should override the exclude key' do
       it { should include('exclude' => 'files_excluded_from_render') }
+    end
+
+    describe 'should exclude other plugins' do
+      before do
+        expect(current).to receive(:disable_other_plugins)
+      end
+      it { current.init(config) }
+    end
+
+    describe 'should use the default config if none set' do
+      let(:user_config) { nil }
+
+      before do
+        expect(Jekyll)
+          .to receive(:configuration)
+          .and_return('foo' => 'bar')
+        expect(logger).to receive(:silent).and_call_original
+      end
+
+      it { should include('foo' => 'bar') }
     end
   end
 
@@ -130,12 +151,20 @@ describe(Jekyll::Algolia::Configurator) do
       allow(current)
         .to receive(:get)
         .with('markdown_ext')
-        .and_return('foo,bar')
+        .and_return(markdown_ext)
     end
 
-    it { should include('html') }
-    it { should include('foo') }
-    it { should include('bar') }
+    context 'with some extensions defined' do
+      let(:markdown_ext) { 'foo,bar' }
+      it { should include('html') }
+      it { should include('foo') }
+      it { should include('bar') }
+    end
+
+    context 'with no extensions defined' do
+      let(:markdown_ext) { nil }
+      it { should include('html') }
+    end
   end
 
   describe '.default_files_to_exclude' do
@@ -341,7 +370,7 @@ describe(Jekyll::Algolia::Configurator) do
     end
   end
 
-  describe 'warn_of_deprecated_options' do
+  describe '.warn_of_deprecated_options' do
     context 'using indexing_mode' do
       before do
         allow(current)
@@ -366,6 +395,14 @@ describe(Jekyll::Algolia::Configurator) do
         end
         it { current.warn_of_deprecated_options }
       end
+    end
+  end
+
+  describe '.disable_other_plugins' do
+    subject { current.disable_other_plugins(config) }
+
+    context 'disable pagination' do
+      it { should include('paginate' => nil) }
     end
   end
 end

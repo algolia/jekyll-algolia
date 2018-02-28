@@ -60,13 +60,17 @@ module Jekyll
 
       # Public: Init the configurator with the Jekyll config
       #
-      # config - The config passed by the `jekyll algolia` command
-      #
-      # This will allow us to have a local version of the config that we can
-      # read
-      def self.init(config)
+      # config - The config passed by the `jekyll algolia` command. Default to
+      # the default Jekyll config
+      def self.init(config = nil)
+        # Use the default Jekyll configuration if none specified. Silence the
+        # warning about no config set
+        Logger.silent { config = Jekyll.configuration } if config.nil?
+
         @config = config
-        config['exclude'] = files_excluded_from_render
+        @config['exclude'] = files_excluded_from_render
+
+        @config = disable_other_plugins(@config)
 
         self
       end
@@ -171,7 +175,8 @@ module Jekyll
       # Markdown files can have many different extensions. We keep the one
       # defined in the Jekyll config
       def self.default_extensions_to_index
-        ['html'] + get('markdown_ext').split(',')
+        markdown_ext = get('markdown_ext') || ''
+        ['html'] + markdown_ext.split(',')
       end
 
       # Public: Setting a default value to ignore index.html/index.md files in
@@ -224,6 +229,18 @@ module Jekyll
         excluded_files << '404.md'
 
         excluded_files
+      end
+
+      # Public: Disable features from other Jekyll plugins that might interfere
+      # with the indexing
+      def self.disable_other_plugins(config)
+        # Disable pagination from jekyll-paginate
+        # It creates a lot of /page2/index.html files that are not relevant to
+        # indexing
+        # https://github.com/jekyll/jekyll-paginate/blob/master/lib/jekyll-paginate/pager.rb#L23
+        config['paginate'] = nil
+
+        config
       end
 
       # Public: Check for any deprecated config option and warn the user

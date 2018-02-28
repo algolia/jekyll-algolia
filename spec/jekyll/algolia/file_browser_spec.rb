@@ -89,10 +89,6 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:file) { site.__find_file('png.png') }
       it { should eq false }
     end
-    context 'with a pagination page' do
-      let(:file) { site.__find_file('blog/pages/2/index.html') }
-      it { should eq false }
-    end
     context 'with a file excluded by a hook' do
       let(:file) { site.__find_file('excluded-from-hook.html') }
       it { should eq false }
@@ -122,25 +118,6 @@ describe(Jekyll::Algolia::FileBrowser) do
     context 'with an html page' do
       let(:file) { site.__find_file('html.html') }
       it { should eq false }
-    end
-  end
-
-  describe '.pagination_page?' do
-    subject { current.pagination_page?(file) }
-
-    context 'with a custom pagination page' do
-      let(:file) { site.__find_file('blog/pages/2/index.html') }
-      it { should eq true }
-    end
-
-    context 'with a pagination page starting with no forward slash' do
-      let(:file) { double('File', path: 'blog/pages/2/index.html') }
-      it { should eq true }
-    end
-
-    context 'with a pagination page starting with no a forward slash' do
-      let(:file) { double('File', path: '/blog/pages/2/index.html') }
-      it { should eq true }
     end
   end
 

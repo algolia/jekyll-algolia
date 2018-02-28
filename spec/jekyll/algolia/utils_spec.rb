@@ -203,7 +203,7 @@ describe(Jekyll::Algolia::Utils) do
       end
       it { should eq nil }
     end
-    fcontext 'with an asciidoc object' do
+    context 'with an asciidoc object' do
       let(:to_s) do
         # rubocop:disable Metrics/LineLength
         '#<Asciidoctor::Document@33306360 {doctype: "article", doctitle: nil, blocks: 11}>'

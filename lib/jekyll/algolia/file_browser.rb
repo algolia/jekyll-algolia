@@ -54,27 +54,6 @@ module Jekyll
         pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
 
-      # Public: Check if the page is a pagination page
-      #
-      # file - The Jekyll file
-      #
-      # `jekyll-paginate` automatically creates pages to paginate through posts.
-      # We don't want to index those
-      def self.pagination_page?(file)
-        # paginate_path contains a special `:num` part that is the page number
-        # We convert that to a regexp
-        paginate_path = Configurator.get('paginate_path')
-        paginate_path_as_regexp = paginate_path.gsub(':num', '([0-9]*)')
-
-        regexp = %r{#{paginate_path_as_regexp}/index\.html$}
-
-        # Make sure all file paths start with a / for comparison
-        filepath = file.path
-        filepath = "/#{filepath}" unless filepath[0] == '/'
-
-        Utils.match?(filepath, regexp)
-      end
-
       # Public: Check if the file has one of the allowed extensions
       #
       # file - The Jekyll file
@@ -125,7 +104,6 @@ module Jekyll
       # all the static assets, only keep the actual content.
       def self.indexable?(file)
         return false if static_file?(file)
-        return false if pagination_page?(file)
         return false unless allowed_extension?(file)
         return false if excluded_from_hook?(file)
 

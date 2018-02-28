@@ -15,6 +15,9 @@ RSpec.configure do |config|
   config.filter_run(focus: true)
   config.fail_fast = true
   config.run_all_when_everything_filtered = true
+  config.before do
+    Jekyll::Algolia::Configurator.init
+  end
 end
 
 # We will run all our tests with a real Jekyll instance, to make sure it works
@@ -52,19 +55,9 @@ def init_new_jekyll_site(user_config = {})
     end
   end
 
-  # We have to call run the command to  actually initialize the Jekyll Site so
+  # We have to run the command to actually initialize the Jekyll site so
   # it populates its list of internal files
   algolia_command.run
 
   site
 end
-# def mock_logger
-#   # Spying on default logging method while still calling them
-#   allow(Jekyll.logger).to receive(:info).and_wrap_original do |method, *args|
-#     # Hiding the basic "Configuration file" display
-#     next if args[0] == 'Configuration file:'
-#     method.call(*args)
-#   end
-#   allow(Jekyll.logger).to receive(:warn).and_call_original
-#   allow(Jekyll.logger).to receive(:error).and_call_original
-# end

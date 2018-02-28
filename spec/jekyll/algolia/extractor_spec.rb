@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::Extractor) do
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:filebrowser) { Jekyll::Algolia::FileBrowser }

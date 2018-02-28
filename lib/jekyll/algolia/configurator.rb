@@ -240,6 +240,9 @@ module Jekyll
         # https://github.com/jekyll/jekyll-paginate/blob/master/lib/jekyll-paginate/pager.rb#L23
         config['paginate'] = nil
 
+        # Disable archive pages from jekyll-archives
+        config['jekyll-archives'] = nil
+
         config
       end
 

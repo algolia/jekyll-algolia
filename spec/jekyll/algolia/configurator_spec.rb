@@ -401,8 +401,12 @@ describe(Jekyll::Algolia::Configurator) do
   describe '.disable_other_plugins' do
     subject { current.disable_other_plugins(config) }
 
-    context 'disable pagination' do
+    context 'disable jekyll-paginate' do
       it { should include('paginate' => nil) }
+    end
+
+    context 'disable jekyll-archives' do
+      it { should include('jekyll-archives' => nil) }
     end
   end
 end

@@ -135,14 +135,18 @@ module Jekyll
         Logger.log("I:Records to add:    #{new_records.length}")
         return if Configurator.dry_run?
 
-        operations = new_records.map do |new_record|
-          { action: 'addObject', indexName: index_name, body: new_record }
-        end
+        # We group delete and add operations into the same batch. Delete
+        # operations should still come first, to avoid hitting an overquota too
+        # soon
+        operations = []
         old_records_ids.each do |object_id|
           operations << {
             action: 'deleteObject', indexName: index_name,
             body: { objectID: object_id }
           }
+        end
+        operations += new_records.map do |new_record|
+          { action: 'addObject', indexName: index_name, body: new_record }
         end
 
         # Run the batches in slices if they are too large

@@ -233,19 +233,19 @@ describe(Jekyll::Algolia::Indexer) do
       end
     end
 
-    it 'should batch all operations' do
+    it 'should batch all operations (deletions first)' do
       expect(::Algolia)
         .to have_received(:batch!)
         .with([
                 {
-                  action: 'addObject',
-                  indexName: 'my_index',
-                  body: { 'objectID' => 'def' }
-                },
-                {
                   action: 'deleteObject',
                   indexName: 'my_index',
                   body: { objectID: 'abc' }
+                },
+                {
+                  action: 'addObject',
+                  indexName: 'my_index',
+                  body: { 'objectID' => 'def' }
                 }
               ])
     end
@@ -258,9 +258,9 @@ describe(Jekyll::Algolia::Indexer) do
           .ordered
           .with([
                   {
-                    action: 'addObject',
+                    action: 'deleteObject',
                     indexName: 'my_index',
-                    body: { 'objectID' => 'def' }
+                    body: { objectID: 'abc' }
                   }
                 ])
         expect(::Algolia)
@@ -268,9 +268,9 @@ describe(Jekyll::Algolia::Indexer) do
           .ordered
           .with([
                   {
-                    action: 'deleteObject',
+                    action: 'addObject',
                     indexName: 'my_index',
-                    body: { objectID: 'abc' }
+                    body: { 'objectID' => 'def' }
                   }
                 ])
       end

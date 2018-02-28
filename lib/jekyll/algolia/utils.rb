@@ -104,6 +104,12 @@ module Jekyll
           Integer, Float,
           String
         ]
+        # Integer arrived in Ruby 2.4. Before that it was Fixnum and Bignum
+        if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4.0')
+          # rubocop:disable Lint/UnifiedInteger
+          simple_types += [Fixnum, Bignum]
+          # rubocop:enable Lint/UnifiedInteger
+        end
         return item if simple_types.member?(item.class)
 
         # Recursive types

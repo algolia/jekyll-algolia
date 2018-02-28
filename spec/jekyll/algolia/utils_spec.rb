@@ -161,13 +161,17 @@ describe(Jekyll::Algolia::Utils) do
       let(:item) { 'foo' }
       it { should eq 'foo' }
     end
-    context 'with a number' do
+    context 'with an integer' do
       let(:item) { 42 }
       it { should eq 42 }
     end
     context 'with a float' do
       let(:item) { 42.42 }
       it { should eq 42.42 }
+    end
+    context 'with a large number' do
+      let(:item) { 2**62 }
+      it { should eq 2**62 }
     end
     context 'with a boolean (true)' do
       let(:item) { true }

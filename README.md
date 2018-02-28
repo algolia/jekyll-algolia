@@ -46,8 +46,8 @@ You need to provide certain Algolia credentials for this plugin to *index* your
 site.
 
 *If you don't yet have an Algolia account, you can open a free [Community plan
-here][8]. Once signed in, you can get your credentials from
-[your dashboard][9].*
+here][8]. Once signed in, you can get your
+credentials from [your dashboard][9].*
 
 Once you have your credentials, you should define your `application_id` and
 `index_name` inside your `_config.yml` file like this:
@@ -71,9 +71,20 @@ ALGOLIA_API_KEY='{your_admin_api_key}' bundle exec jekyll algolia
 
 Note that `ALGOLIA_API_KEY` should be set to your admin API key.
 
+## More about the Community plan
+
+The Algolia [Community plan][10] lets you host up to 10k records and perform up to
+100k add/edit/delete operations per month (search operations are free). The plan
+is entirely free, with no time limit.
+
+What we ask in exchange is that you display a "Search by Algolia" logo next to
+your search results. Our [InstantSearch libraries][11] have a simple boolean
+option to toggle that on an off. If you want more flexibility, you can find
+all versions of our logo [here][12].
+
 # Thanks
 
-Thanks to [Anatoliy Yastreb][10] for a [great tutorial][11] on creating Jekyll
+Thanks to [Anatoliy Yastreb][13] for a [great tutorial][14] on creating Jekyll
 plugins.
 
 
@@ -84,7 +95,10 @@ plugins.
 [5]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Amaster&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Dmaster
 [6]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Adevelop&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
 [7]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Adevelop&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
-[8]: https://www.algolia.com/users/sign_up/hacker
+[8]: #more-about-the-community-plan
 [9]: https://www.algolia.com/licensing
-[10]: https://github.com/ayastreb/
-[11]: https://ayastreb.me/writing-a-jekyll-plugin/
+[10]: https://www.algolia.com/users/sign_up/hacker
+[11]: https://community.algolia.com/instantsearch.js/
+[12]: https://www.algolia.com/press#resources
+[13]: https://github.com/ayastreb/
+[14]: https://ayastreb.me/writing-a-jekyll-plugin/

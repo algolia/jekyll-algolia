@@ -85,15 +85,14 @@ The plugin only takes care of extracting your data and pushing it to an Algolia
 index. Building the front-end that will allow your users to search into that
 data is not part of the plugin.
 
-As it would depend too much on the theming you applied to Jekyll, we could not
+As it would depend too much on the theme you applied to Jekyll, we could not
 create a one-size-fits-all solution. Instead, the best solution is to use our
-[InstantSearch.js][9] library (also available for [Vue.js][10] and [React][11]).
-It's an easy-to-use set of UI widgets you can use to build your own search in
-a matter of minutes.
+[InstantSearch.js][9] library (also available for [Vue.js][10], [React][11] and
+[Angular][12]). It's an easy-to-use set of UI widgets you can use to build your
+own search in a matter of minutes.
 
-You can follow [this tutorial][12] to see how to add search on the default blog
+You can follow [this tutorial][13] to see how to add search on the default blog
 theme.
-
 
 [1]: https://jekyllrb.com/
 [2]: https://www.ruby-lang.org/en/
@@ -106,4 +105,6 @@ theme.
 [9]: https://community.algolia.com/instantsearch.js/
 [10]: https://community.algolia.com/vue-instantsearch/
 [11]: https://community.algolia.com/react-instantsearch/
-[12]: ./blog.html
+[12]: https://community.algolia.com/angular-instantsearch/
+[13]: ./blog.html
+[14]: https://www.algolia.com/press#resources

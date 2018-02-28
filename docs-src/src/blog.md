@@ -15,6 +15,7 @@ already have pushed all your data, following our [getting started][2] guide.
 
 [![Search in the minima theme][3]](https://community.algolia.com/jekyll-algolia-example/)
 
+
 In this tutorial we'll add a search on the front page that will let you search
 into all your posts (both titles and content), in a fast and relevant manner.
 
@@ -91,7 +92,8 @@ const search = instantsearch({
 search.addWidget(
   instantsearch.widgets.searchBox({
     container: '#search-searchbar',
-    placeholder: 'Search into posts...'
+    placeholder: 'Search into posts...',
+    poweredBy: true // This is required if you're on the free Community plan
   })
 );
 search.addWidget(
@@ -286,7 +288,8 @@ const hitTemplate = function(hit) {
 search.addWidget(
   instantsearch.widgets.searchBox({
     container: '#search-searchbar',
-    placeholder: 'Search into posts...'
+    placeholder: 'Search into posts...',
+    poweredBy: true // This is required if you're on the free Community plan
   })
 );
 

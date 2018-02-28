@@ -165,6 +165,10 @@ describe(Jekyll::Algolia::Utils) do
       let(:item) { 42 }
       it { should eq 42 }
     end
+    context 'with a float' do
+      let(:item) { 42.42 }
+      it { should eq 42.42 }
+    end
     context 'with a boolean (true)' do
       let(:item) { true }
       it { should eq true }

@@ -5,14 +5,12 @@ W:
 W: The plugin tried to extract records from the pages, posts and collections of
 W: your site but could not find anything to index.
 I:
-I: Make sure you did not exclude too many files using the `exclude` and 
-I: `algolia.files_to_exclude` options.
-I:
-I: You are currently excluding the following files:
+I: Make sure you did not exclude too many files from indexing using the
+I: `files_to_exclude` option. You are currently excluding the following files:
 I:     {files_to_exclude}
 I:
 I: Also double check that your current value for `nodes_to_index` can actually
-I: match something in the page. You are current indexing the following nodes:
+I: match something in the pages. You are current indexing the following nodes:
 I:     {nodes_to_index}
 I:
 I: Note that all the markup that is defined in the layouts won't be available 

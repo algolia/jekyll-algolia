@@ -98,12 +98,13 @@ module Jekyll
       # but will try to stringify other objects, excluding the one that contain
       # a unique identifier once serialized.
       def self.jsonify(item)
-        # Simple types
-        return item if item.nil?
-        return item if item.is_a? TrueClass
-        return item if item.is_a? FalseClass
-        return item if item.is_a? Integer
-        return item if item.is_a? String
+        simple_types = [
+          NilClass,
+          TrueClass, FalseClass,
+          Integer, Float,
+          String
+        ]
+        return item if simple_types.member?(item.class)
 
         # Recursive types
         return item.map { |value| jsonify(value) } if item.is_a?(Array)

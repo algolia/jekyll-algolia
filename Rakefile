@@ -98,6 +98,7 @@ namespace 'test' do
     end
   end
 end
+task watch: 'test:watch'
 
 # GEM RELEASE
 desc 'Release a new version of the gem'

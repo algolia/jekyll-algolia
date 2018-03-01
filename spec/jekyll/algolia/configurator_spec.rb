@@ -184,20 +184,28 @@ describe(Jekyll::Algolia::Configurator) do
   describe '.index_name' do
     subject { current.index_name }
 
+    before do
+      stub_const('ENV', 'ALGOLIA_INDEX_NAME' => env_value)
+    end
+
     describe 'should return nil if none configured' do
+      let(:env_value) { nil }
+      let(:config) { { 'algolia' => { 'index_name' => nil } } }
       it { should eq nil }
     end
     describe 'should return the value in _config.yml if set' do
+      let(:env_value) { nil }
       let(:config) { { 'algolia' => { 'index_name' => 'foo' } } }
       it { should eq 'foo' }
     end
     describe 'should return the value in ENV is set' do
-      before { stub_const('ENV', 'ALGOLIA_INDEX_NAME' => 'bar') }
+      let(:env_value) { 'bar' }
+      let(:config) { { 'algolia' => { 'index_name' => nil } } }
       it { should eq 'bar' }
     end
     describe 'should prefer the value in ENV rather than config if set' do
+      let(:env_value) { 'bar' }
       let(:config) { { 'algolia' => { 'index_name' => 'foo' } } }
-      before { stub_const('ENV', 'ALGOLIA_INDEX_NAME' => 'bar') }
       it { should eq 'bar' }
     end
   end
@@ -205,21 +213,28 @@ describe(Jekyll::Algolia::Configurator) do
   describe '.application_id' do
     subject { current.application_id }
 
+    before do
+      stub_const('ENV', 'ALGOLIA_APPLICATION_ID' => env_value)
+    end
+
     describe 'should return nil if none configured' do
+      let(:env_value) { nil }
+      let(:config) { { 'algolia' => { 'application_id' => nil } } }
       it { should eq nil }
     end
     describe 'should return the value in _config.yml if set' do
+      let(:env_value) { nil }
       let(:config) { { 'algolia' => { 'application_id' => 'foo' } } }
       it { should eq 'foo' }
     end
-    describe 'should return the value in ENV is set' do
-      let(:config) { {} }
-      before { stub_const('ENV', 'ALGOLIA_APPLICATION_ID' => 'bar') }
+    describe 'should return the value in ENV if set' do
+      let(:env_value) { 'bar' }
+      let(:config) { { 'algolia' => { 'application_id' => nil } } }
       it { should eq 'bar' }
     end
     describe 'should prefer the value in ENV rather than config if set' do
+      let(:env_value) { 'bar' }
       let(:config) { { 'algolia' => { 'application_id' => 'foo' } } }
-      before { stub_const('ENV', 'ALGOLIA_APPLICATION_ID' => 'bar') }
       it { should eq 'bar' }
     end
   end
@@ -227,18 +242,27 @@ describe(Jekyll::Algolia::Configurator) do
   describe '.api_key' do
     subject { current.api_key }
 
+    before do
+      stub_const('ENV', 'ALGOLIA_API_KEY' => env_value)
+    end
+
     describe 'should return nil if none configured' do
+      let(:env_value) { nil }
       it { should eq nil }
     end
     describe 'should return the value in ENV is set' do
-      before { stub_const('ENV', 'ALGOLIA_API_KEY' => 'bar') }
+      let(:env_value) { 'bar' }
       it { should eq 'bar' }
     end
     describe 'should return the value in _algolia_api_key file' do
+      let(:env_value) { nil }
       let(:config) { { 'source' => './spec/site' } }
       it { should eq 'APIKEY_FROM_FILE' }
     end
     describe 'should prefer the value in ENV rather than in the file' do
+      let(:env_value) { 'bar' }
+      let(:config) { { 'source' => './spec/site' } }
+      it { should eq 'bar' }
     end
   end
 

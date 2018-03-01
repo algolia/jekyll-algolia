@@ -65,6 +65,20 @@ describe(Jekyll::Algolia) do
     end
   end
 
+  describe 'overriding Jekyll::Site#cleanup' do
+    # Given
+    let(:configuration) { Jekyll.configuration }
+    let(:jekyll_site) { Jekyll::Site.new(configuration) }
+    let(:algolia_site) { Jekyll::Algolia::Site.new(configuration) }
+    let!(:initial_method) { jekyll_site.method(:cleanup).source_location }
+    let!(:overridden_method) { algolia_site.method(:cleanup).source_location }
+
+    # Then
+    it 'should change the initial .cleanup method' do
+      expect(overridden_method).to_not eq initial_method
+    end
+  end
+
   describe '.run (mocked build)' do
     # Prevent the whole process to stop if Algolia config is not available
     before do

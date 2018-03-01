@@ -73,9 +73,13 @@ module Jekyll
     end
 
     # A Jekyll::Site subclass that overrides #write from the parent class to
-    # create JSON records out of rendered documents and push those records
-    # to Algolia instead of writing files to disk.
+    # create JSON records out of rendered documents and push those records to
+    # Algolia instead of writing files to disk.
     class Site < Jekyll::Site
+      # We make the cleanup method a noop, otherwise it will remove excluded
+      # files from destination
+      def cleanup; end
+
       def write
         records = []
         files = []

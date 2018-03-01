@@ -10,6 +10,8 @@ algolia:
     - index.html
     - excluded.html
     - excluded_dir/*.html
+  settings:
+    attributesToSnippet: ['content:10']
 
 # Jekyll 3.0 extracted the secondary features into their own plugins
 plugins: 

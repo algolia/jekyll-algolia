@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+cd ./spec/site
+bundle install --quiet
+bundle exec jekyll build
+bundle exec jekyll algolia

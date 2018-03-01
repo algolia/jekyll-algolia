@@ -28,7 +28,7 @@ end
 # TEST
 require 'rspec/core'
 require 'rspec/core/rake_task'
-desc 'Run tests (with simple progress)'
+desc 'Run unit tests'
 RSpec::Core::RakeTask.new(:test) do |task|
   task.rspec_opts = '--color --format progress'
   task.pattern = [
@@ -36,34 +36,45 @@ RSpec::Core::RakeTask.new(:test) do |task|
     'spec/jekyll/**/*.rb'
   ]
 end
-desc 'Run tests (with full details)'
-RSpec::Core::RakeTask.new(:test_details) do |task|
-  task.rspec_opts = '--color --format documentation'
-  task.pattern = [
-    'spec/*.rb',
-    'spec/jekyll/**/*.rb'
-  ]
-end
-desc 'Run tests in all Ruby versions (with full details)'
-task :test_all_ruby_versions do
-  puts 'Please, run ./scripts/test_all_ruby_versions manually'
-end
+namespace 'test' do
+  desc 'Run tests in all Ruby versions'
+  task :all_ruby_versions do
+    puts 'Please, run ./scripts/test_all_ruby_versions manually'
+  end
 
-# COVERAGE
-desc 'Generate locally browsable coverage files'
-task :coverage do
-  ENV['COVERAGE'] = 'true'
-  Rake::Task['test'].execute
-end
+  # Generate locally browsable coverage files
+  task :coverage do
+    ENV['COVERAGE'] = 'true'
+    Rake::Task['test'].execute
+  end
 
-# WATCH
-desc 'Watch for changes in files and reload tests'
-task :watch do
-  # We specifically watch for ./lib and ./spec and not the whole dir because:
-  # 1. It's the only directories we are interested in
-  # 2. Listening to the whole parent dir might throw Guard errors if we have
-  #    symlink
-  sh 'bundle exec guard --clear --watchdir lib spec'
+  desc 'Live-reload unit tests'
+  task :watch do
+    # We specifically watch for ./lib and ./spec and not the whole dir because:
+    # 1. It's the only directories we are interested in
+    # 2. Listening to the whole parent dir might throw Guard errors if we have
+    #    symlink
+    sh 'bundle exec guard --clear --watchdir lib spec'
+  end
+
+  # Integration tests need to run `bundle exec jekyll build/algolia`. Using
+  # bundle from inside a Rakefile does not seem to work, so the scripts have to
+  # be run manually. Each script run the needed commands to prepare the test
+  # site, then actually run the _run and _watch_run tasks below.
+  desc 'Run integration tests'
+  task :integration do
+    puts 'Please, run ./scripts/test_integration manually'
+  end
+  namespace 'integration' do
+    desc 'Live-reload integration tests'
+    task :watch do
+      puts 'Please, run ./scripts/test_integration_watch manually'
+    end
+    task :_run do
+    end
+    task :_watch_run do
+    end
+  end
 end
 
 # GEM RELEASE

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+./scripts/test_integration_prepare
+rake test:integration:_watch_run
+

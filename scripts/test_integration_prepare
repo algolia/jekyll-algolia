@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 set -e
 
+if [[ -z "$ALGOLIA_APPLICATION_ID" ]]; then
+    echo "You need to set ALGOLIA_APPLICATION_ID"
+    exit 1
+fi  
+if [[ -z "$ALGOLIA_API_KEY" ]]; then
+    echo "You need to set ALGOLIA_API_KEY"
+    exit 1
+fi  
+if [[ -z "$ALGOLIA_INDEX_NAME" ]]; then
+    echo "You need to set ALGOLIA_INDEX_NAME"
+    exit 1
+fi  
+
+
 cd ./spec/site
 bundle install --quiet
+
 bundle exec jekyll build
+
+rake test:integration:_delete_index
 bundle exec jekyll algolia

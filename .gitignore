@@ -1,4 +1,5 @@
 Gemfile.lock
+.envrc
 pkg/
 coverage/
 docs-dev/

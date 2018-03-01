@@ -9,10 +9,13 @@ rescue Bundler::BundlerError => e
   warn 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
+require 'algoliasearch'
 require 'rake'
+require 'rspec/core'
+require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
 # LINT
-require 'rubocop/rake_task'
 desc 'Check files for linting issues'
 RuboCop::RakeTask.new(:lint) do |task|
   task.patterns = [
@@ -26,8 +29,6 @@ RuboCop::RakeTask.new(:lint) do |task|
 end
 
 # TEST
-require 'rspec/core'
-require 'rspec/core/rake_task'
 desc 'Run unit tests'
 RSpec::Core::RakeTask.new(:test) do |task|
   task.rspec_opts = '--color --format progress'
@@ -69,6 +70,14 @@ namespace 'test' do
     desc 'Live-reload integration tests'
     task :watch do
       puts 'Please, run ./scripts/test_integration_watch manually'
+    end
+    # Delete the test index
+    task :_delete_index do
+      Algolia.init(
+        application_id: ENV['ALGOLIA_APPLICATION_ID'],
+        api_key: ENV['ALGOLIA_API_KEY']
+      )
+      Algolia::Index.new(ENV['ALGOLIA_INDEX_NAME']).delete_index!
     end
     task :_run do
     end

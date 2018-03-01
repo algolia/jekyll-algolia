@@ -79,9 +79,22 @@ namespace 'test' do
       )
       Algolia::Index.new(ENV['ALGOLIA_INDEX_NAME']).delete_index!
     end
-    task :_run do
+    # Run only the integration tests
+    RSpec::Core::RakeTask.new(:_run) do |task|
+      task.rspec_opts = '--color --format progress'
+      task.pattern = [
+        'spec/integration/*.rb'
+      ]
     end
+    # Live-reloading integration tests
+    # It will reload the tests whenever they are changed. It will not
+    # live-rebuild everything, you still have to run rake
+    # ./scripts/test_integration_prepare for that
     task :_watch_run do
+      sh 'bundle exec guard '\
+         '--clear '\
+         '--watchdir lib spec/integration '\
+         '--guardfile Guardfile_integration'
     end
   end
 end

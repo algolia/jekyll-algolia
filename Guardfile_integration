@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+# Live-reload integration tests
+guard :rspec, cmd: 'bundle exec rspec --color --format progress' do
+  watch(%r{^spec/integration/.+_spec\.rb$})
+end
+
+notification :off

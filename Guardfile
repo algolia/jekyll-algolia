@@ -1,4 +1,6 @@
-# Launch tests whenever a file in ./lib or ./spec changes
+# frozen_string_literal: true
+
+# Live-reload unit tests
 guard :rspec, cmd: 'bundle exec rspec --color --format progress' do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$}) do |match|

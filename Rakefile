@@ -13,6 +13,7 @@ require 'rake'
 
 # LINT
 require 'rubocop/rake_task'
+desc 'Check files for linting issues'
 RuboCop::RakeTask.new(:lint) do |task|
   task.patterns = [
     'lib/**/*.rb',
@@ -75,14 +76,14 @@ task release: %i[lint test] do
   Rake::Task['release:update_master_from_develop'].invoke
 end
 namespace 'release' do
-  desc 'Getting up to date from master'
+  # Getting up to date from master
   task :update_develop_from_master do
     sh 'git checkout master --quiet'
     sh 'git pull --rebase origin master --quiet'
     sh 'git checkout develop --quiet'
     sh 'git rebase master --quiet'
   end
-  desc 'Update current version'
+  # Update current version
   task :update_version do
     version_file_path = 'lib/jekyll/algolia/version.rb'
     require_relative version_file_path
@@ -103,12 +104,12 @@ namespace 'release' do
     # Create the git tag
     sh "git tag -am 'tag v#{new_version}' #{new_version}"
   end
-  desc 'Build the gem'
+  # Build the gem
   task :build do
     sh 'bundle install'
     sh 'gem build jekyll-algolia.gemspec'
   end
-  desc 'Push the gem to rubygems'
+  # Push the gem to rubygems
   task :push do
     # This will throw a warning because we're redefining a constant. That's ok.
     load 'lib/jekyll/algolia/version.rb'
@@ -117,7 +118,7 @@ namespace 'release' do
     sh "rm jekyll-algolia-#{current_version}.gem"
     sh "git push origin #{current_version}"
   end
-  desc 'Update master'
+  # Update master
   task :update_master_from_develop do
     sh 'git checkout master --quiet'
     sh 'git rebase develop --quiet'

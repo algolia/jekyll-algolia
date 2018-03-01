@@ -80,6 +80,7 @@ namespace 'test' do
       Algolia::Index.new(ENV['ALGOLIA_INDEX_NAME']).delete_index!
     end
     # Run only the integration tests
+    desc ''
     RSpec::Core::RakeTask.new(:_run) do |task|
       task.rspec_opts = '--color --format progress'
       task.pattern = [

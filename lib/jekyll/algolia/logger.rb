@@ -79,7 +79,7 @@ module Jekyll
         # Convert all variables
         content = File.open(file).read
         metadata.each do |key, value|
-          content = content.gsub("{#{key}}", value)
+          content = content.gsub("{#{key}}", value.to_s)
         end
 
         # Display each line differently

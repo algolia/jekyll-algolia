@@ -27,6 +27,24 @@ describe(Jekyll::Algolia::Logger) do
       expect(current).to have_received(:log).with('I: Info line my_index')
       expect(current).to have_received(:log).with('W: Warning line')
     end
+
+    context 'with non-string metadata' do
+      describe do
+        let(:metadata) { { 'index_name' => false } }
+        it do
+          expect(current).to have_received(:log).with('I: Info line false')
+        end
+      end
+
+      describe do
+        let(:metadata) { { 'index_name' => %w[foo bar] } }
+        it do
+          expect(current)
+            .to have_received(:log)
+            .with('I: Info line ["foo", "bar"]')
+        end
+      end
+    end
   end
 
   describe '.log' do

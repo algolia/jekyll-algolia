@@ -87,7 +87,7 @@ module Jekyll
       def self.update_records(old_records_ids, new_records)
         # Stop if nothing to change
         if old_records_ids.empty? && new_records.empty?
-          Logger.log('I:Nothing to index. Your content is already up to date.')
+          Logger.log('I:Content is already up to date.')
           return
         end
 
@@ -165,6 +165,7 @@ module Jekyll
         # The config we're about to push is the same we pushed previously. We
         # won't push.
         if setting_id == remote_setting_id
+          Logger.log('I:Settings are already up to date.')
           # Check if remote config has been changed outside of the plugin, so we
           # can warn users that they should not alter their config from outside
           # of the plugin.
@@ -182,7 +183,7 @@ module Jekyll
           'settingID' => setting_id
         }
 
-        Logger.verbose('I:Updating settings')
+        Logger.log("I:Updating settings of index #{index.name}")
         return if Configurator.dry_run?
         set_settings(settings)
       end
@@ -212,7 +213,7 @@ module Jekyll
         yaml_lines.map! do |line|
           line = line.gsub(/^ */) { |spaces| ' ' * spaces.length }
           line = line.gsub('- ', '  - ')
-          "I:    #{line}"
+          "W:    #{line}"
         end
         Logger.known_message(
           'settings_manually_edited',

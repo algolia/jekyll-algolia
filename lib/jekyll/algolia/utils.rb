@@ -127,6 +127,54 @@ module Jekyll
 
         stringified
       end
+
+      # Public: Get a hash representing the difference between two hashes
+      #
+      # It only checks that all keys of alpha are also in beta, with the same
+      # value. If not, it remember what was the value of beta and return it in
+      # the output
+      def self.diff_keys(alpha, beta)
+        diff = {}
+        alpha.each do |key, value|
+          diff[key] = beta[key] if beta[key] != value
+        end
+
+        return nil if diff.empty?
+        diff
+      end
+
+      # Public: Split a long text into lines of specific length
+      #
+      # It takes care to not cut words
+      def self.split_lines(input, max_length)
+        # Force splitting on actual new lines first
+        if input.include?("\n")
+          output = []
+          input.split("\n").each do |line|
+            output += split_lines(line, max_length)
+          end
+          return output
+        end
+
+        output = []
+        words = input.split(' ')
+        current_line = words.shift || ''
+        test_line = '' # must be defined outside of the loop
+
+        words.each do |word|
+          test_line = "#{current_line} #{word}"
+          if test_line.length > max_length
+            output << current_line
+            current_line = word
+            next
+          end
+          current_line = test_line
+        end
+        output << current_line
+
+        # Making sure all lines are the same length
+        output.map { |line| line.ljust(max_length, ' ') }
+      end
     end
   end
 end

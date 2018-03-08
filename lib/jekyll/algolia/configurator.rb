@@ -38,7 +38,7 @@ module Jekyll
             hierarchy.lvl4
             hierarchy.lvl5
             unordered(content)
-            collection,unordered(categories),unordered(tags)
+            collection,categories,tags
           ],
           # We want to allow highlight in more keys than what we search on
           'attributesToHighlight' => %w[

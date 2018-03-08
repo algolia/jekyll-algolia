@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-
 # rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::Utils) do
   let(:current) { Jekyll::Algolia::Utils }
@@ -219,6 +218,74 @@ describe(Jekyll::Algolia::Utils) do
       end
       let(:item) { double('Custom::Object', to_s: to_s) }
       it { should eq nil }
+    end
+  end
+
+  describe '.diff_keys' do
+    subject { current.diff_keys(alpha, beta) }
+
+    describe do
+      let(:alpha) { { foo: 'bar' } }
+      let(:beta) { { foo: 'bar' } }
+      it { should eq nil }
+    end
+
+    describe do
+      let(:alpha) { { foo: 'bar' } }
+      let(:beta) { { foo: 'bar', bar: 'baz' } }
+      it { should eq nil }
+    end
+
+    describe do
+      let(:alpha) { { foo: 'bar' } }
+      let(:beta) { { foo: 'baz' } }
+      it { should eq(foo: 'baz') }
+    end
+
+    describe do
+      let(:alpha) { { foo: 'bar' } }
+      let(:beta) { { foo: nil } }
+      it { should eq(foo: nil) }
+    end
+
+    describe do
+      let(:alpha) { { foo: 'bar' } }
+      let(:beta) { {} }
+      it { should eq(foo: nil) }
+    end
+
+    describe do
+      let(:alpha) { { foo: ['bar'] } }
+      let(:beta) { { foo: ['bar'] } }
+      it { should eq nil }
+    end
+  end
+
+  describe '.split_lines' do
+    subject { current.split_lines(input, max_length) }
+
+    describe do
+      let(:input) { 'short' }
+      let(:max_length) { 9 }
+      it { should eq ['short    '] }
+    end
+
+    describe do
+      let(:input) { 'this is a long line I guess' }
+      let(:max_length) { 9 }
+      it { should eq ['this is a', 'long line', 'I guess  '] }
+    end
+
+    describe do
+      let(:input) { "those are\nactually\nfour lines" }
+      let(:max_length) { 9 }
+      it { should eq ['those are', 'actually ', 'four     ', 'lines    '] }
+    end
+
+    describe do
+      let(:input) { '' }
+      let(:max_length) { 9 }
+      it { should eq ['         '] }
     end
   end
 end

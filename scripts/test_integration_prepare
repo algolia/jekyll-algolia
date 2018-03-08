@@ -18,7 +18,7 @@ fi
 cd ./spec/site
 bundle install --quiet
 
-bundle exec jekyll build
+bundle exec jekyll build --trace
 
 rake test:integration:_delete_index
-bundle exec jekyll algolia
+bundle exec jekyll algolia --trace

@@ -84,7 +84,10 @@ namespace 'test' do
     RSpec::Core::RakeTask.new(:_run) do |task|
       task.rspec_opts = '--color --format progress'
       task.pattern = [
-        'spec/integration/*.rb'
+        # Check that the default build has the expected results
+        'spec/integration/main_spec.rb',
+        # Now check various config and its impact on the settings
+        'spec/integration/settings_spec.rb'
       ]
     end
     # Live-reloading integration tests

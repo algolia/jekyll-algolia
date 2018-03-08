@@ -29,18 +29,19 @@ module Jekyll
       #   "X:Your content"
       # Where X is either I, W or E for marking respectively an info, warning or
       # error display
-      def self.log(line)
-        type, content = /^(I|W|E):(.*)/.match(line).captures
+      def self.log(input)
+        type, content = /^(I|W|E):(.*)/m.match(input).captures
         logger_mapping = {
           'E' => :error,
           'I' => :info,
           'W' => :warn
         }
 
-        # Jekyll logger tries to center log lines, so we force a consistent
-        # width of 80 chars
-        content = content.ljust(80, ' ')
-        Jekyll.logger.send(logger_mapping[type], content)
+        # Display by chunk of 80-characters lines
+        lines = Utils.split_lines(content, 80)
+        lines.each do |line|
+          Jekyll.logger.send(logger_mapping[type], line)
+        end
       end
 
       # Public: Only display a log line if verbose mode is enabled

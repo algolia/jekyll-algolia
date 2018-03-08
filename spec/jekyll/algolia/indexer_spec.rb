@@ -1,12 +1,15 @@
-# rubocop:disable Metrics/BlockLength
 # frozen_string_literal: true
 
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::Indexer) do
   let(:current) { Jekyll::Algolia::Indexer }
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:logger) { Jekyll::Algolia::Logger }
+  let(:error_handler) { Jekyll::Algolia::ErrorHandler }
+  let(:utils) { Jekyll::Algolia::Utils }
+  let(:html_extractor) { AlgoliaHTMLExtractor }
   let(:dry_run) { false }
   before { allow(configurator).to receive(:dry_run?).and_return(dry_run) }
   before { allow(logger).to receive(:log) }
@@ -16,6 +19,9 @@ describe(Jekyll::Algolia::Indexer) do
       allow(configurator).to receive(:application_id).and_return('app_id')
       allow(configurator).to receive(:api_key).and_return('api_key')
       allow(::Algolia).to receive(:init)
+      allow(::Algolia::Index)
+        .to receive(:new)
+        .and_return(double('Algolia::Index', name: 'index_name'))
       allow(current).to receive(:set_user_agent)
     end
 
@@ -31,6 +37,9 @@ describe(Jekyll::Algolia::Indexer) do
     end
     it 'should set the user agent' do
       expect(current).to have_received(:set_user_agent)
+    end
+    it 'should make the index accessible' do
+      expect(current.index.name).to eq 'index_name'
     end
   end
 
@@ -60,47 +69,13 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  describe '.index' do
-    subject { current.index(input) }
-
-    let(:input) { 'index_name' }
-    before do
-      expect(::Algolia::Index)
-        .to receive(:new)
-        .with('index_name')
-        .and_return('custom_index')
-    end
-
-    it { should eq 'custom_index' }
-  end
-
-  describe 'index?' do
-    subject { current.index?('foo') }
-
-    let(:index) { double('Algolia::Index', get_settings: nil) }
-    before do
-      expect(current)
-        .to receive(:index)
-        .and_return(index)
-    end
-
-    it { should eq true }
-
-    context 'when no settings' do
-      before do
-        expect(index).to receive(:get_settings).and_raise
-      end
-
-      it { should eq false }
-    end
-  end
-
   describe '.remote_object_ids' do
-    subject { current.remote_object_ids(index) }
+    subject { current.remote_object_ids }
 
     let(:index) { double('Algolia::Index').as_null_object }
 
     before do
+      allow(current).to receive(:index).and_return(index)
       expect(index)
         .to receive(:browse)
         .with(attributesToRetrieve: 'objectID')
@@ -137,84 +112,21 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  describe '.update_settings' do
-    let(:index_name) { 'my_index' }
-    let(:index) do
-      double('Algolia::Index', name: index_name, set_settings!: nil)
-    end
-    let(:dry_run) { false }
-    let(:index_exists) { nil }
-    let(:raw_settings) { nil }
-    let(:settings) { 'settings' }
-    before do
-      allow(configurator)
-        .to receive(:algolia)
-        .with('settings')
-        .and_return(raw_settings)
-      allow(configurator).to receive(:settings).and_return(settings)
-      allow(configurator).to receive(:dry_run).and_return(dry_run)
-      allow(current).to receive(:index?).and_return(index_exists)
-    end
-    before { current.update_settings(index) }
-
-    context 'when index does not exist' do
-      let(:index_exists) { false }
-
-      describe do
-        let(:raw_settings) { nil }
-        it { expect(index).to have_received(:set_settings!).with(settings) }
-
-        describe do
-          let(:dry_run) { true }
-          it { expect(index).to_not have_received(:set_settings!) }
-        end
-      end
-
-      describe do
-        let(:raw_settings) { 'settings' }
-        it { expect(index).to have_received(:set_settings!).with(settings) }
-
-        describe do
-          let(:dry_run) { true }
-          it { expect(index).to_not have_received(:set_settings!) }
-        end
-      end
-    end
-
-    context 'when index already exists' do
-      let(:index_exists) { true }
-
-      describe do
-        let(:raw_settings) { nil }
-        it { expect(index).to_not have_received(:set_settings!) }
-      end
-
-      describe do
-        let(:raw_settings) { 'settings' }
-        it { expect(index).to have_received(:set_settings!).with(settings) }
-
-        describe do
-          let(:dry_run) { true }
-          it { expect(index).to_not have_received(:set_settings!) }
-        end
-      end
-    end
-  end
-
   describe '.update_records' do
-    let(:index_name) { 'my_index' }
+    let(:index) { double('Algolia::Index', name: 'my_index') }
     let(:old_records_ids) { %w[abc] }
     let(:new_records) { [{ 'objectID' => 'def' }] }
     let(:indexing_batch_size) { 1000 }
 
     before { allow(::Algolia).to receive(:batch!) }
     before do
+      allow(current).to receive(:index).and_return(index)
       allow(configurator)
         .to receive(:algolia)
         .with('indexing_batch_size')
         .and_return(indexing_batch_size)
     end
-    before { current.update_records(index_name, old_records_ids, new_records) }
+    before { current.update_records(old_records_ids, new_records) }
 
     context 'when running a dry run' do
       let(:dry_run) { true }
@@ -281,10 +193,10 @@ describe(Jekyll::Algolia::Indexer) do
     let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
     let(:remote_ids) { %w[foo baz] }
     let(:index_name) { 'my_index' }
+    let(:index) { double('Algolia::Index', name: index_name) }
     before do
-      allow(configurator).to receive(:index_name).and_return(index_name)
       allow(current).to receive(:init)
-      allow(current).to receive(:index).and_return('my_index')
+      allow(current).to receive(:index).and_return(index)
       allow(current).to receive(:update_settings)
       allow(current).to receive(:remote_object_ids).and_return(remote_ids)
       allow(current).to receive(:update_records)
@@ -297,12 +209,11 @@ describe(Jekyll::Algolia::Indexer) do
       it do
         expect(current)
           .to have_received(:update_settings)
-          .with('my_index')
       end
       it do
         expect(current)
           .to have_received(:update_records)
-          .with(index_name, ['baz'], [{ objectID: 'bar' }])
+          .with(['baz'], [{ objectID: 'bar' }])
       end
     end
 
@@ -332,6 +243,205 @@ describe(Jekyll::Algolia::Indexer) do
       end
 
       it { is_expected.to raise_error SystemExit }
+    end
+  end
+
+  describe '.update_settings' do
+    let(:diff_keys) { nil }
+
+    before do
+      allow(current).to receive(:set_settings)
+      allow(current).to receive(:warn_of_manual_dashboard_editing)
+      allow(current).to receive(:local_setting_id).and_return(local_setting_id)
+      allow(current).to receive(:remote_settings).and_return(remote_settings)
+      allow(utils).to receive(:diff_keys).and_return(diff_keys)
+
+      current.update_settings
+    end
+
+    describe 'should do nothing if same settings both locally and remote' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'foo' } } }
+      it { expect(current).to_not have_received(:set_settings) }
+      it do
+        expect(current).to_not have_received(:warn_of_manual_dashboard_editing)
+      end
+      context 'with remote settings manually edited' do
+        let(:diff_keys) { { 'foo' => 'bar' } }
+        it do
+          expect(current)
+            .to have_received(:warn_of_manual_dashboard_editing)
+            .with('foo' => 'bar')
+        end
+      end
+    end
+
+    describe 'should update settings if no remote settingID' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => {} } }
+      it do
+        expect(current)
+          .to have_received(:set_settings)
+      end
+    end
+
+    describe 'should update settings if no remote userData' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { {} }
+      it do
+        expect(current).to have_received(:set_settings)
+      end
+    end
+
+    describe 'should update settings if no remote settings' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { nil }
+      it do
+        expect(current).to have_received(:set_settings)
+      end
+    end
+
+    describe 'should update settings if local and remote id are different' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'bar' } } }
+      it do
+        expect(current).to have_received(:set_settings)
+      end
+    end
+
+    describe 'should update settings with new settingID' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'bar' } } }
+      it do
+        expect(current)
+          .to have_received(:set_settings)
+          .with(
+            hash_including('userData' => { 'settingID' => 'foo' })
+          )
+      end
+    end
+
+    describe 'should not update in dry run' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'bar' } } }
+      let(:dry_run) { true }
+      it do
+        expect(current).to_not have_received(:set_settings)
+      end
+    end
+  end
+
+  describe '.local_setting_id' do
+    subject { current.local_setting_id }
+
+    before do
+      expect(configurator).to receive(:settings).and_return(settings)
+    end
+
+    describe do
+      let(:settings) { { 'foo' => 'bar' } }
+      it { should eq '06ad47d8e64bd28de537b62ff85357c4' }
+    end
+
+    describe do
+      let(:settings) { { 'foo' => 'baz' } }
+      it { should_not eq '06ad47d8e64bd28de537b62ff85357c4' }
+    end
+
+    describe do
+      let(:settings) do
+        { 'foo' => 'bar', 'userData' => { 'settingID': 'foo' } }
+      end
+      it { should eq '06ad47d8e64bd28de537b62ff85357c4' }
+    end
+  end
+
+  describe '.remote_settings' do
+    let(:index) { double('Algolia::Index') }
+
+    before do
+      allow(current).to receive(:index).and_return(index)
+    end
+
+    context 'with actual index' do
+      subject { current.remote_settings }
+
+      before do
+        allow(index).to receive(:get_settings).and_return('settings')
+      end
+
+      it { should eq 'settings' }
+    end
+
+    context 'with API error' do
+      subject { current.remote_settings }
+
+      before do
+        allow(index).to receive(:get_settings).and_raise
+      end
+
+      it { is_expected.to eq nil }
+    end
+  end
+
+  describe '.set_settings' do
+    let(:index) { double('Algolia::Index') }
+    let(:settings) { 'settings' }
+
+    before do
+      allow(current).to receive(:index).and_return(index)
+    end
+
+    describe 'with valid settings' do
+      before do
+        allow(index).to receive(:set_settings!)
+        current.set_settings(settings)
+      end
+      it do
+        expect(index).to have_received(:set_settings!).with(settings)
+      end
+    end
+
+    describe 'with invalid settings' do
+      before do
+        allow(index).to receive(:set_settings!).and_raise
+        allow(error_handler).to receive(:stop)
+
+        current.set_settings(settings)
+      end
+      it do
+        expect(error_handler)
+          .to have_received(:stop)
+          .with(RuntimeError, settings: settings)
+      end
+    end
+  end
+
+  describe '.warn_of_manual_dashboard_editing' do
+    let(:changed_keys) do
+      {
+        'distinct' => false,
+        'customRanking' => %w[foo bar baz]
+      }
+    end
+
+    before do
+      allow(logger).to receive(:known_message)
+      current.warn_of_manual_dashboard_editing(changed_keys)
+    end
+
+    it do
+      expect(logger)
+        .to have_received(:known_message)
+        .with(
+          'settings_manually_edited',
+          settings:
+            "I:    distinct: false\n"\
+            "I:    customRanking:\n"\
+            "I:      - foo\n"\
+            "I:      - bar\n"\
+            'I:      - baz'\
+        )
     end
   end
 end

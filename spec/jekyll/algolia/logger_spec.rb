@@ -67,6 +67,17 @@ describe(Jekyll::Algolia::Logger) do
       end
       it { current.log(input) }
     end
+
+    context 'with an new line' do
+      let(:input) { "I:\nInformation line" }
+      before do
+        allow(Jekyll.logger).to receive(:info)
+        expect(Jekyll.logger)
+          .to receive(:info)
+          .with(/Information line/)
+      end
+      it { current.log(input) }
+    end
   end
 
   describe '.verbose' do

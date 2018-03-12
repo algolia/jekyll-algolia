@@ -87,6 +87,7 @@ describe(Jekyll::Algolia::Extractor) do
                                           position: 0,
                                           heading: 80
                                         })
+          expect(subject[0]).to_not include(:tag_name)
         end
       end
     end

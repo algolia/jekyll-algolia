@@ -96,7 +96,6 @@ Here is an example of a record extracted by the plugin:
 
   "html": "<p>We've learned a lot from your comments […]</p>",
   "content": "We've learned a lot from your comments […]",
-  "tag_name": "p",
   "hierarchy": {
     "lvl0": null,
     "lvl1": "Applying more UI best practices",

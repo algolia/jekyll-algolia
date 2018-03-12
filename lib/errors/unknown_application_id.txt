@@ -7,7 +7,7 @@ W:
 I:Here is the application ID you defined: {application_id}
 I:
 I:Make sure it's the same as the one displayed in your dashboard:
-I:   https://www.algolia.com/licensing
+I:   https://www.algolia.com/api-keys
 I:
 I:Then, define it in your Jekyll _config.yml file like this:
 I:

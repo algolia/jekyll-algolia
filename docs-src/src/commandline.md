@@ -17,9 +17,6 @@ Here is the list of command line options you can pass to the `jekyll algolia` co
 | Flag                     | Description                                                           |
 | ----                     | -----                                                                 |
 | `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` |
-| `--future`               | With this flag, the command will also index posts with a future date  |
-| `--limit_posts 10`       | Limits the number of posts to parse and index                         |
-| `--drafts`               | Index drafts in the `_drafts` folder as well                          |
 | `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             |
 | `--verbose`              | Display more information about what is going to be indexed            |
 
@@ -32,10 +29,9 @@ to overwrite those values.
 
 key                    | value
 ---------------------- | ----------------------
-ALGOLIA_APPLICATION_ID | `your_application_id`
-ALGOLIA_INDEX_NAME     | `your_index_name`
-ALGOLIA_API_KEY        | `your_api_key`
-
+ALGOLIA_APPLICATION_ID | Your Application ID, available in [your dashboard](https://www.algolia.com/api-keys).
+ALGOLIA_INDEX_NAME     | Your Index name, any string will work
+ALGOLIA_API_KEY        | Your Admin API Key, available in [your dashboard](https://www.algolia.com/api-keys).
 
 ## `_algolia_api_key` file
 

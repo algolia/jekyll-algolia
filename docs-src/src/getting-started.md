@@ -56,7 +56,7 @@ Once you have your credentials, you should define your `application_id` and
 
 algolia:
   application_id: your_application_id
-  index_name:     your_index_name
+  index_name:     jekyll # You can replace that with whatever name you want
 ```
 
 ## Usage
@@ -98,7 +98,7 @@ theme.
 [2]: https://www.ruby-lang.org/en/
 [3]: http://bundler.io/
 [4]: https://www.algolia.com/users/sign_up/hacker
-[5]: https://www.algolia.com/licensing
+[5]: https://www.algolia.com/api-keys
 [6]: ./assets/images/getting-started.gif
 [7]: ./commandline.html#algolia-api-key-file
 [8]: https://github.com/rvm/rubygems-bundler

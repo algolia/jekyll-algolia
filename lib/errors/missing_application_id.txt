@@ -8,4 +8,4 @@ W:  algolia:
 W:    application_id: {your_application_id}
 I:
 I:You can find your application ID along with all your credentials in your Algolia dashboard here:
-I:   https://www.algolia.com/licensing
+I:   https://www.algolia.com/api-keys

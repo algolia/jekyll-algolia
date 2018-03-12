@@ -34,7 +34,7 @@ Here are the steps to follow to setup your Travis account for your project:
 - Find your GitHub repository in the list and activate it
 
 _You should also uncheck the "Build pull request updates" in the options.
-This will avoid re-indexing your date every time you receive a pull request._
+This will avoid re-indexing your data every time you receive a pull request._
 
 ![Travis configuration](./assets/images/travis-config.png)
 

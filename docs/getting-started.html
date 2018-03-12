@@ -210,14 +210,14 @@ content you’ll need:</p>
 site.</p>
 <p><em>If you don’t yet have an Algolia account, you can open a free <a href="https://www.algolia.com/users/sign_up/hacker">Community plan
 here</a>. Once signed in, you can get your credentials from
-<a href="https://www.algolia.com/licensing">your dashboard</a>.</em></p>
+<a href="https://www.algolia.com/api-keys">your dashboard</a>.</em></p>
 <p>Once you have your credentials, you should define your <code>application_id</code> and
 <code>index_name</code> inside your <code>_config.yml</code> file like this:</p>
 <pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-comment"># _config.yml</span>
 
 <span class="cm-atom">algolia</span><span class="cm-meta">:</span>
 <span class="cm-atom">  application_id</span><span class="cm-meta">: </span>your_application_id
-<span class="cm-atom">  index_name</span><span class="cm-meta">:     </span>your_index_name
+<span class="cm-atom">  index_name</span><span class="cm-meta">:     </span>jekyll <span class="cm-comment"># You can replace that with whatever name you want</span>
 </code></div></pre>
 <h2 id="usage">Usage <a class="anchor" href="getting-started.html#usage" aria-hidden="true"></a></h2>
 <p>Once your credentials are setup, you can run the indexing by running the

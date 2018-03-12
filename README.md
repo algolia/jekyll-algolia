@@ -96,7 +96,7 @@ plugins.
 [6]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Adevelop&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
 [7]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Adevelop&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
 [8]: #more-about-the-community-plan
-[9]: https://www.algolia.com/licensing
+[9]: https://www.algolia.com/api-keys
 [10]: https://www.algolia.com/users/sign_up/hacker
 [11]: https://community.algolia.com/instantsearch.js/
 [12]: https://www.algolia.com/press#resources

@@ -255,6 +255,9 @@ describe(Jekyll::Algolia::Indexer) do
       allow(current).to receive(:local_setting_id).and_return(local_setting_id)
       allow(current).to receive(:remote_settings).and_return(remote_settings)
       allow(utils).to receive(:diff_keys).and_return(diff_keys)
+      allow(current)
+        .to receive(:index)
+        .and_return(double('Algolia::index', name: 'my_index'))
 
       current.update_settings
     end
@@ -436,11 +439,11 @@ describe(Jekyll::Algolia::Indexer) do
         .with(
           'settings_manually_edited',
           settings:
-            "I:    distinct: false\n"\
-            "I:    customRanking:\n"\
-            "I:      - foo\n"\
-            "I:      - bar\n"\
-            'I:      - baz'\
+            "W:    distinct: false\n"\
+            "W:    customRanking:\n"\
+            "W:      - foo\n"\
+            "W:      - bar\n"\
+            'W:      - baz'\
         )
     end
   end

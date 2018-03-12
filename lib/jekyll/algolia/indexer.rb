@@ -139,9 +139,9 @@ module Jekyll
       #
       # In case the index is not accessible, it will return nil
       def self.remote_settings
-        return index.get_settings
+        index.get_settings
       rescue StandardError
-        return nil
+        nil
       end
 
       # Public: Smart update of the settings of the index

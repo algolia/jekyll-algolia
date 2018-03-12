@@ -24,8 +24,8 @@ module Jekyll
           ],
           'customRanking' => [
             'desc(date)',
-            'desc(weight.heading)',
-            'asc(weight.position)'
+            'desc(custom_ranking.heading)',
+            'asc(custom_ranking.position)'
           ],
           'highlightPreTag' => '<em class="ais-Highlight">',
           'highlightPostTag' => '</em>',

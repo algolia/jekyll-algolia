@@ -326,8 +326,8 @@ describe(Jekyll::Algolia::Configurator) do
       it {
         should include('customRanking' => [
                          'desc(date)',
-                         'desc(weight.heading)',
-                         'asc(weight.position)'
+                         'desc(custom_ranking.heading)',
+                         'asc(custom_ranking.position)'
                        ])
       }
     end

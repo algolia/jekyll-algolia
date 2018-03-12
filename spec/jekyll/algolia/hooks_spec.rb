@@ -38,4 +38,3 @@ describe(Jekyll::Algolia::Hooks) do
     it { should eq records_after_hook }
   end
 end
-# rubocop:enable Metrics/BlockLength

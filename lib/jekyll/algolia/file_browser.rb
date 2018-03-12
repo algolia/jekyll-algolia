@@ -224,7 +224,7 @@ module Jekyll
           return file.data['excerpt'].to_s
         end
       rescue StandardError
-        return nil
+        nil
       end
 
       # Public: Returns the HTML version of the excerpt

@@ -103,7 +103,7 @@ Here is an example of a record extracted by the plugin:
     "lvl2": "Focus on readability",
   },
   "anchor": "focus-on-readability",
-  "weight": {
+  "custom_ranking": {
     "position": 8,
     "heading": 70
   }

@@ -23,55 +23,71 @@ describe(Jekyll::Algolia::Extractor) do
   end
 
   describe '.extract_raw_records' do
-    context 'with mock data' do
-      # Given
-      let(:content) { 'some html markup' }
-      before do
-        allow(AlgoliaHTMLExtractor)
-          .to receive(:run)
-      end
-      before do
-        allow(configurator)
-          .to receive(:algolia)
-          .with('nodes_to_index')
-          .and_return('foo')
-      end
+    let(:nodes_to_index) { 'p' }
 
-      # When
-      before { current.extract_raw_records(content) }
+    subject { current.extract_raw_records(content) }
 
-      # Then
-      it 'should create a new AlgoliaHTMLExtractor with the content passed' do
-        expect(AlgoliaHTMLExtractor)
-          .to have_received(:run)
-          .with(content, anything)
-      end
-      it 'should configure the extractor with the nodex_to_index value' do
-        expect(AlgoliaHTMLExtractor)
-          .to have_received(:run)
-          .with(anything, options: { css_selector: 'foo' })
-      end
+    before do
+      allow(configurator)
+        .to receive(:algolia)
+      allow(configurator)
+        .to receive(:algolia)
+        .with('nodes_to_index')
+        .and_return(nodes_to_index)
     end
 
-    context 'with real data' do
-      let(:site) { init_new_jekyll_site }
-      subject { current.extract_raw_records(content) }
+    describe 'should call the underlying extractor' do
+      let(:content) { 'some html markup' }
 
-      context 'with a page' do
-        let(:content) { site.__find_file('only-paragraphs.md').content }
+      before do
+        expect(AlgoliaHTMLExtractor)
+          .to receive(:run)
+          .with(
+            content,
+            options: hash_including(css_selector: nodes_to_index)
+          )
+          .and_return([{ name: 'record' }])
+      end
+
+      it { expect(subject[0]).to include(name: 'record') }
+    end
+
+    describe do
+      let(:content) { init_new_jekyll_site.__find_file(filename).content }
+
+      describe do
+        let(:filename) { 'only-paragraphs.md' }
         it { expect(subject.length).to eq 6 }
       end
-      context 'with a page with divs' do
-        let(:content) { site.__find_file('only-divs.md').content }
-        before do
-          allow(configurator)
-            .to receive(:algolia)
-          allow(configurator)
-            .to receive(:algolia)
-            .with('nodes_to_index')
-            .and_return('div')
+
+      describe do
+        let(:filename) { 'only-paragraphs.md' }
+        let(:nodes_to_index) { 'div' }
+        it { expect(subject.length).to eq 0 }
+      end
+
+      describe do
+        let(:filename) { 'only-divs.md' }
+        let(:nodes_to_index) { 'div' }
+        it { expect(subject.length).to eq 6 }
+      end
+
+      describe do
+        let(:content) do
+          '<h1>Main title</h1>
+           <h2>Subtitle</h2>
+           <p>My text</p>'
         end
-        it { expect(subject.length).to eq 5 }
+
+        it do
+          expect(subject[0]).to include(html: '<p>My text</p>')
+          expect(subject[0]).to include(content: 'My text')
+          expect(subject[0]).to_not include(:weight)
+          expect(subject[0]).to include(custom_ranking: {
+                                          position: 0,
+                                          heading: 80
+                                        })
+        end
       end
     end
   end

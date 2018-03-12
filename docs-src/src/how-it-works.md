@@ -45,7 +45,7 @@ Here is an example of what a record looks like:
     "lvl2": "Focus on readability",
   },
   "anchor": "focus-on-readability",
-  "weight": {
+  "custom_ranking": {
     "position": 8,
     "heading": 70
   }

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'algoliasearch'
-require 'awesome_print'
+require_relative './spec_helper'
 
 # Note: Those tests will delete and recreate the index several times, deleting
 # any records in it, in order to test the settings.
@@ -16,10 +14,6 @@ describe('updating settings') do
   let(:indexer) { Jekyll::Algolia::Indexer.init }
   before(:all) do
     # Requesting the index from outside of the Jekyll plugin
-    Algolia.init(
-      application_id: ENV['ALGOLIA_APPLICATION_ID'],
-      api_key: ENV['ALGOLIA_API_KEY']
-    )
     @index = Algolia::Index.new(ENV['ALGOLIA_INDEX_NAME'])
 
     # We keep a reference to what default index settings look like so we can

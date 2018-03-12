@@ -188,7 +188,7 @@ describe(Jekyll::Algolia::Configurator) do
       stub_const('ENV', 'ALGOLIA_INDEX_NAME' => env_value)
     end
 
-    describe 'should return nil if none configured' do
+    describe 'should return the default value if none configured' do
       let(:env_value) { nil }
       let(:config) { { 'algolia' => { 'index_name' => nil } } }
       it { should eq nil }

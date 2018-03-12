@@ -3,6 +3,7 @@
 # Live-reload integration tests
 guard :rspec, cmd: 'bundle exec rspec --color --format progress' do
   watch(%r{^spec/integration/.+_spec\.rb$})
+  watch('spec/integration/spec_helper.rb') { 'spec/integration' }
 end
 
 notification :off

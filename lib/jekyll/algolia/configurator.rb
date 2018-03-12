@@ -54,7 +54,12 @@ module Jekyll
             collection
             categories
             tags
-          ]
+          ],
+          'attributesToSnippet' => %w[
+            content:55
+          ],
+          # This is the default only for accounts created after 2016-02-10
+          'snippetEllipsisText' => '…'
         }
       }.freeze
 

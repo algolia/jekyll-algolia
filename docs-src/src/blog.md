@@ -85,7 +85,8 @@ don't worry, we'll explain it all right after.
 const search = instantsearch({
   appId: '{{ site.algolia.application_id }}',
   indexName: '{{ site.algolia.index_name }}',
-  apiKey: '{{ site.algolia.search_only_api_key }}'
+  apiKey: '{{ site.algolia.search_only_api_key }}',
+  poweredBy: true // This is required if you're on the free Community plan
 });
 
 // Adding searchbar and results widgets
@@ -228,20 +229,22 @@ All HTML nodes added by InstantSearch.js come with a custom `.ais-*` class added
 to them. This makes altering the styling of the elements to match your overall
 theme easy to achieve.
 
-### Edge-case handling
+### Headings
 
 With the current configuration, we will sometimes end up with results that look
 irrelevant: nothing is highlighted neither in the title or the content.
 
-This is because by default the plugin is searching into different fields
-(including `tags`, `categories` and the parent heading hierarchy of each
-paragraph). Because we chose to only display the title and content, it means that
-when a match in another attribute is occurring, we have no way to visually signal
-it to the user. It makes the result look irrelevant, while it is actually
-relevant (but we're not explaining why).
+This is because by default the plugin is searching not only in the content and
+the title, but also in the headings (`<h1>` to `<h6>` of the page). Because we
+currently only display the title and content, it make some perfectly relevant
+result look odd, because nothing is highlighted.
 
-One way to work around this issue is to manually tell the API in which field it
-should search, by using the [restrictSearchableAttributes][12] option.
+To fix that, we'll add the highlighted headings to the display when they are
+matching. We'll create a new variable called `headings`, filled with the
+highlighted headings, and add it to our template only when not empty.
+
+We also update the url to include the `#` anchor that will point the link
+directly to the closest matching heading.
 
 ### Final code
 
@@ -258,12 +261,7 @@ const search = instantsearch({
   appId: '{{ site.algolia.application_id }}',
   apiKey: '{{ site.algolia.search_only_api_key }}',
   indexName: '{{ site.algolia.index_name }}',
-  searchParameters: {
-    restrictSearchableAttributes: [
-      'title',
-      'content'
-    ]
-  }
+  poweredBy: true // This is required if you're on the free Community plan
 });
 
 const hitTemplate = function(hit) {
@@ -271,14 +269,22 @@ const hitTemplate = function(hit) {
   if (hit.date) {
     date = moment.unix(hit.date).format('MMM D, YYYY');
   }
-  const url = hit.url;
+  let url = `{{ site.baseurl }}${hit.url}#${hit.anchor}`;
+
   const title = hit._highlightResult.title.value;
+  let breadcrumbs = '';
+  if (hit._highlightResult.headings) {
+    breadcrumbs = hit._highlightResult.headings.map(match => {
+      return `<span class="post-breadcrumb">${match.value}</span>`
+    }).join(' > ')
+  }
   const content = hit._highlightResult.html.value;
 
   return `
     <div class="post-item">
       <span class="post-meta">${date}</span>
       <h2><a class="post-link" href="${url}">${title}</a></h2>
+      {{#breadcrumbs}}<a href="${url}" class="post-breadcrumbs">${breadcrumbs}</a>{{/breadcrumbs}}
       <div class="post-snippet">${content}</div>
     </div>
   `;
@@ -288,8 +294,7 @@ const hitTemplate = function(hit) {
 search.addWidget(
   instantsearch.widgets.searchBox({
     container: '#search-searchbar',
-    placeholder: 'Search into posts...',
-    poweredBy: true // This is required if you're on the free Community plan
+    placeholder: 'Search into posts...'
   })
 );
 
@@ -318,18 +323,33 @@ search.start();
   font-style: normal;
   text-decoration: underline;
 }
+.post-breadcrumbs {
+  color: #424242;
+  display: block;
+}
+.post-breadcrumb {
+  font-size: 18px;
+  color: #424242;
+}
+.post-breadcrumb .ais-Highlight {
+  font-weight: bold;
+  font-style: normal;
+}
 .post-snippet .ais-Highlight {
   color: #2a7ae2;
   font-style: normal;
   font-weight: bold;
+}
+.post-snippet img {
+  display: none;
 }
 </style>
 ```
 
 ## Final result
 
-You can check the [final result live here][13], and have a look at all the code from
-the [GitHub repository][14].
+You can check the [final result live here][12], and have a look at all the code
+from the [GitHub repository][13].
 
 
 [1]: https://github.com/jekyll/minima
@@ -343,6 +363,5 @@ the [GitHub repository][14].
 [9]: ./assets/images/instantsearch-nostyling.png
 [10]: ./assets/images/instantsearch-styling.png
 [11]: https://momentjs.com/docs/
-[12]: https://www.algolia.com/doc/api-reference/api-parameters/restrictSearchableAttributes/
-[13]: https://community.algolia.com/jekyll-algolia-example/
-[14]: https://github.com/algolia/jekyll-algolia-example
+[12]: https://community.algolia.com/jekyll-algolia-example/
+[13]: https://github.com/algolia/jekyll-algolia-example

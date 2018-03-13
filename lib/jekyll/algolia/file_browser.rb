@@ -121,6 +121,8 @@ module Jekyll
         raw_data = raw_data(file)
         specific_data = {
           collection: collection(file),
+          tags: tags(file),
+          categories: categories(file),
           date: date(file),
           excerpt_html: excerpt_html(file),
           excerpt_text: excerpt_text(file),
@@ -187,6 +189,16 @@ module Jekyll
       # file - The Jekyll file
       def self.url(file)
         file.url
+      end
+
+      # Public: Returns the list of tags of a file, defaults to an empty array
+      def self.tags(file)
+        file.data['tags'] || []
+      end
+
+      # Public: Returns the list of tags of a file, defaults to an empty array
+      def self.categories(file)
+        file.data['categories'] || []
       end
 
       # Public: Returns a timestamp of the file date

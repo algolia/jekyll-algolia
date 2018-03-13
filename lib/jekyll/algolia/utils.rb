@@ -46,14 +46,14 @@ module Jekyll
         text.tr("\n", ' ').squeeze(' ').strip
       end
 
-      # Public: Remove all keys with a nil value or an empty array from a hash
+      # Public: Remove all keys with a nil value or an empty string from a hash
       #
       # hash - The input hash
       def self.compact_empty(hash)
         new_hash = {}
         hash.each do |key, value|
           next if value.nil?
-          next if value.respond_to?(:empty?) && value.empty?
+          next if value.is_a?(String) && value.empty?
           new_hash[key] = value
         end
         new_hash

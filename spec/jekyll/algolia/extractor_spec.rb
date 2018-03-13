@@ -131,14 +131,21 @@ describe(Jekyll::Algolia::Extractor) do
         it { expect(subject[0]).to_not include(:node) }
       end
 
-      describe 'should not contain any nil or empty array keys' do
-        let(:raw_records) { [{ foo: nil, bar: [] }] }
-        let(:metadata) { { baz: nil, yep: 'yep' } }
+      describe 'should not contain any nil' do
+        let(:raw_records) { [{ foo: nil }] }
+        let(:metadata) { { bar: nil, yep: 'yep' } }
         it do
           expect(subject[0]).to_not include(:foo)
           expect(subject[0]).to_not include(:bar)
-          expect(subject[0]).to_not include(:baz)
           expect(subject[0]).to include(yep: 'yep')
+        end
+      end
+
+      describe 'should keep empty arrays' do
+        let(:raw_records) { [{ foo: [] }] }
+        let(:metadata) { {} }
+        it do
+          expect(subject[0]).to include(:foo)
         end
       end
     end

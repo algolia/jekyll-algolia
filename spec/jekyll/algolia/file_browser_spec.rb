@@ -214,6 +214,68 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 
+  describe '.tags' do
+    subject { current.tags(file) }
+
+    context 'with a page with tags' do
+      let(:file) { site.__find_file('page-with-tags.md') }
+      it { should eq %w[tag1 tag2] }
+    end
+    context 'with a page without tags' do
+      let(:file) { site.__find_file('about.md') }
+      it { should eq [] }
+    end
+    context 'with a post with tags' do
+      let(:file) { site.__find_file('-post-with-tags.md') }
+      it { should eq %w[tag1 tag2] }
+    end
+    context 'with a post without tags' do
+      let(:file) { site.__find_file('-post-without-tags.md') }
+      it { should eq [] }
+    end
+    context 'with a collection element with tags' do
+      let(:file) do
+        site.__find_file('_my-collection/collection-item-with-tags.html')
+      end
+      it { should eq %w[tag1 tag2] }
+    end
+    context 'with a collection element without tags' do
+      let(:file) { site.__find_file('_my-collection/collection-item.html') }
+      it { should eq [] }
+    end
+  end
+
+  describe '.categories' do
+    subject { current.categories(file) }
+
+    context 'with a page with categories' do
+      let(:file) { site.__find_file('page-with-categories.md') }
+      it { should eq %w[category1 category2] }
+    end
+    context 'with a page without categories' do
+      let(:file) { site.__find_file('about.md') }
+      it { should eq [] }
+    end
+    context 'with a post with categories' do
+      let(:file) { site.__find_file('-post-with-categories.md') }
+      it { should eq %w[category1 category2] }
+    end
+    context 'with a post without categories' do
+      let(:file) { site.__find_file('-post-without-categories.md') }
+      it { should eq [] }
+    end
+    context 'with a collection element with categories' do
+      let(:file) do
+        site.__find_file('_my-collection/collection-item-with-categories.html')
+      end
+      it { should eq %w[category1 category2] }
+    end
+    context 'with a collection element without tags' do
+      let(:file) { site.__find_file('_my-collection/collection-item.html') }
+      it { should eq [] }
+    end
+  end
+
   describe '.date' do
     subject { current.date(file) }
 
@@ -383,16 +445,16 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:file) { site.__find_file('-test-post.md') }
       it do
         should include(title: 'Test post')
-        should include(categories: %w[foo bar])
-        should include(tags: ['tag', 'another tag'])
+        should_not include(:categories)
+        should_not include(:tags)
       end
     end
     context 'with a collection item' do
       let(:file) { site.__find_file('collection-item.html') }
       it do
         should include(title: 'Collection Item')
-        should include(categories: [])
-        should include(tags: [])
+        should_not include(:categories)
+        should_not include(:tags)
       end
     end
 
@@ -446,6 +508,8 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:file) { nil }
       before do
         allow(current).to receive(:collection).and_return('collection')
+        allow(current).to receive(:tags).and_return('tags')
+        allow(current).to receive(:categories).and_return('categories')
         allow(current).to receive(:date).and_return('date')
         allow(current).to receive(:excerpt_html).and_return('excerpt_html')
         allow(current).to receive(:excerpt_text).and_return('excerpt_text')
@@ -462,6 +526,8 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should include(excerpt_text: 'excerpt_text') }
         it { should include(slug: 'slug') }
         it { should include(type: 'type') }
+        it { should include(categories: 'categories') }
+        it { should include(tags: 'tags') }
         it { should include(url: 'url') }
       end
       describe 'should contain custom metadata' do
@@ -476,25 +542,17 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should_not include(:url) }
         it { should_not include(:foo) }
       end
-      context 'with empty arrays' do
-        before do
-          allow(current)
-            .to receive(:raw_data)
-            .and_return(categories: [], tags: [])
-        end
-        it { should_not include(:categories) }
-        it { should_not include(:tags) }
-      end
     end
 
     context 'with real data' do
       context 'with a page' do
         let(:file) { site.__find_file('about.md') }
         it { should include(author: 'Myself') }
+        it { should include(tags: []) }
+        it { should include(categories: []) }
         it { should_not include(:collection) }
         it { should_not include(:date) }
         it { should include(slug: 'about') }
-        it { should_not include(:tags) }
         it { should include(type: 'page') }
         it { should include(title: 'About') }
         it { should include(url: '/about.html') }
@@ -506,7 +564,6 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should_not include(:collection) }
         it { should include(categories: %w[foo bar]) }
         it { should include(date: 1_435_788_000) }
-        it { should_not include(:ext) }
         it { should include(slug: 'test-post') }
         it { should include(tags: ['tag', 'another tag']) }
         it { should include(type: 'post') }
@@ -518,7 +575,8 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should include(collection: 'my-collection') }
         it { should include(date: 452_469_600) }
         it { should include(slug: 'collection-item') }
-        it { should_not include(:tags) }
+        it { should include(tags: []) }
+        it { should include(categories: []) }
         it { should include(type: 'document') }
         it { should include(title: 'Collection Item') }
         it { should include(url: '/my-collection/collection-item.html') }

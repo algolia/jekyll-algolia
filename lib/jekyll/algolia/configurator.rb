@@ -15,51 +15,50 @@ module Jekyll
         'nodes_to_index' => 'p',
         'indexing_batch_size' => 1000,
         'settings' => {
-          'distinct' => true,
-          'attributeForDistinct' => 'url',
-          'attributesForFaceting' => %w[
-            searchable(tags)
-            searchable(type)
-            searchable(title)
+          # Searchable attributes
+          'searchableAttributes' => %w[
+            title
+            headings
+            unordered(content)
+            collection,categories,tags
           ],
+          # Custom Ranking
           'customRanking' => [
             'desc(date)',
             'desc(custom_ranking.heading)',
             'asc(custom_ranking.position)'
           ],
-          'highlightPreTag' => '<em class="ais-Highlight">',
-          'highlightPostTag' => '</em>',
-          'searchableAttributes' => %w[
-            title
-            hierarchy.lvl0
-            hierarchy.lvl1
-            hierarchy.lvl2
-            hierarchy.lvl3
-            hierarchy.lvl4
-            hierarchy.lvl5
-            unordered(content)
-            collection,categories,tags
+          'unretrievableAttributes' => [
+            'custom_ranking'
           ],
-          # We want to allow highlight in more keys than what we search on
+          # Highlight
           'attributesToHighlight' => %w[
             title
-            hierarchy.lvl0
-            hierarchy.lvl1
-            hierarchy.lvl2
-            hierarchy.lvl3
-            hierarchy.lvl4
-            hierarchy.lvl5
+            headings
             content
             html
             collection
             categories
             tags
           ],
+          'highlightPreTag' => '<em class="ais-Highlight">',
+          'highlightPostTag' => '</em>',
+          # Snippet
           'attributesToSnippet' => %w[
             content:55
           ],
-          # This is the default only for accounts created after 2016-02-10
-          'snippetEllipsisText' => '…'
+          'snippetEllipsisText' => '…',
+          # Distinct
+          'distinct' => true,
+          'attributeForDistinct' => 'url',
+          # Faceting
+          'attributesForFaceting' => %w[
+            type
+            searchable(collection)
+            searchable(categories)
+            searchable(tags)
+            searchable(title)
+          ]
         }
       }.freeze
 

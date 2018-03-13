@@ -108,6 +108,11 @@ describe(Jekyll::Algolia::Utils) do
     end
     context 'with empty arrays' do
       let(:input) { { foo: 'bar', bar: [] } }
+      let(:expected) { { foo: 'bar', bar: [] } }
+      it { should eq expected }
+    end
+    context 'with empty strings' do
+      let(:input) { { foo: 'bar', bar: '' } }
       let(:expected) { { foo: 'bar' } }
       it { should eq expected }
     end

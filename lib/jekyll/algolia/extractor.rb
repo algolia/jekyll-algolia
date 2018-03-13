@@ -12,7 +12,7 @@ module Jekyll
       #
       # file - The Jekyll file to process
       def self.run(file)
-        # Getting all hierarchical nodes from the HTML input
+        # Getting all nodes from the HTML input
         raw_records = extract_raw_records(file.content)
         # Getting file metadata
         shared_metadata = FileBrowser.metadata(file)
@@ -47,7 +47,7 @@ module Jekyll
       end
 
       # Public: Extract raw records from the file, including content for each
-      # node to index and hierarchy
+      # node and its headings
       #
       # content - The HTML content to parse
       def self.extract_raw_records(content)

@@ -38,11 +38,10 @@ Here is an example of what a record looks like:
 
   "html": "<p>We've learned a lot from your comments […]</p>",
   "content": "We've learned a lot from your comments […]",
-  "hierarchy": {
-    "lvl0": null,
-    "lvl1": "Applying more UI best practices",
-    "lvl2": "Focus on readability",
-  },
+  "headings": [
+    "Applying more UI best practices",
+    "Focus on readability"
+  ],
   "anchor": "focus-on-readability",
   "custom_ranking": {
     "position": 8,
@@ -54,9 +53,8 @@ Here is an example of what a record looks like:
 Each record created that way will contain a mix of shared data and specific
 data. Shared data is the metadata of the page it was extracted from (`title`,
 `slug`, `url`, `tags`, etc, as well as any custom field added to the
-front-matter). Specific data is the paragraph content, and information
-about its position in the page (where its situated in the hierarchy of headings
-in the page).
+front-matter). Specific data is the paragraph content and, if applicable, the
+list of parent headings (based on the `<h1>` and `<h6>` of the page).
 
 Using the [distinct setting][1] of the Algolia API, only the best matching
 paragraph of each page is returned for a specific query. This greatly improves

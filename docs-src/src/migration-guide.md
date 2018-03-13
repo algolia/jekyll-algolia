@@ -96,11 +96,10 @@ Here is an example of a record extracted by the plugin:
 
   "html": "<p>We've learned a lot from your comments […]</p>",
   "content": "We've learned a lot from your comments […]",
-  "hierarchy": {
-    "lvl0": null,
-    "lvl1": "Applying more UI best practices",
-    "lvl2": "Focus on readability",
-  },
+  "headings": [
+    "Applying more UI best practices",
+    "Focus on readability"
+  ],
   "anchor": "focus-on-readability",
   "custom_ranking": {
     "position": 8,

@@ -1,5 +1,5 @@
 ---
-title: Hierarchy test
+title: Heading test
 ---
 
 # H1

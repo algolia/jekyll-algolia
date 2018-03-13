@@ -232,6 +232,12 @@ module Jekyll
         excluded_files << '404.html'
         excluded_files << '404.md'
 
+        # All paths must be relative to the source as this is how Jekyll is
+        # checking for exclusion
+        excluded_files = excluded_files.map do |filepath|
+          FileBrowser.relative_path(filepath)
+        end
+
         excluded_files
       end
 

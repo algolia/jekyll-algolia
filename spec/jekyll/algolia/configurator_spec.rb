@@ -93,6 +93,14 @@ describe(Jekyll::Algolia::Configurator) do
       it { should include '404.html' }
       it { should include '404.md' }
     end
+
+    describe 'should have all filepath relative to the source' do
+      let(:exclude) { nil }
+      let(:algolia_exclude) { ['foo.html', './bar.html'] }
+
+      it { should include 'foo.html' }
+      it { should include 'bar.html' }
+    end
   end
 
   describe '.get' do

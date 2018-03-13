@@ -26,31 +26,27 @@ module Jekyll
       # Public: Return the absolute path of a Jekyll file
       #
       # file - The Jekyll file to inspect
-      #
-      # Jekyll handles the .path property of some files as relative to the root
-      # (pages) or as an absolute paths (posts and static assets). We make sure
-      # we have a consistent way of accessing it
-      def self.absolute_path(file)
-        pathname = Pathname.new(file.path)
+      def self.absolute_path(filepath)
+        pathname = Pathname.new(filepath)
         return pathname.cleanpath.to_s if pathname.absolute?
 
-        File.expand_path(File.join(Configurator.get('source'), file.path))
+        File.expand_path(File.join(Configurator.get('source'), filepath))
       end
 
       # Public: Return the path of a Jekyll file relative to the Jekyll source
       #
       # file - The Jekyll file to inspect
-      #
-      # Jekyll handles the .path property of some files as relative to the root
-      # (pages) or as an absolute paths (posts and static assets). We make sure
-      # we have a consistent way of accessing it
-      def self.relative_path(file)
-        pathname = Pathname.new(file.path)
-        return file.path if pathname.relative?
+      def self.relative_path(filepath)
+        pathname = Pathname.new(filepath)
+        config_source = Configurator.get('source') || ''
+        jekyll_source = Pathname.new(File.expand_path(config_source))
 
-        jekyll_source = Pathname.new(
-          File.expand_path(Configurator.get('source'))
-        )
+        # Removing any starting ./
+        if pathname.relative?
+          fullpath = File.expand_path(File.join(jekyll_source, pathname))
+          return fullpath.gsub(%r{^#{jekyll_source}/}, '')
+        end
+
         pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
 

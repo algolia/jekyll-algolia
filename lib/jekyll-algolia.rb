@@ -85,7 +85,7 @@ module Jekyll
         files = []
         Logger.log('I:Extracting records...')
         each_site_file do |file|
-          path = FileBrowser.relative_path(file)
+          path = FileBrowser.relative_path(file.path)
 
           # Skip files that should not be indexed
           is_indexable = FileBrowser.indexable?(file)

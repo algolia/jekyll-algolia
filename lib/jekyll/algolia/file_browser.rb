@@ -153,6 +153,11 @@ module Jekyll
         end
         data.delete('excerpt')
 
+        # Delete other keys added by Jekyll that are not in the front-matter and
+        # not needed for search
+        data.delete('draft')
+        data.delete('ext')
+
         # Convert all values to a version that can be serialized to JSON
         data = Utils.jsonify(data)
 

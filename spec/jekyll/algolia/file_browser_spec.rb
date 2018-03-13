@@ -385,8 +385,6 @@ describe(Jekyll::Algolia::FileBrowser) do
         should include(title: 'Test post')
         should include(categories: %w[foo bar])
         should include(tags: ['tag', 'another tag'])
-        should include(draft: false)
-        should include(ext: '.md')
       end
     end
     context 'with a collection item' do
@@ -395,8 +393,6 @@ describe(Jekyll::Algolia::FileBrowser) do
         should include(title: 'Collection Item')
         should include(categories: [])
         should include(tags: [])
-        should include(draft: false)
-        should include(ext: '.html')
       end
     end
 
@@ -417,6 +413,29 @@ describe(Jekyll::Algolia::FileBrowser) do
     describe 'should not contain the excerpt' do
       let(:file) { site.__find_file('html.html') }
       it { should_not include(:excerpt) }
+    end
+    describe 'should not contain keys added by Jekyll unused in search' do
+      describe do
+        let(:file) { site.__find_file('about.md') }
+        it do
+          should_not include(:draft)
+          should_not include(:ext)
+        end
+      end
+      describe do
+        let(:file) { site.__find_file('-test-post.md') }
+        it do
+          should_not include(:draft)
+          should_not include(:ext)
+        end
+      end
+      describe do
+        let(:file) { site.__find_file('collection-item.html') }
+        it do
+          should_not include(:draft)
+          should_not include(:ext)
+        end
+      end
     end
   end
 
@@ -487,7 +506,7 @@ describe(Jekyll::Algolia::FileBrowser) do
         it { should_not include(:collection) }
         it { should include(categories: %w[foo bar]) }
         it { should include(date: 1_435_788_000) }
-        it { should include(ext: '.md') }
+        it { should_not include(:ext) }
         it { should include(slug: 'test-post') }
         it { should include(tags: ['tag', 'another tag']) }
         it { should include(type: 'post') }

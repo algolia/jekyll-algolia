@@ -24,12 +24,12 @@ describe(Jekyll::Algolia::Extractor) do
 
   describe '.extract_raw_records' do
     let(:nodes_to_index) { 'p' }
+    let(:content) { init_new_jekyll_site.__find_file(filename).content }
 
     subject { current.extract_raw_records(content) }
 
     before do
-      allow(configurator)
-        .to receive(:algolia)
+      allow(configurator).to receive(:algolia).and_call_original
       allow(configurator)
         .to receive(:algolia)
         .with('nodes_to_index')
@@ -53,42 +53,33 @@ describe(Jekyll::Algolia::Extractor) do
     end
 
     describe do
-      let(:content) { init_new_jekyll_site.__find_file(filename).content }
+      let(:filename) { 'only-paragraphs.md' }
+      let(:nodes_to_index) { 'div' }
+      it { expect(subject.length).to eq 0 }
+    end
 
-      describe do
-        let(:filename) { 'only-paragraphs.md' }
-        it { expect(subject.length).to eq 6 }
+    describe do
+      let(:filename) { 'only-divs.md' }
+      let(:nodes_to_index) { 'div' }
+      it { expect(subject.length).to eq 6 }
+    end
+
+    describe do
+      let(:content) do
+        '<h1>Main title</h1>
+         <h2>Subtitle</h2>
+         <p>My text</p>'
       end
 
-      describe do
-        let(:filename) { 'only-paragraphs.md' }
-        let(:nodes_to_index) { 'div' }
-        it { expect(subject.length).to eq 0 }
-      end
-
-      describe do
-        let(:filename) { 'only-divs.md' }
-        let(:nodes_to_index) { 'div' }
-        it { expect(subject.length).to eq 6 }
-      end
-
-      describe do
-        let(:content) do
-          '<h1>Main title</h1>
-           <h2>Subtitle</h2>
-           <p>My text</p>'
-        end
-
-        it do
-          expect(subject[0]).to include(html: '<p>My text</p>')
-          expect(subject[0]).to include(content: 'My text')
-          expect(subject[0]).to_not include(:weight)
-          expect(subject[0]).to include(custom_ranking: {
-                                          position: 0,
-                                          heading: 80
-                                        })
-          expect(subject[0]).to_not include(:tag_name)
-        end
+      it do
+        expect(subject[0]).to include(html: '<p>My text</p>')
+        expect(subject[0]).to include(content: 'My text')
+        expect(subject[0]).to_not include(:weight)
+        expect(subject[0]).to include(custom_ranking: {
+                                        position: 0,
+                                        heading: 80
+                                      })
+        expect(subject[0]).to_not include(:tag_name)
       end
     end
   end

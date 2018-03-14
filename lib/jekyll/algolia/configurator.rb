@@ -72,7 +72,6 @@ module Jekyll
         Logger.silent { config = Jekyll.configuration } if config.nil?
 
         @config = config
-        @config['exclude'] = files_excluded_from_render
 
         @config = disable_other_plugins(@config)
 
@@ -214,31 +213,6 @@ module Jekyll
         value = get('dry_run')
         return true if value == true
         false
-      end
-
-      # Public: List of files to exclude from the Jekyll build
-      #
-      # We skip all files usually ignored by Jekyll, plus any file that should
-      # not be indexed.
-      def self.files_excluded_from_render
-        site_exclude = get('exclude') || []
-        algolia_exclude = algolia('files_to_exclude') || []
-
-        excluded_files = site_exclude + algolia_exclude
-
-        # 404 pages are not Jekyll defaults but a convention adopted by GitHub
-        # pages. We don't want to index those.
-        # https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
-        excluded_files << '404.html'
-        excluded_files << '404.md'
-
-        # All paths must be relative to the source as this is how Jekyll is
-        # checking for exclusion
-        excluded_files = excluded_files.map do |filepath|
-          FileBrowser.relative_path(filepath)
-        end
-
-        excluded_files
       end
 
       # Public: Disable features from other Jekyll plugins that might interfere

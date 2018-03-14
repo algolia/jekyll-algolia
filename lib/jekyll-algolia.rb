@@ -72,27 +72,79 @@ module Jekyll
       @start_time
     end
 
-    # A Jekyll::Site subclass that overrides #write from the parent class to
+    # A Jekyll::Site subclass that overrides process from the parent class to
     # create JSON records out of rendered documents and push those records to
     # Algolia instead of writing files to disk.
     class Site < Jekyll::Site
-      # We make the cleanup method a noop, otherwise it will remove excluded
-      # files from destination
-      def cleanup; end
+      # We expose a way to reset the collection, as it will be needed in the
+      # tests
+      attr_writer :collections
 
-      def write
+      # Public: Overwriting the parent method
+      #
+      # This will prepare the website, gathering all files, excluding the one we
+      # don't need to index, then render them (converting to HTML), the finally
+      # calling `push` to push to Algolia
+      def process
+        # Default Jekyll preflight
+        reset
+        read
+        generate
+
+        # Removing all files that won't be indexed, so we don't waste time
+        # rendering them
+        keep_only_indexable_files
+
+        # Converting them to HTML
+        render
+
+        # Pushing them Algolia
+        push
+      end
+
+      # Public: Filtering a list of items to only keep the one that are
+      # indexable.
+      #
+      # items - List of Pages/Documents
+      #
+      # Note: It also sets the layout to nil, to further speed up the rendering
+      def indexable_list(items)
+        new_list = []
+        items.each do |item|
+          next unless FileBrowser.indexable?(item)
+          item.data = {} if item.data.nil?
+          item.data['layout'] = nil
+          new_list << item
+        end
+        new_list
+      end
+
+      # Public: Removing non-indexable Pages, Posts and Documents from the
+      # internals
+      def keep_only_indexable_files
+        @pages = indexable_list(@pages)
+
+        # Applying to each collections
+        @collections.each_value do |collection|
+          collection.docs = indexable_list(collection.docs)
+        end
+
+        # Remove all static files
+        @static_files = []
+      end
+
+      # Public: Extract records from every file and index them
+      def push
         records = []
         files = []
-        Logger.log('I:Extracting records...')
         each_site_file do |file|
-          path = FileBrowser.relative_path(file.path)
+          # Even if we cleared the list of documents/pages beforehand, some
+          # files might still sneak up to this point (like static files added to
+          # a collection directory), so we check again if they can really be
+          # indexed.
+          next unless FileBrowser.indexable?(file)
 
-          # Skip files that should not be indexed
-          is_indexable = FileBrowser.indexable?(file)
-          unless is_indexable
-            Logger.verbose("W:Skipping #{path}")
-            next
-          end
+          path = FileBrowser.relative_path(file.path)
 
           Logger.verbose("I:Extracting records from #{path}")
           file_records = Extractor.run(file)

@@ -14,15 +14,6 @@ module Jekyll
     module FileBrowser
       include Jekyll::Algolia
 
-      # Public: Check if the specified file is a static Jekyll asset
-      #
-      # file - The Jekyll file
-      #
-      # We don't index static assets (js, css, images)
-      def self.static_file?(file)
-        file.is_a?(Jekyll::StaticFile)
-      end
-
       # Public: Return the absolute path of a Jekyll file
       #
       # file - The Jekyll file to inspect
@@ -49,6 +40,45 @@ module Jekyll
 
         pathname.relative_path_from(jekyll_source).cleanpath.to_s
       end
+
+      # Public: Check if the file should be indexed
+      #
+      # file - The Jekyll file
+      #
+      # There are many reasons a file should not be indexed. We need to exclude
+      # all the static assets, only keep the actual content.
+      def self.indexable?(file)
+        return false if static_file?(file)
+        return false if is_404?(file)
+        return false unless allowed_extension?(file)
+        return false if excluded_from_config?(file)
+        return false if excluded_from_hook?(file)
+
+        true
+      end
+
+      # Public: Check if the specified file is a static Jekyll asset
+      #
+      # file - The Jekyll file
+      #
+      # We don't index static assets (js, css, images)
+      def self.static_file?(file)
+        file.is_a?(Jekyll::StaticFile)
+      end
+
+      # Public: Check if the file is a 404 error page
+      #
+      # file - The Jekyll file
+      #
+      # 404 pages are not Jekyll defaults but a convention adopted by GitHub
+      # pages. We don't want to index those.
+      # Source: https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
+      #
+      # rubocop:disable Naming/PredicateName
+      def self.is_404?(file)
+        ['404.md', '404.html'].include?(File.basename(file.path))
+      end
+      # rubocop:enable Naming/PredicateName
 
       # Public: Check if the file has one of the allowed extensions
       #
@@ -81,7 +111,7 @@ module Jekyll
           end
         end
 
-        excluded_files.include?(absolute_path(file))
+        excluded_files.include?(absolute_path(file.path))
       end
 
       # Public: Check if the file has been excluded by running a custom user
@@ -90,20 +120,6 @@ module Jekyll
       # file - The Jekyll file
       def self.excluded_from_hook?(file)
         Hooks.should_be_excluded?(file.path)
-      end
-
-      # Public: Check if the file should be indexed
-      #
-      # file - The Jekyll file
-      #
-      # There are many reasons a file should not be indexed. We need to exclude
-      # all the static assets, only keep the actual content.
-      def self.indexable?(file)
-        return false if static_file?(file)
-        return false unless allowed_extension?(file)
-        return false if excluded_from_hook?(file)
-
-        true
       end
 
       # Public: Return a hash of all the file metadata
@@ -188,11 +204,15 @@ module Jekyll
       end
 
       # Public: Returns the list of tags of a file, defaults to an empty array
+      #
+      # file - The Jekyll file
       def self.tags(file)
         file.data['tags'] || []
       end
 
       # Public: Returns the list of tags of a file, defaults to an empty array
+      #
+      # file - The Jekyll file
       def self.categories(file)
         file.data['categories'] || []
       end

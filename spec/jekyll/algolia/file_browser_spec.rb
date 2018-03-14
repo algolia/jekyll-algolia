@@ -91,94 +91,119 @@ describe(Jekyll::Algolia::FileBrowser) do
   end
 
   describe '.indexable?' do
+    let(:file) { double('File') }
+    let(:static_file) { false }
+    let(:is_404) { false }
+    let(:allowed_extension) { true }
+    let(:excluded_from_config) { false }
+    let(:excluded_from_hook) { false }
+
     subject { current.indexable?(file) }
 
-    context 'with a static asset' do
-      let(:file) { site.__find_file('png.png') }
-      it { should eq false }
-    end
-    context 'with a file excluded by a hook' do
-      let(:file) { site.__find_file('excluded-from-hook.html') }
-      it { should eq false }
-    end
-    context 'with a file not in the allowed extensions' do
-      let(:file) { site.__find_file('dhtml.dhtml') }
-      it { should eq false }
+    before do
+      allow(current).to receive(:static_file?).and_return(static_file)
+      allow(current).to receive(:is_404?).and_return(is_404)
+      allow(current)
+        .to receive(:allowed_extension?)
+        .and_return(allowed_extension)
+      allow(current)
+        .to receive(:excluded_from_config?)
+        .and_return(excluded_from_config)
+      allow(current)
+        .to receive(:excluded_from_hook?)
+        .and_return(excluded_from_hook)
     end
 
-    context 'with a regular markdown file' do
-      let(:file) { site.__find_file('markdown.markdown') }
-      it { should eq true }
+    context 'with a static asset' do
+      let(:static_file) { true }
+      it { should eq false }
     end
-    context 'with a regular HTML file' do
-      let(:file) { site.__find_file('html.html') }
-      it { should eq true }
+    context 'with a 404 page' do
+      let(:is_404) { true }
+      it { should eq false }
+    end
+    context 'with a disallowed extension' do
+      let(:allowed_extension) { false }
+      it { should eq false }
+    end
+    context 'excluded from config' do
+      let(:excluded_from_config) { true }
+      it { should eq false }
+    end
+    context 'excluded from hooks' do
+      let(:excluded_from_hook) { true }
+      it { should eq false }
     end
   end
 
   describe '.static_file?' do
+    let(:file) { double('File') }
+
     subject { current.static_file?(file) }
 
+    before do
+      allow(file)
+        .to receive(:is_a?)
+        .with(Jekyll::StaticFile)
+        .and_return(is_static)
+    end
+
     context 'with a static file' do
-      let(:file) { site.__find_file('ring.png') }
+      let(:is_static) { true }
       it { should eq true }
     end
-    context 'with an html page' do
-      let(:file) { site.__find_file('html.html') }
+    context 'with an non static file' do
+      let(:is_static) { false }
+      it { should eq false }
+    end
+  end
+
+  describe 'is_404?' do
+    let(:file) { double('File', path: path) }
+
+    subject { current.is_404?(file) }
+
+    describe '404.md' do
+      let(:path) { './path/to/404.md' }
+      it { should eq true }
+    end
+    describe '404.html' do
+      let(:path) { './path/to/404.html' }
+      it { should eq true }
+    end
+    describe 'anything elese' do
+      let(:path) { './path/to/foobar.md' }
       it { should eq false }
     end
   end
 
   describe '.allowed_extension?' do
+    let(:file) { double('File', path: path) }
+
     subject { current.allowed_extension?(file) }
 
-    context 'with default config' do
-      describe 'should accept html files' do
-        let(:file) { site.__find_file('html.html') }
-        it { should eq true }
-      end
-      describe 'should accept .markdown files' do
-        let(:file) { site.__find_file('markdown.markdown') }
-        it { should eq true }
-      end
-      describe 'should accept .mkdown files' do
-        let(:file) { site.__find_file('mkdown.mkdown') }
-        it { should eq true }
-      end
-      describe 'should accept .mkdn files' do
-        let(:file) { site.__find_file('mkdn.mkdn') }
-        it { should eq true }
-      end
-      describe 'should accept .mkd files' do
-        let(:file) { site.__find_file('mkd.mkd') }
-        it { should eq true }
-      end
-      describe 'should accept .md files' do
-        let(:file) { site.__find_file('md.md') }
-        it { should eq true }
-      end
+    before do
+      allow(configurator)
+        .to receive(:algolia)
+        .with('extensions_to_index')
+        .and_return(extensions)
     end
 
-    context 'with custom config' do
-      before do
-        allow(configurator)
-          .to receive(:algolia)
-        allow(configurator)
-          .to receive(:algolia)
-          .with('extensions_to_index')
-          .and_return('html,dhtml')
+    describe do
+      let(:extensions) { %w[html md] }
+
+      context 'html file' do
+        let(:path) { 'file.html' }
+        it { should eq true }
       end
 
-      describe 'should accept html' do
-        let(:file) { site.__find_file('html.html') }
+      context 'md file' do
+        let(:path) { 'file.md' }
         it { should eq true }
       end
-      describe 'should accept dhtml' do
-        let(:file) { site.__find_file('dhtml.dhtml') }
-        it { should eq true }
-      end
-      describe 'should reject other files' do
-        let(:file) { site.__find_file('md.md') }
+
+      context 'dhtml file' do
+        let(:path) { 'file.dhtml' }
         it { should eq false }
       end
     end

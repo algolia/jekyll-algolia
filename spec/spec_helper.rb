@@ -20,7 +20,7 @@ RSpec.configure do |config|
   end
 end
 
-# We will run all our tests with a real Jekyll instance, to make sure it works
+# We will run our tests with a real Jekyll instance, to make sure it works
 # with the real beast.
 def init_new_jekyll_site(user_config = {})
   # We start a new Jekyll site, using our ./spec/site directory as its starting
@@ -31,18 +31,13 @@ def init_new_jekyll_site(user_config = {})
     )
   )
   algolia_command = Jekyll::Algolia.init(config)
-  site = algolia_command.site
 
-  # We mock the .write method to prevent it from actually doing anything
-  allow(site).to receive(:write)
+  site = algolia_command.site
 
   # We monkey patch it to add a new method that will allow us to more easily
   # access the files that are processed by Jekyll, and return an actual instance
   # of Jekyll::File
   def site.__find_file(needle)
-    # Note: We need to monkey patch here and not use a method accepting a site
-    # as input because the `each_site_file` iterator is only accessible from
-    # inside the class
     each_site_file do |file|
       return file if file.path =~ /#{needle}$/
     end
@@ -57,6 +52,7 @@ def init_new_jekyll_site(user_config = {})
 
   # We have to run the command to actually initialize the Jekyll site so
   # it populates its list of internal files
+  allow(site).to receive(:push)
   algolia_command.run
 
   site

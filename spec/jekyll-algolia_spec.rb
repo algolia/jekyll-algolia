@@ -9,6 +9,7 @@ describe(Jekyll::Algolia) do
   let(:extractor) { Jekyll::Algolia::Extractor }
   let(:logger) { Jekyll::Algolia::Logger }
   let(:file_browser) { Jekyll::Algolia::FileBrowser }
+  let(:progress_bar) { Jekyll::Algolia::ProgressBar }
   let(:hooks) { Jekyll::Algolia::Hooks }
   let(:indexer) { Jekyll::Algolia::Indexer }
 
@@ -288,18 +289,18 @@ describe(Jekyll::Algolia) do
 
   describe 'Jekyll::Site#init_rendering_progress_bar' do
     let(:site) { Jekyll::Algolia::Site.new(Jekyll.configuration) }
-    let(:progressbar) { double('ProgressBar') }
+    let(:progress_bar_instance) { double('ProgressBarInstance') }
     let(:item_count) { 2 }
 
     before do
       allow(site).to receive(:indexable_item_count).and_return(item_count)
-      allow(ProgressBar).to receive(:create).and_return(progressbar)
+      allow(progress_bar).to receive(:create).and_return(progress_bar_instance)
       allow(Jekyll::Hooks).to receive(:register)
       site.init_rendering_progress_bar
     end
 
     it do
-      expect(ProgressBar)
+      expect(progress_bar)
         .to have_received(:create)
         .with(
           hash_including(total: item_count)
@@ -319,7 +320,7 @@ describe(Jekyll::Algolia) do
     let(:records_foo) { [{ name: 'foo1' }, { name: 'foo2' }] }
     let(:records_bar) { [{ name: 'bar1' }, { name: 'bar2' }] }
     let(:site) { Jekyll::Algolia::Site.new(Jekyll.configuration) }
-    let(:progress_bar) { double('ProgressBar') }
+    let(:progress_bar_instance) { double('ProgressBarInstance') }
 
     before do
       allow(site)
@@ -327,8 +328,8 @@ describe(Jekyll::Algolia) do
         .and_yield(file_foo)
         .and_yield(file_bar)
       allow(site).to receive(:indexable_item_count)
-      allow(ProgressBar).to receive(:create).and_return(progress_bar)
-      allow(progress_bar).to receive(:increment)
+      allow(progress_bar).to receive(:create).and_return(progress_bar_instance)
+      allow(progress_bar_instance).to receive(:increment)
       allow(extractor).to receive(:run)
       allow(extractor).to receive(:run).with(file_foo).and_return(records_foo)
       allow(extractor).to receive(:run).with(file_bar).and_return(records_bar)
@@ -447,18 +448,15 @@ describe(Jekyll::Algolia) do
         allow(site)
           .to receive(:indexable_item_count)
           .and_return(42)
-        allow(ProgressBar)
-          .to receive(:create)
-          .with(42, anything)
 
         site.push
       end
 
       it do
-        expect(ProgressBar)
+        expect(progress_bar)
           .to have_received(:create)
           .with(hash_including(total: 42))
-        expect(progress_bar).to have_received(:increment).twice
+        expect(progress_bar_instance).to have_received(:increment).twice
       end
     end
   end

@@ -2,21 +2,21 @@
 
 require 'jekyll/commands/algolia'
 require 'date'
-require 'progressbar'
 
 module Jekyll
   # Requirable file, loading all dependencies.
   # Methods here are called by the main `jekyll algolia` command
   module Algolia
-    require 'jekyll/algolia/version'
-    require 'jekyll/algolia/utils'
-    require 'jekyll/algolia/hooks'
     require 'jekyll/algolia/configurator'
-    require 'jekyll/algolia/logger'
     require 'jekyll/algolia/error_handler'
-    require 'jekyll/algolia/file_browser'
     require 'jekyll/algolia/extractor'
+    require 'jekyll/algolia/file_browser'
+    require 'jekyll/algolia/hooks'
     require 'jekyll/algolia/indexer'
+    require 'jekyll/algolia/logger'
+    require 'jekyll/algolia/progress_bar'
+    require 'jekyll/algolia/utils'
+    require 'jekyll/algolia/version'
 
     # Public: Init the Algolia module
     #

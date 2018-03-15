@@ -3,7 +3,6 @@
 require 'algoliasearch'
 require 'yaml'
 require 'algolia_html_extractor'
-require 'progressbar'
 
 module Jekyll
   module Algolia

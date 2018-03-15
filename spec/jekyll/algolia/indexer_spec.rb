@@ -247,14 +247,20 @@ describe(Jekyll::Algolia::Indexer) do
   end
 
   describe '.update_settings' do
+    let(:pluginVersion) { nil }
     let(:diff_keys) { nil }
+    let(:force_settings) { nil }
 
     before do
+      stub_const('Jekyll::Algolia::VERSION', pluginVersion)
+      allow(utils).to receive(:diff_keys).and_return(diff_keys)
+      allow(configurator)
+        .to receive(:force_settings?)
+        .and_return(force_settings)
       allow(current).to receive(:set_settings)
       allow(current).to receive(:warn_of_manual_dashboard_editing)
       allow(current).to receive(:local_setting_id).and_return(local_setting_id)
       allow(current).to receive(:remote_settings).and_return(remote_settings)
-      allow(utils).to receive(:diff_keys).and_return(diff_keys)
       allow(current)
         .to receive(:index)
         .and_return(double('Algolia::index', name: 'my_index'))
@@ -276,6 +282,16 @@ describe(Jekyll::Algolia::Indexer) do
             .to have_received(:warn_of_manual_dashboard_editing)
             .with('foo' => 'bar')
         end
+      end
+    end
+
+    describe 'should always update if --force-settings' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'foo' } } }
+      let(:force_settings) { true }
+      it do
+        expect(current)
+          .to have_received(:set_settings)
       end
     end
 
@@ -319,7 +335,24 @@ describe(Jekyll::Algolia::Indexer) do
         expect(current)
           .to have_received(:set_settings)
           .with(
-            hash_including('userData' => { 'settingID' => 'foo' })
+            hash_including(
+              'userData' => hash_including('settingID' => 'foo')
+            )
+          )
+      end
+    end
+
+    describe 'should update settings with new version' do
+      let(:local_setting_id) { 'foo' }
+      let(:remote_settings) { { 'userData' => { 'settingID' => 'bar' } } }
+      let(:pluginVersion) { 'pluginVersion' }
+      it do
+        expect(current)
+          .to have_received(:set_settings)
+          .with(
+            hash_including(
+              'userData' => hash_including('pluginVersion' => 'pluginVersion')
+            )
           )
       end
     end

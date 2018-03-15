@@ -19,6 +19,7 @@ Here is the list of command line options you can pass to the `jekyll algolia` co
 | `--config ./_config.yml` | You can here specify the config file to use. Default is `_config.yml` |
 | `--dry-run` or `-n`      | Do a dry run, do not actually push anything to your index             |
 | `--verbose`              | Display more information about what is going to be indexed            |
+| `--force-settings`       | Force update of the index settings                                    |
 
 
 ## Environment variables

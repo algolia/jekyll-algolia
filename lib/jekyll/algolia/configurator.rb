@@ -215,6 +215,16 @@ module Jekyll
         false
       end
 
+      # Public: Returns true if the command should always update the settings
+      #
+      # When set to true, the index settings will always be updated, no matter
+      # if they've been modified or not
+      def self.force_settings?
+        value = get('force_settings')
+        return true if value == true
+        false
+      end
+
       # Public: Disable features from other Jekyll plugins that might interfere
       # with the indexing
       def self.disable_other_plugins(config)

@@ -343,6 +343,31 @@ describe(Jekyll::Algolia::Configurator) do
     end
   end
 
+  describe 'force_settings?' do
+    subject { current.force_settings? }
+
+    before do
+      allow(current).to receive(:get).with('force_settings').and_return(value)
+    end
+
+    context 'when no value passed' do
+      let(:value) { nil }
+      it { should eq false }
+    end
+    context 'when passed true' do
+      let(:value) { true }
+      it { should eq true }
+    end
+    context 'when passed false' do
+      let(:value) { false }
+      it { should eq false }
+    end
+    context 'when passed invalid value' do
+      let(:value) { 'chunky bacon' }
+      it { should eq false }
+    end
+  end
+
   describe '.warn_of_deprecated_options' do
     context 'using indexing_mode' do
       before do

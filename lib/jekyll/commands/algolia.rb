@@ -21,6 +21,9 @@ module Jekyll
             command.option 'verbose',
                            '--verbose',
                            'Display more information on what is indexed'
+            command.option 'force_settings',
+                           '--force-settings',
+                           'Force updating of the index settings'
 
             command.action do |_, options|
               configuration = configuration_from_options(options)

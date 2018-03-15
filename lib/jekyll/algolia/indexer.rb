@@ -162,9 +162,11 @@ module Jekyll
         settings = Configurator.settings
         setting_id = local_setting_id
 
+        are_settings_forced = Configurator.force_settings?
+
         # The config we're about to push is the same we pushed previously. We
         # won't push again.
-        if setting_id == remote_setting_id
+        if setting_id == remote_setting_id && !are_settings_forced
           Logger.log('I:Settings are already up to date.')
           # Check if remote config has been changed outside of the plugin, so we
           # can warn users that they should not alter their config from outside
@@ -180,7 +182,8 @@ module Jekyll
 
         # Settings have changed, we push them
         settings['userData'] = {
-          'settingID' => setting_id
+          'settingID' => setting_id,
+          'pluginVersion' => VERSION
         }
 
         Logger.log("I:Updating settings of index #{index.name}")

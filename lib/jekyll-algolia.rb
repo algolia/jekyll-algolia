@@ -112,6 +112,7 @@ module Jekyll
         new_list = []
         items.each do |item|
           next unless FileBrowser.indexable?(item)
+
           item.data = {} if item.data.nil?
           item.data['layout'] = nil
           new_list << item

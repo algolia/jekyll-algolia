@@ -163,7 +163,7 @@ module Jekyll
         setting_id = local_setting_id
 
         # The config we're about to push is the same we pushed previously. We
-        # won't push.
+        # won't push again.
         if setting_id == remote_setting_id
           Logger.log('I:Settings are already up to date.')
           # Check if remote config has been changed outside of the plugin, so we

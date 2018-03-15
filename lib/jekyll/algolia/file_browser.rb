@@ -100,18 +100,13 @@ module Jekyll
       def self.excluded_from_config?(file)
         excluded_patterns = Configurator.algolia('files_to_exclude')
         jekyll_source = Configurator.get('source')
+        path = absolute_path(file.path)
 
-        # Transform the glob patterns into a real list of files
-        excluded_files = []
-        Dir.chdir(jekyll_source) do
-          excluded_patterns.each do |pattern|
-            Dir.glob(pattern).each do |match|
-              excluded_files << File.expand_path(match)
-            end
-          end
+        excluded_patterns.each do |pattern|
+          pattern = File.expand_path(File.join(jekyll_source, pattern))
+          return true if File.fnmatch(pattern, path, File::FNM_PATHNAME)
         end
-
-        excluded_files.include?(absolute_path(file.path))
+        false
       end
 
       # Public: Check if the file has been excluded by running a custom user

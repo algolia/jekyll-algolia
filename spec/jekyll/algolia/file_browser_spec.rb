@@ -209,6 +209,158 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 
+  describe '.excluded_from_config?' do
+    let(:file) { double('Jekyll::File', path: filepath) }
+
+    subject { current.excluded_from_config?(file) }
+
+    before do
+      allow(configurator).to receive(:algolia).and_call_original
+      allow(configurator)
+        .to receive(:algolia)
+        .with('files_to_exclude')
+        .and_return(files_to_exclude)
+      allow(configurator).to receive(:get).and_call_original
+      allow(configurator)
+        .to receive(:get)
+        .with('source')
+        .and_return('./spec/site')
+    end
+
+    context 'file in root' do
+      describe do
+        let(:files_to_exclude) { ['excluded.html'] }
+        let(:filepath) { 'excluded.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['excluded.html'] }
+        let(:filepath) { './excluded.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded.html'] }
+        let(:filepath) { './excluded.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded.html'] }
+        let(:filepath) { 'excluded.html' }
+        it { should eq true }
+      end
+    end
+
+    context 'in a subdir' do
+      describe do
+        let(:files_to_exclude) { ['excluded_dir/file.html'] }
+        let(:filepath) { 'excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['excluded_dir/file.html'] }
+        let(:filepath) { './excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded_dir/file.html'] }
+        let(:filepath) { './excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded_dir/file.html'] }
+        let(:filepath) { 'excluded_dir/file.html' }
+        it { should eq true }
+      end
+    end
+
+    context 'whole subdir' do
+      describe do
+        let(:files_to_exclude) { ['excluded_dir/*'] }
+        let(:filepath) { 'excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['excluded_dir/*'] }
+        let(:filepath) { './excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded_dir/*'] }
+        let(:filepath) { './excluded_dir/file.html' }
+        it { should eq true }
+      end
+      describe do
+        let(:files_to_exclude) { ['./excluded_dir/*'] }
+        let(:filepath) { 'excluded_dir/file.html' }
+        it { should eq true }
+      end
+    end
+
+    context 'file following a pattern' do
+      context '* pattern' do
+        describe do
+          let(:files_to_exclude) { ['*.html'] }
+          let(:filepath) { 'excluded.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['*.html'] }
+          let(:filepath) { './excluded.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['./*.html'] }
+          let(:filepath) { 'excluded.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['./*.html'] }
+          let(:filepath) { './excluded.html' }
+          it { should eq true }
+        end
+        describe '* patterns do not go into subdir' do
+          let(:files_to_exclude) { ['*.html'] }
+          let(:filepath) { 'excluded_dir/file.html' }
+          it { should eq false }
+        end
+      end
+      context '*/* patterns' do
+        describe do
+          let(:files_to_exclude) { ['*/*.html'] }
+          let(:filepath) { 'excluded_dir/file.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['./*/*.html'] }
+          let(:filepath) { 'excluded_dir/file.html' }
+          it { should eq true }
+        end
+        describe 'do not go too deep' do
+          let(:files_to_exclude) { ['*/*.html'] }
+          let(:filepath) { 'foo/bar/baz.html' }
+          it { should eq false }
+        end
+      end
+      context '**/* pattern' do
+        describe do
+          let(:files_to_exclude) { ['**/*.html'] }
+          let(:filepath) { 'file.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['**/*.html'] }
+          let(:filepath) { 'foo/file.html' }
+          it { should eq true }
+        end
+        describe do
+          let(:files_to_exclude) { ['**/*.html'] }
+          let(:filepath) { 'foo/bar/baz.html' }
+          it { should eq true }
+        end
+      end
+    end
+  end
+
   describe '.type' do
     subject { current.type(file) }
 

@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'jekyll', '~> 3.0'
   gem.add_runtime_dependency 'json', '~> 2.0'
   gem.add_runtime_dependency 'nokogiri', '~> 1.6'
+  gem.add_runtime_dependency 'progressbar', '~> 1.9'
   gem.add_runtime_dependency 'verbal_expressions', '~> 0.1.5'
 
   gem.add_development_dependency 'coveralls', '~> 0.8'

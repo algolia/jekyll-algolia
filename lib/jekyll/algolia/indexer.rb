@@ -3,6 +3,7 @@
 require 'algoliasearch'
 require 'yaml'
 require 'algolia_html_extractor'
+require 'progressbar'
 
 module Jekyll
   module Algolia
@@ -112,9 +113,21 @@ module Jekyll
 
         # Run the batches in slices if they are too large
         batch_size = Configurator.algolia('indexing_batch_size')
-        operations.each_slice(batch_size) do |slice|
+        slices = operations.each_slice(batch_size).to_a
+
+        should_have_progress_bar = (slices.length > 1)
+        if should_have_progress_bar
+          progress_bar = ProgressBar.create(
+            total: slices.length,
+            format: 'Pushing records (%j%%) |%B|'
+          )
+        end
+
+        slices.each do |slice|
           begin
             ::Algolia.batch!(slice)
+
+            progress_bar.increment if should_have_progress_bar
           rescue StandardError => error
             records = slice.map do |record|
               record[:body]

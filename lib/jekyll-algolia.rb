@@ -2,6 +2,7 @@
 
 require 'jekyll/commands/algolia'
 require 'date'
+require 'progressbar'
 
 module Jekyll
   # Requirable file, loading all dependencies.
@@ -95,11 +96,40 @@ module Jekyll
         # rendering them
         keep_only_indexable_files
 
+        # Starting the rendering progress bar
+        init_rendering_progress_bar
+
         # Converting them to HTML
         render
 
         # Pushing them Algolia
         push
+      end
+
+      # Public: Return the number of pages/documents to index
+      def indexable_item_count
+        count = @pages.length
+        @collections.each_value { |collection| count += collection.docs.length }
+        count
+      end
+
+      # Public: Init the rendering progress bar, incrementing it for each
+      # rendered item
+      #
+      # This uses Jekyll post_render hooks, listening to both pages and
+      # documents
+      def init_rendering_progress_bar
+        progress_bar = ProgressBar.create(
+          total: indexable_item_count,
+          format: 'Rendering to HTML (%j%%) |%B|'
+        )
+        Jekyll::Hooks.register :pages, :post_render do |_|
+          progress_bar.increment
+        end
+
+        Jekyll::Hooks.register :documents, :post_render do |_|
+          progress_bar.increment
+        end
       end
 
       # Public: Filtering a list of items to only keep the one that are
@@ -138,6 +168,10 @@ module Jekyll
       def push
         records = []
         files = []
+        progress_bar = ProgressBar.create(
+          total: indexable_item_count,
+          format: 'Extracting records (%j%%) |%B|'
+        )
         each_site_file do |file|
           # Even if we cleared the list of documents/pages beforehand, some
           # files might still sneak up to this point (like static files added to
@@ -152,6 +186,8 @@ module Jekyll
 
           files << file
           records += file_records
+
+          progress_bar.increment
         end
 
         # Applying the user hook on the whole list of records

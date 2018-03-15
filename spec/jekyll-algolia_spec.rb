@@ -64,6 +64,7 @@ describe(Jekyll::Algolia) do
       allow(algolia_site).to receive(:read)
       allow(algolia_site).to receive(:generate)
       allow(algolia_site).to receive(:keep_only_indexable_files)
+      allow(algolia_site).to receive(:init_rendering_progress_bar)
       allow(algolia_site).to receive(:render)
       allow(algolia_site).to receive(:push)
       allow(algolia_site).to receive(:cleanup)
@@ -93,6 +94,16 @@ describe(Jekyll::Algolia) do
 
       it do
         expect(algolia_site).to have_received(:keep_only_indexable_files)
+      end
+    end
+
+    describe 'should set a progress bar' do
+      before do
+        algolia_site.process
+      end
+
+      it do
+        expect(algolia_site).to have_received(:init_rendering_progress_bar)
       end
     end
 
@@ -239,18 +250,85 @@ describe(Jekyll::Algolia) do
     end
   end
 
+  describe 'Jekyll::Site#indexable_item_count' do
+    let(:site) { Jekyll::Algolia::Site.new(Jekyll.configuration) }
+    let(:collections) do
+      {
+        foo: double('CollectionFoo', docs: docs_foo),
+        bar: double('CollectionBar', docs: docs_bar)
+      }
+    end
+
+    subject { site.indexable_item_count }
+
+    before do
+      site.pages = pages
+      site.collections = collections
+    end
+
+    describe do
+      let(:pages) { %w[foo bar] }
+      let(:docs_foo) { [] }
+      let(:docs_bar) { [] }
+      it { should eq 2 }
+    end
+    describe do
+      let(:pages) { [] }
+      let(:docs_foo) { ['foo'] }
+      let(:docs_bar) { %w[bar baz] }
+      it { should eq 3 }
+    end
+    describe do
+      let(:pages) { [42] }
+      let(:docs_foo) { ['foo'] }
+      let(:docs_bar) { %w[bar baz] }
+      it { should eq 4 }
+    end
+  end
+
+  describe 'Jekyll::Site#init_rendering_progress_bar' do
+    let(:site) { Jekyll::Algolia::Site.new(Jekyll.configuration) }
+    let(:progressbar) { double('ProgressBar') }
+    let(:item_count) { 2 }
+
+    before do
+      allow(site).to receive(:indexable_item_count).and_return(item_count)
+      allow(ProgressBar).to receive(:create).and_return(progressbar)
+      allow(Jekyll::Hooks).to receive(:register)
+      site.init_rendering_progress_bar
+    end
+
+    it do
+      expect(ProgressBar)
+        .to have_received(:create)
+        .with(
+          hash_including(total: item_count)
+        )
+      expect(Jekyll::Hooks)
+        .to have_received(:register)
+        .with(:pages, :post_render)
+      expect(Jekyll::Hooks)
+        .to have_received(:register)
+        .with(:documents, :post_render)
+    end
+  end
+
   describe 'Jekyll::Site#push' do
     let(:file_foo) { double('File', path: 'foo') }
     let(:file_bar) { double('File', path: 'bar') }
     let(:records_foo) { [{ name: 'foo1' }, { name: 'foo2' }] }
     let(:records_bar) { [{ name: 'bar1' }, { name: 'bar2' }] }
     let(:site) { Jekyll::Algolia::Site.new(Jekyll.configuration) }
+    let(:progress_bar) { double('ProgressBar') }
 
     before do
       allow(site)
         .to receive(:each_site_file)
         .and_yield(file_foo)
         .and_yield(file_bar)
+      allow(site).to receive(:indexable_item_count)
+      allow(ProgressBar).to receive(:create).and_return(progress_bar)
+      allow(progress_bar).to receive(:increment)
       allow(extractor).to receive(:run)
       allow(extractor).to receive(:run).with(file_foo).and_return(records_foo)
       allow(extractor).to receive(:run).with(file_bar).and_return(records_bar)
@@ -361,6 +439,26 @@ describe(Jekyll::Algolia) do
         expect(extractor)
           .to have_received(:add_unique_object_id)
           .with(name: 'bar2')
+      end
+    end
+
+    describe 'increment progress bar' do
+      before do
+        allow(site)
+          .to receive(:indexable_item_count)
+          .and_return(42)
+        allow(ProgressBar)
+          .to receive(:create)
+          .with(42, anything)
+
+        site.push
+      end
+
+      it do
+        expect(ProgressBar)
+          .to have_received(:create)
+          .with(hash_including(total: 42))
+        expect(progress_bar).to have_received(:increment).twice
       end
     end
   end

@@ -117,9 +117,12 @@ describe(Jekyll::Algolia::Indexer) do
     let(:old_records_ids) { %w[abc] }
     let(:new_records) { [{ 'objectID' => 'def' }] }
     let(:indexing_batch_size) { 1000 }
+    let(:progress_bar) { double('ProgressBar') }
 
-    before { allow(::Algolia).to receive(:batch!) }
     before do
+      allow(::Algolia).to receive(:batch!)
+      allow(ProgressBar).to receive(:create).and_return(progress_bar)
+      allow(progress_bar).to receive(:increment)
       allow(current).to receive(:index).and_return(index)
       allow(configurator)
         .to receive(:algolia)
@@ -185,6 +188,22 @@ describe(Jekyll::Algolia::Indexer) do
                     body: { 'objectID' => 'def' }
                   }
                 ])
+      end
+    end
+
+    context 'progress bar' do
+      describe 'should not create it if only one batch' do
+        it do
+          expect(ProgressBar).to_not have_received(:create)
+          expect(progress_bar).to_not have_received(:increment)
+        end
+      end
+      describe 'should create it if several batches' do
+        let(:indexing_batch_size) { 1 }
+        it do
+          expect(ProgressBar).to have_received(:create)
+          expect(progress_bar).to have_received(:increment).twice
+        end
       end
     end
   end

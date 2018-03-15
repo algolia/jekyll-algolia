@@ -10,6 +10,7 @@ end
 
 require 'jekyll'
 require 'jekyll-algolia'
+require 'ostruct'
 
 RSpec.configure do |config|
   config.filter_run(focus: true)
@@ -31,6 +32,14 @@ def init_new_jekyll_site(user_config = {})
     )
   )
   algolia_command = Jekyll::Algolia.init(config)
+
+  # Silence the progress bars. We couldn't use a double here as it would leak
+  # across tests and this is not allowed by rspec.
+  fake_progress_bar = OpenStruct.new
+  fake_progress_bar.increment = nil
+  allow(ProgressBar)
+    .to receive(:create)
+    .and_return(fake_progress_bar)
 
   site = algolia_command.site
 

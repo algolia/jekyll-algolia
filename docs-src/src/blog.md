@@ -76,17 +76,16 @@ don't worry, we'll explain it all right after.
 
 ```html
 <!-- Including InstantSearch.js library and styling -->
-<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1/dist/instantsearch.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1/dist/instantsearch-theme-algolia.min.css">
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch-theme-algolia.min.css">
 
 <script>
 // Instanciating InstantSearch.js with Algolia credentials
 const search = instantsearch({
   appId: '{{ site.algolia.application_id }}',
   indexName: '{{ site.algolia.index_name }}',
-  apiKey: '{{ site.algolia.search_only_api_key }}',
-  poweredBy: true // This is required if you're on the free Community plan
+  apiKey: '{{ site.algolia.search_only_api_key }}'
 });
 
 // Adding searchbar and results widgets
@@ -251,17 +250,16 @@ directly to the closest matching heading.
 Here is the complete new version of the `_includes/algolia.html` file.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch-theme-algolia.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch-theme-algolia.min.css">
 
 <script>
 const search = instantsearch({
   appId: '{{ site.algolia.application_id }}',
   apiKey: '{{ site.algolia.search_only_api_key }}',
-  indexName: '{{ site.algolia.index_name }}',
-  poweredBy: true // This is required if you're on the free Community plan
+  indexName: '{{ site.algolia.index_name }}'
 });
 
 const hitTemplate = function(hit) {
@@ -269,15 +267,18 @@ const hitTemplate = function(hit) {
   if (hit.date) {
     date = moment.unix(hit.date).format('MMM D, YYYY');
   }
+
   let url = `{{ site.baseurl }}${hit.url}#${hit.anchor}`;
 
   const title = hit._highlightResult.title.value;
+
   let breadcrumbs = '';
   if (hit._highlightResult.headings) {
     breadcrumbs = hit._highlightResult.headings.map(match => {
       return `<span class="post-breadcrumb">${match.value}</span>`
     }).join(' > ')
   }
+
   const content = hit._highlightResult.html.value;
 
   return `
@@ -294,7 +295,8 @@ const hitTemplate = function(hit) {
 search.addWidget(
   instantsearch.widgets.searchBox({
     container: '#search-searchbar',
-    placeholder: 'Search into posts...'
+    placeholder: 'Search into posts...',
+    poweredBy: true // This is required if you're on the free Community plan
   })
 );
 

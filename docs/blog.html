@@ -245,7 +245,8 @@ don’t worry, we’ll explain it all right after.</p>
 <span class="cm-keyword">const</span> <span class="cm-def">search</span> <span class="cm-operator">=</span> <span class="cm-variable">instantsearch</span>({
   <span class="cm-property">appId</span>: <span class="cm-string">&#39;{{ site.algolia.application_id }}&#39;</span>,
   <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>,
-  <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>
+  <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>,
+  <span class="cm-property">poweredBy</span>: <span class="cm-atom">true</span> <span class="cm-comment">// This is required if you&#39;re on the free Community plan</span>
 });
 
 <span class="cm-comment">// Adding searchbar and results widgets</span>
@@ -373,7 +374,8 @@ directly to the closest matching heading.</p>
 <span class="cm-keyword">const</span> <span class="cm-def">search</span> <span class="cm-operator">=</span> <span class="cm-variable">instantsearch</span>({
   <span class="cm-property">appId</span>: <span class="cm-string">&#39;{{ site.algolia.application_id }}&#39;</span>,
   <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>,
-  <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>
+  <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>,
+  <span class="cm-property">poweredBy</span>: <span class="cm-atom">true</span> <span class="cm-comment">// This is required if you&#39;re on the free Community plan</span>
 });
 
 <span class="cm-keyword">const</span> <span class="cm-def">hitTemplate</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>(<span class="cm-def">hit</span>) {

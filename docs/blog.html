@@ -236,17 +236,16 @@ exist yet.</p>
 <p>In that file, we’ll add the following content. It’s a lot of code in one go, but
 don’t worry, we’ll explain it all right after.</p>
 <pre class="code-sample cm-s-mdn-like codeMirror htmlmixed" data-code-type="Code"><div class="code-wrap"><code><span class="cm-comment">&lt;!-- Including InstantSearch.js library and styling --&gt;</span>
-<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
-<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1/dist/instantsearch.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
-<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.5.1/dist/instantsearch-theme-algolia.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
+<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
+<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
+<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch-theme-algolia.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
 
 <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
 <span class="cm-comment">// Instanciating InstantSearch.js with Algolia credentials</span>
 <span class="cm-keyword">const</span> <span class="cm-def">search</span> <span class="cm-operator">=</span> <span class="cm-variable">instantsearch</span>({
   <span class="cm-property">appId</span>: <span class="cm-string">&#39;{{ site.algolia.application_id }}&#39;</span>,
   <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>,
-  <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>,
-  <span class="cm-property">poweredBy</span>: <span class="cm-atom">true</span> <span class="cm-comment">// This is required if you&#39;re on the free Community plan</span>
+  <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>
 });
 
 <span class="cm-comment">// Adding searchbar and results widgets</span>
@@ -365,17 +364,16 @@ highlighted headings, and add it to our template only when not empty.</p>
 directly to the closest matching heading.</p>
 <h3 id="final-code">Final code <a class="anchor" href="blog.html#final-code" aria-hidden="true"></a></h3>
 <p>Here is the complete new version of the <code>_includes/algolia.html</code> file.</p>
-<pre class="code-sample cm-s-mdn-like codeMirror htmlmixed" data-code-type="Code"><div class="code-wrap"><code><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
+<pre class="code-sample cm-s-mdn-like codeMirror htmlmixed" data-code-type="Code"><div class="code-wrap"><code><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
 <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
-<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
-<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch-theme-algolia.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
+<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
+<span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch-theme-algolia.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>
 
 <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
 <span class="cm-keyword">const</span> <span class="cm-def">search</span> <span class="cm-operator">=</span> <span class="cm-variable">instantsearch</span>({
   <span class="cm-property">appId</span>: <span class="cm-string">&#39;{{ site.algolia.application_id }}&#39;</span>,
   <span class="cm-property">apiKey</span>: <span class="cm-string">&#39;{{ site.algolia.search_only_api_key }}&#39;</span>,
-  <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>,
-  <span class="cm-property">poweredBy</span>: <span class="cm-atom">true</span> <span class="cm-comment">// This is required if you&#39;re on the free Community plan</span>
+  <span class="cm-property">indexName</span>: <span class="cm-string">&#39;{{ site.algolia.index_name }}&#39;</span>
 });
 
 <span class="cm-keyword">const</span> <span class="cm-def">hitTemplate</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>(<span class="cm-def">hit</span>) {
@@ -383,15 +381,18 @@ directly to the closest matching heading.</p>
   <span class="cm-keyword">if</span> (<span class="cm-variable-2">hit</span>.<span class="cm-property">date</span>) {
     <span class="cm-variable-2">date</span> <span class="cm-operator">=</span> <span class="cm-variable">moment</span>.<span class="cm-property">unix</span>(<span class="cm-variable-2">hit</span>.<span class="cm-property">date</span>).<span class="cm-property">format</span>(<span class="cm-string">&#39;MMM D, YYYY&#39;</span>);
   }
+
   <span class="cm-keyword">let</span> <span class="cm-def">url</span> <span class="cm-operator">=</span> <span class="cm-string-2">`{{ site.baseurl }}${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">url</span><span class="cm-string-2">}</span><span class="cm-string-2">#${</span><span class="cm-variable-2">hit</span>.<span class="cm-property">anchor</span><span class="cm-string-2">}</span><span class="cm-string-2">`</span>;
 
   <span class="cm-keyword">const</span> <span class="cm-def">title</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">title</span>.<span class="cm-property">value</span>;
+
   <span class="cm-keyword">let</span> <span class="cm-def">breadcrumbs</span> <span class="cm-operator">=</span> <span class="cm-string">&#39;&#39;</span>;
   <span class="cm-keyword">if</span> (<span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">headings</span>) {
     <span class="cm-variable-2">breadcrumbs</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">headings</span>.<span class="cm-property">map</span>(<span class="cm-def">match</span> <span class="cm-operator">=&gt;</span> {
       <span class="cm-keyword">return</span> <span class="cm-string-2">`&lt;span class=&quot;post-breadcrumb&quot;&gt;${</span><span class="cm-variable-2">match</span>.<span class="cm-property">value</span><span class="cm-string-2">}</span><span class="cm-string-2">&lt;/span&gt;`</span>
     }).<span class="cm-property">join</span>(<span class="cm-string">&#39; &gt; &#39;</span>)
   }
+
   <span class="cm-keyword">const</span> <span class="cm-def">content</span> <span class="cm-operator">=</span> <span class="cm-variable-2">hit</span>.<span class="cm-property">_highlightResult</span>.<span class="cm-property">html</span>.<span class="cm-property">value</span>;
 
   <span class="cm-keyword">return</span> <span class="cm-string-2">`</span>
@@ -408,7 +409,8 @@ directly to the closest matching heading.</p>
 <span class="cm-variable">search</span>.<span class="cm-property">addWidget</span>(
   <span class="cm-variable">instantsearch</span>.<span class="cm-property">widgets</span>.<span class="cm-property">searchBox</span>({
     <span class="cm-property">container</span>: <span class="cm-string">&#39;#search-searchbar&#39;</span>,
-    <span class="cm-property">placeholder</span>: <span class="cm-string">&#39;Search into posts...&#39;</span>
+    <span class="cm-property">placeholder</span>: <span class="cm-string">&#39;Search into posts...&#39;</span>,
+    <span class="cm-property">poweredBy</span>: <span class="cm-atom">true</span> <span class="cm-comment">// This is required if you&#39;re on the free Community plan</span>
   })
 );
 

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'algoliasearch'
-require 'awesome_print'
 require 'jekyll'
 require 'jekyll-algolia'
 

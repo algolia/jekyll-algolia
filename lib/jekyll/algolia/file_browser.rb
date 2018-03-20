@@ -216,26 +216,21 @@ module Jekyll
       #
       # file - The Jekyll file
       #
-      # All collections (including posts) will have a date taken either from the
-      # front-matter or the filename prefix. If none is set, Jekyll will use the
-      # current date.
-      #
-      # For pages, only dates defined in the front-matter will be used.
-      #
-      # Note that because the default date is the current one if none is
-      # defined, we have to make sure the date is actually nil when we index it.
-      # Otherwise the diff indexing mode will think that records have changed
-      # while they haven't.
+      # Posts have their date coming from the filepath, or the front-matter.
+      # Pages and other collection items can only have a date set in
+      # front-matter.
       def self.date(file)
-        date = file.data['date']
+        # Collections get their date from .date, while pages read it from .data.
+        # Jekyll by default will set the date of collection to the current date,
+        # but we overwrote this.
+        date = if file.respond_to?(:date)
+                 file.date
+               else
+                 file.data['date']
+               end
+
         return nil if date.nil?
-
-        # The date is *exactly* the time where the `jekyll algolia` was run.
-        # What a coincidence! It's a safe bet to assume that the original date
-        # was nil and has been overwritten by Jekyll
-        return nil if date.to_i == Jekyll::Algolia.start_time.to_i
-
-        date.to_i
+        date.to_time.to_i
       end
 
       # Public: Returns the raw excerpt of a file, directly as returned by

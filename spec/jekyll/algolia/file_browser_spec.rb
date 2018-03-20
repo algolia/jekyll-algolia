@@ -462,29 +462,44 @@ describe(Jekyll::Algolia::FileBrowser) do
   end
 
   describe '.date' do
-    subject { current.date(file) }
+    subject { current.date(site.__find_file(filepath)) }
 
-    context 'with a page in the root' do
-      let(:file) { site.__find_file('about.md') }
-      it { should eq nil }
-    end
-    context 'with a collection element with a date set in front-matter' do
-      let(:file) { site.__find_file('_my-collection/collection-item.html') }
-      it { should eq 452_469_600 }
-    end
-    context 'with a collection element with no date' do
-      let(:file) { site.__find_file('_my-collection/sample-item.md') }
-      it { should eq nil }
-    end
-    context 'with a post' do
-      let(:file) { site.__find_file('_posts/2015-07-02-test-post.md') }
-      it { should eq 1_435_788_000 }
+    context 'page' do
+      describe 'nothing in front matter' do
+        let(:filepath) { 'about.md' }
+        it { should eq nil }
+      end
+      describe 'date in front matter' do
+        let(:filepath) { 'front_matter.md' }
+        it { should eq 1_521_500_400 }
+      end
     end
 
-    context 'with a custom timezone' do
-      let(:site) { init_new_jekyll_site(timezone: 'America/New_York') }
-      let(:file) { site.__find_file('_posts/2015-07-02-test-post.md') }
-      it { should eq 1_435_809_600 }
+    context 'post' do
+      describe 'only date in filepath' do
+        let(:filepath) { 'post-with-date.md' }
+        it { should eq 1_521_414_000 }
+      end
+      describe 'date set in frontmatter' do
+        let(:filepath) { 'test-post.md' }
+        it { should eq 1_435_788_000 }
+      end
+      describe 'with a custom timezone' do
+        let(:site) { init_new_jekyll_site(timezone: 'America/New_York') }
+        let(:filepath) { 'test-post.md' }
+        it { should eq 1_435_809_600 }
+      end
+    end
+
+    context 'collection' do
+      describe 'no date defined' do
+        let(:filepath) { 'sample-item.md' }
+        it { should eq nil }
+      end
+      describe 'date in frontmatter' do
+        let(:filepath) { 'collection-item.md' }
+        it { should eq 452_469_600 }
+      end
     end
   end
 

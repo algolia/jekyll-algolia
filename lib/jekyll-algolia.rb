@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'jekyll/commands/algolia'
+require 'jekyll/algolia/overwrites'
 require 'date'
 
 module Jekyll
@@ -26,7 +27,6 @@ module Jekyll
     # The gist of the plugin works by instanciating a Jekyll site,
     # monkey-patching its `write` method and building it.
     def self.init(config = {})
-      @start_time = Time.now
       config = Configurator.init(config).config
       @site = Jekyll::Algolia::Site.new(config)
 
@@ -61,16 +61,6 @@ module Jekyll
     # Tests will need access to the inner Jekyll website so we expose it here
     def self.site
       @site
-    end
-
-    # Public: Get access to the time at which the command was run
-    #
-    # Jekyll will always set the updated time of pages to the time of the build
-    # run. The plugin needs those values to stay at nil if they did not change,
-    # so we'll keep track of the time at build time and revert any page build at
-    # that time to nil.
-    def self.start_time
-      @start_time
     end
 
     # A Jekyll::Site subclass that overrides process from the parent class to

@@ -239,7 +239,7 @@ currently only display the title and content, it make some perfectly relevant
 result look odd, because nothing is highlighted.
 
 To fix that, we'll add the highlighted headings to the display when they are
-matching. We'll create a new variable called `headings`, filled with the
+matching. We'll create a new variable called `breadcrumbs`, filled with the
 highlighted headings, and add it to our template only when not empty.
 
 We also update the url to include the `#` anchor that will point the link

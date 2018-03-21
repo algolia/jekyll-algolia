@@ -76,12 +76,12 @@ The hook will receive three arguments: `record`, `node` and `context`. `record`
 is the hash of the record, ready to be pushed to Algolia. `node` is
 a [Nokogiri][5] representation of the HTML node the record was extracted from
 (as specified in [nodes_to_index][6]). `context` gives more information about
-the whole indexing; check `context.data` for collections and `context.config` for settings.
+the whole indexing process (check the following table for more details).
 
 | Key  | Value  |
 | ---- | ---- |
 | Signature | `before_indexing_each(record, node, context)` |
-| Arguments | <ul><li>`record`: A hash of the record that will be pushed</li><li>`node`: A [Nokogiri][7] representation of the HTML node used to extract the content</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Collections (including `_data` folder)</li><li>`context.config`: Settings (as set in `_config.yml`)</li></ul></li></ul> |
+| Arguments | <ul><li>`record`: A hash of the record that will be pushed</li><li>`node`: A [Nokogiri][7] representation of the HTML node used to extract the content</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Any data defined in the `_data` folder</li><li>`context.config`: Settings defined in  `_config.yml`</li><li>`data.collections`: Custom collections and posts</li></ul></li></ul> |
 | Expected returns | <ul><li>A hash of the record to be indexed</li><li>`nil` if the record should not be indexed</li></ul> |
 
 ### Example
@@ -111,8 +111,8 @@ before pushing them.
 
 It will be called with two arguments: `records` will be the full list of records
 to be pushed, and `context` will contain more information about the current
-indexing (check `context.data` for collections and `context.config` for
-settings). The method expects a list of records to be returned.
+indexing (check the following table for more details). The method expects a list
+of records to be returned.
 
 You can use this hook to add, edit or delete complete records from the list,
 knowing the full context of what is going to be pushed.
@@ -120,7 +120,7 @@ knowing the full context of what is going to be pushed.
 | Key  | Value  |
 | ---- | ---- |
 | Signature | `before_indexing_all(records, context)` |
-| Arguments | <ul><li>`records`: An array of hashes representing the records that are going to be pushed</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Collections (including `_data` folder)</li><li>`context.config`: Settings (as set in `_config.yml`)</li></ul></li></ul> |
+| Arguments | <ul><li>`records`: An array of hashes representing the records that are going to be pushed</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Any data defined in the `_data` folder</li><li>`context.config`: Settings defined in  `_config.yml`</li><li>`data.collections`: Custom collections and posts</li></ul></li></ul> |
 | Expected returns | <ul><li>An array of hashes to be pushed as records</li></ul> |
 
 ### Example

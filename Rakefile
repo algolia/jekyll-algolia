@@ -183,7 +183,7 @@ namespace 'docs' do
 
     Rake::Task['docs:build'].invoke
     sh 'git add ./docs'
-    sh "git commit -m 'Updating documentation website'"
+    sh "git commit -m 'Updating documentation website' || true"
 
     sh 'git checkout master --quiet'
     sh 'git rebase develop --quiet'

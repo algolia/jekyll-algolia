@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><base href="/jekyll-algolia/"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta charset="utf-8"><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport"><meta name="ROBOTS" content="NOINDEX, NOFOLLOW"><link rel="icon" href="assets/images/favicon-54339122a2393b28d82d46ac8b785542.png"><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"><meta content="Add fast and relevant search to your Jekyll site" name="description"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><!-- Twitter card--><meta content="summary_large_image" name="twitter:card"><meta content="https://community.algolia.com/jekyll-algolia/" name="twitter:site"><meta content="Algolia" name="twitter:creator"><meta content="Algolia for Jekyll" name="twitter:title"><meta content="Add fast and relevant search to your Jekyll site" name="twitter:description"><meta content="https://community.algolia.com/jekyll-algolia/assets/images/card-d601b3714c5bd2fd25a0cd1179cef970.png" name="twitter:image"><!-- OG meta--><meta content="https://community.algolia.com/jekyll-algolia/" property="og:url"><meta content="Algolia for Jekyll" property="og:title"><meta content="https://community.algolia.com/jekyll-algolia/assets/images/card-d601b3714c5bd2fd25a0cd1179cef970.png" property="og:image"><meta content="website" property="og:type"><meta content="Add fast and relevant search to your Jekyll site" property="og:description"><meta content="Algolia for Jekyll" property="og:site_name"><title>Algolia for Jekyll | Add fast and relevant search to your Jekyll site</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.css"><link rel="stylesheet" href="stylesheets/index-da515f06f738693b8e84a5635c1c7b99.css"></head><body><div><!-- Start community header -->
+<!DOCTYPE html><html lang="en"><head><base href="/jekyll-algolia/"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta charset="utf-8"><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport"><meta name="ROBOTS" content="NOINDEX, NOFOLLOW"><link rel="icon" href="assets/images/favicon-54339122a2393b28d82d46ac8b785542.png"><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"><meta content="Add fast and relevant search to your Jekyll site" name="description"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><!-- Twitter card--><meta content="summary_large_image" name="twitter:card"><meta content="https://community.algolia.com/jekyll-algolia/" name="twitter:site"><meta content="Algolia" name="twitter:creator"><meta content="Algolia for Jekyll" name="twitter:title"><meta content="Add fast and relevant search to your Jekyll site" name="twitter:description"><meta content="https://community.algolia.com/jekyll-algolia/assets/images/card-d601b3714c5bd2fd25a0cd1179cef970.png" name="twitter:image"><!-- OG meta--><meta content="https://community.algolia.com/jekyll-algolia/" property="og:url"><meta content="Algolia for Jekyll" property="og:title"><meta content="https://community.algolia.com/jekyll-algolia/assets/images/card-d601b3714c5bd2fd25a0cd1179cef970.png" property="og:image"><meta content="website" property="og:type"><meta content="Add fast and relevant search to your Jekyll site" property="og:description"><meta content="Algolia for Jekyll" property="og:site_name"><title>Algolia for Jekyll | Add fast and relevant search to your Jekyll site</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.css"><link rel="stylesheet" href="stylesheets/index-3d89cefd32fcfa5acfb9739ae74be5af.css"></head><body><div><!-- Start community header -->
     <nav class='algc-navigation'>
       <div class='algc-navigation__container'>
         <div class='algc-mainmenu'>
@@ -243,14 +243,15 @@ indexed if it returns <code>false</code>.</p>
 <span class="cm-keyword">end</span>
 </code></div></pre>
 <h2 id="before-indexing-each"><code>before_indexing_each</code> <a class="anchor" href="hooks.html#before-indexing-each" aria-hidden="true"></a></h2>
-<p>This hook will be called on every single record before indexing them. It gives you
-a way to edit the record before pushing it. You can use this hook to add, edit
-or delete keys from the record. If the hook returns <code>nil</code>, the
-record will not be indexed.</p>
-<p>The hook will receive two arguments: <code>record</code> and <code>node</code>. <code>record</code> is the hash
-of the record, ready to be pushed to Algolia. <code>node</code> is a <a href="http://www.nokogiri.org">Nokogiri</a>
-representation of the HTML node the record was extracted from (as specified in
-<a href="./options.html#nodes-to-index">nodes_to_index</a>.</p>
+<p>This hook will be called on every single record before indexing them. It gives
+you a way to edit the record before pushing it. You can use this hook to add,
+edit or delete keys from the record. If the hook returns <code>nil</code>, the record will
+not be indexed.</p>
+<p>The hook will receive three arguments: <code>record</code>, <code>node</code> and <code>context</code>. <code>record</code>
+is the hash of the record, ready to be pushed to Algolia. <code>node</code> is
+a <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node the record was extracted from
+(as specified in <a href="./options.html#nodes-to-index">nodes_to_index</a>). <code>context</code> gives more information about
+the whole indexing; check <code>context.data</code> for collections and <code>context.config</code> for settings.</p>
 <table>
 <thead>
 <tr>
@@ -261,11 +262,11 @@ representation of the HTML node the record was extracted from (as specified in
 <tbody>
 <tr>
 <td>Signature</td>
-<td><code>before_indexing_each(record, node)</code></td>
+<td><code>before_indexing_each(record, node, context)</code></td>
 </tr>
 <tr>
 <td>Arguments</td>
-<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node it was extracted from</li></ul></td>
+<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node used to extract the content</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Collections (including <code>_data</code> folder)</li><li><code>context.config</code>: Settings (as set in <code>_config.yml</code>)</li></ul></li></ul></td>
 </tr>
 <tr>
 <td>Expected returns</td>
@@ -277,7 +278,7 @@ representation of the HTML node the record was extracted from (as specified in
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
     <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>)
+      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>, <span class="cm-variable">context</span>)
         <span class="cm-comment"># Do not index deprecation warnings</span>
         <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">attr</span>(<span class="cm-string">&#39;class&#39;</span>) <span class="cm-operator">=~</span> <span class="cm-string">&#39;deprecation-notice&#39;</span>
         <span class="cm-comment"># Add my name as an author to each record</span>
@@ -290,11 +291,13 @@ representation of the HTML node the record was extracted from (as specified in
 <span class="cm-keyword">end</span>
 </code></div></pre>
 <h2 id="before-indexing-all"><code>before_indexing_all</code> <a class="anchor" href="hooks.html#before-indexing-all" aria-hidden="true"></a></h2>
-<p>This hook is very similar to <a href="hooks.html#hook-before-indexing-each">before_index_each</a>, but instead of being called
+<p>This hook is similar to <a href="hooks.html#hook-before-indexing-each">before_index_each</a>, but instead of being called
 on every record, it is called only once, on the full list of record, right
 before pushing them.</p>
-<p>It will be called with one argument, <code>records</code>, being the full list of records
-to be pushed, and expects a list of records to be returned.</p>
+<p>It will be called with two arguments: <code>records</code> will be the full list of records
+to be pushed, and <code>context</code> will contain more information about the current
+indexing (check <code>context.data</code> for collections and <code>context.config</code> for
+settings). The method expects a list of records to be returned.</p>
 <p>You can use this hook to add, edit or delete complete records from the list,
 knowing the full context of what is going to be pushed.</p>
 <table>
@@ -307,11 +310,11 @@ knowing the full context of what is going to be pushed.</p>
 <tbody>
 <tr>
 <td>Signature</td>
-<td><code>before_indexing_all(records)</code></td>
+<td><code>before_indexing_all(records, context)</code></td>
 </tr>
 <tr>
 <td>Arguments</td>
-<td><ul><li><code>records</code>: An array of hashes representing the records that are going to be pushed</li></ul></td>
+<td><ul><li><code>records</code>: An array of hashes representing the records that are going to be pushed</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Collections (including <code>_data</code> folder)</li><li><code>context.config</code>: Settings (as set in <code>_config.yml</code>)</li></ul></li></ul></td>
 </tr>
 <tr>
 <td>Expected returns</td>
@@ -323,7 +326,7 @@ knowing the full context of what is going to be pushed.</p>
 <pre class="code-sample cm-s-mdn-like codeMirror ruby" data-code-type="Code"><div class="code-wrap"><code><span class="cm-keyword">module</span> <span class="cm-tag">Jekyll</span>
   <span class="cm-keyword">module</span> <span class="cm-tag">Algolia</span>
     <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
-      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_all</span>(<span class="cm-variable">records</span>)
+      <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_all</span>(<span class="cm-variable">records</span>, <span class="cm-variable">context</span>)
         <span class="cm-comment"># Add a tags array to each record</span>
         <span class="cm-variable">records</span><span class="cm-operator">.</span><span class="cm-property">each</span> <span class="cm-keyword">do</span> |<span class="cm-def">record</span>|
           <span class="cm-variable">record</span>[<span class="cm-atom">:tags</span>] <span class="cm-operator">=</span> []

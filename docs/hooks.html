@@ -251,7 +251,7 @@ not be indexed.</p>
 is the hash of the record, ready to be pushed to Algolia. <code>node</code> is
 a <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node the record was extracted from
 (as specified in <a href="./options.html#nodes-to-index">nodes_to_index</a>). <code>context</code> gives more information about
-the whole indexing; check <code>context.data</code> for collections and <code>context.config</code> for settings.</p>
+the whole indexing process (check the following table for more details).</p>
 <table>
 <thead>
 <tr>
@@ -266,7 +266,7 @@ the whole indexing; check <code>context.data</code> for collections and <code>co
 </tr>
 <tr>
 <td>Arguments</td>
-<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node used to extract the content</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Collections (including <code>_data</code> folder)</li><li><code>context.config</code>: Settings (as set in <code>_config.yml</code>)</li></ul></li></ul></td>
+<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node used to extract the content</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Any data defined in the <code>_data</code> folder</li><li><code>context.config</code>: Settings defined in  <code>_config.yml</code></li><li><code>data.collections</code>: Custom collections and posts</li></ul></li></ul></td>
 </tr>
 <tr>
 <td>Expected returns</td>
@@ -296,8 +296,8 @@ on every record, it is called only once, on the full list of record, right
 before pushing them.</p>
 <p>It will be called with two arguments: <code>records</code> will be the full list of records
 to be pushed, and <code>context</code> will contain more information about the current
-indexing (check <code>context.data</code> for collections and <code>context.config</code> for
-settings). The method expects a list of records to be returned.</p>
+indexing (check the following table for more details). The method expects a list
+of records to be returned.</p>
 <p>You can use this hook to add, edit or delete complete records from the list,
 knowing the full context of what is going to be pushed.</p>
 <table>
@@ -314,7 +314,7 @@ knowing the full context of what is going to be pushed.</p>
 </tr>
 <tr>
 <td>Arguments</td>
-<td><ul><li><code>records</code>: An array of hashes representing the records that are going to be pushed</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Collections (including <code>_data</code> folder)</li><li><code>context.config</code>: Settings (as set in <code>_config.yml</code>)</li></ul></li></ul></td>
+<td><ul><li><code>records</code>: An array of hashes representing the records that are going to be pushed</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Any data defined in the <code>_data</code> folder</li><li><code>context.config</code>: Settings defined in  <code>_config.yml</code></li><li><code>data.collections</code>: Custom collections and posts</li></ul></li></ul></td>
 </tr>
 <tr>
 <td>Expected returns</td>

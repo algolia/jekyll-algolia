@@ -140,6 +140,14 @@ describe(Jekyll::Algolia::Extractor) do
         end
       end
 
+      describe 'should create a record with metadata only if no content' do
+        let(:raw_records) { [] }
+        let(:metadata) { { name: 'foo' } }
+        it do
+          expect(subject[0]).to eq metadata
+        end
+      end
+
       describe 'should call apply_each on each record' do
         let(:node) { double('Node') }
         let(:hook_context) { double('Context') }

@@ -17,6 +17,9 @@ module Jekyll
         # Getting file metadata
         shared_metadata = FileBrowser.metadata(file)
 
+        # If no content, we still index the metadata
+        raw_records = [shared_metadata] if raw_records.empty?
+
         # Building the list of records
         records = []
         raw_records.map do |record|

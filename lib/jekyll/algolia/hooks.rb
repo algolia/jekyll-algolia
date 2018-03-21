@@ -12,7 +12,12 @@ module Jekyll
       # record - The hash of the record to be pushed
       # node - The Nokogiri node of the element
       def self.apply_each(record, node, context)
-        before_indexing_each(record, node, context)
+        case method(:before_indexing_each).arity
+        when 2
+          before_indexing_each(record, node)
+        else
+          before_indexing_each(record, node, context)
+        end
       end
 
       # Public: Apply the before_indexing_all hook to all records.
@@ -22,7 +27,12 @@ module Jekyll
       #
       # records - The list of all records to be indexed
       def self.apply_all(records, context)
-        before_indexing_all(records, context)
+        case method(:before_indexing_all).arity
+        when 1
+          before_indexing_all(records)
+        else
+          before_indexing_all(records, context)
+        end
       end
 
       # Public: Check if the file should be indexed or not

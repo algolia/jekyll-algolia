@@ -8,12 +8,12 @@ module Jekyll
         filepath == 'excluded-from-hook.html'
       end
 
-      def self.before_indexing_each(record, _node)
+      def self.before_indexing_each(record, _node, _context)
         record[:added_through_each] = true
         record
       end
 
-      def self.before_indexing_all(records)
+      def self.before_indexing_all(records, _context)
         records << {
           name: 'Last one'
         }

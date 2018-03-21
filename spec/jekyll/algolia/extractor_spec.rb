@@ -88,11 +88,11 @@ describe(Jekyll::Algolia::Extractor) do
     subject { current.run(file) }
 
     context 'with mock data' do
-      let!(:file) { site.__find_file('html.html') }
+      let(:file) { double('File', content: nil) }
       before do
         allow(hooks)
           .to receive(:apply_each)
-            .with(anything, anything) { |input| input }
+            .with(anything, anything, anything) { |input| input }
 
         allow(current)
           .to receive(:extract_raw_records)
@@ -137,6 +137,28 @@ describe(Jekyll::Algolia::Extractor) do
         let(:metadata) { {} }
         it do
           expect(subject[0]).to include(:foo)
+        end
+      end
+
+      describe 'should call apply_each on each record' do
+        let(:node) { double('Node') }
+        let(:hook_context) { double('Context') }
+        let(:raw_records) { [{ name: 'foo', node: node }] }
+        let(:metadata) { { url: '/url/' } }
+        before do
+          allow(Jekyll::Algolia).to receive(:site).and_return(hook_context)
+
+          current.run(file)
+        end
+
+        it do
+          expect(hooks)
+            .to have_received(:apply_each)
+            .with(
+              { name: 'foo', url: '/url/' },
+              node,
+              hook_context
+            )
         end
       end
     end

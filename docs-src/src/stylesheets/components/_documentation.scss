@@ -127,11 +127,7 @@ $offset-height: 64px;
         li {
           line-height: 26px;
 
-          &:before {
-            content: '-';
-            float: left;
-            margin-right: 6px;
-            color: $logan; } } } }
+           } } }
 
     .content {
       position: relative;

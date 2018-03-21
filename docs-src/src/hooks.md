@@ -67,20 +67,21 @@ end
 
 ## `before_indexing_each`
 
-This hook will be called on every single record before indexing them. It gives you
-a way to edit the record before pushing it. You can use this hook to add, edit
-or delete keys from the record. If the hook returns `nil`, the
-record will not be indexed.
+This hook will be called on every single record before indexing them. It gives
+you a way to edit the record before pushing it. You can use this hook to add,
+edit or delete keys from the record. If the hook returns `nil`, the record will
+not be indexed.
 
-The hook will receive two arguments: `record` and `node`. `record` is the hash
-of the record, ready to be pushed to Algolia. `node` is a [Nokogiri][5]
-representation of the HTML node the record was extracted from (as specified in
-[nodes_to_index][6].
+The hook will receive three arguments: `record`, `node` and `context`. `record`
+is the hash of the record, ready to be pushed to Algolia. `node` is
+a [Nokogiri][5] representation of the HTML node the record was extracted from
+(as specified in [nodes_to_index][6]). `context` gives more information about
+the whole indexing; check `context.data` for collections and `context.config` for settings.
 
 | Key  | Value  |
 | ---- | ---- |
-| Signature | `before_indexing_each(record, node)` |
-| Arguments | <ul><li>`record`: A hash of the record that will be pushed</li><li>`node`: A [Nokogiri][7] representation of the HTML node it was extracted from</li></ul> |
+| Signature | `before_indexing_each(record, node, context)` |
+| Arguments | <ul><li>`record`: A hash of the record that will be pushed</li><li>`node`: A [Nokogiri][7] representation of the HTML node used to extract the content</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Collections (including `_data` folder)</li><li>`context.config`: Settings (as set in `_config.yml`)</li></ul></li></ul> |
 | Expected returns | <ul><li>A hash of the record to be indexed</li><li>`nil` if the record should not be indexed</li></ul> |
 
 ### Example
@@ -89,7 +90,7 @@ representation of the HTML node the record was extracted from (as specified in
 module Jekyll
   module Algolia
     module Hooks
-      def self.before_indexing_each(record, node)
+      def self.before_indexing_each(record, node, context)
         # Do not index deprecation warnings
         return nil if node.attr('class') =~ 'deprecation-notice'
         # Add my name as an author to each record
@@ -104,20 +105,22 @@ end
 
 ## `before_indexing_all`
 
-This hook is very similar to [before_index_each][8], but instead of being called
+This hook is similar to [before_index_each][8], but instead of being called
 on every record, it is called only once, on the full list of record, right
 before pushing them.
 
-It will be called with one argument, `records`, being the full list of records
-to be pushed, and expects a list of records to be returned.
+It will be called with two arguments: `records` will be the full list of records
+to be pushed, and `context` will contain more information about the current
+indexing (check `context.data` for collections and `context.config` for
+settings). The method expects a list of records to be returned.
 
 You can use this hook to add, edit or delete complete records from the list,
 knowing the full context of what is going to be pushed.
 
 | Key  | Value  |
 | ---- | ---- |
-| Signature | `before_indexing_all(records)` |
-| Arguments | <ul><li>`records`: An array of hashes representing the records that are going to be pushed</li></ul> |
+| Signature | `before_indexing_all(records, context)` |
+| Arguments | <ul><li>`records`: An array of hashes representing the records that are going to be pushed</li><li>`context`: More information about the whole website. <ul><li>`context.data`: Collections (including `_data` folder)</li><li>`context.config`: Settings (as set in `_config.yml`)</li></ul></li></ul> |
 | Expected returns | <ul><li>An array of hashes to be pushed as records</li></ul> |
 
 ### Example
@@ -126,7 +129,7 @@ knowing the full context of what is going to be pushed.
 module Jekyll
   module Algolia
     module Hooks
-      def self.before_indexing_all(records)
+      def self.before_indexing_all(records, context)
         # Add a tags array to each record
         records.each do |record|
           record[:tags] = []
@@ -142,6 +145,7 @@ module Jekyll
   end
 end
 ```
+
 
 [1]: ./options.html
 [2]: https://jekyllrb.com/docs/plugins/#installing-a-plugin

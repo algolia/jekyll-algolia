@@ -11,8 +11,8 @@ module Jekyll
       #
       # record - The hash of the record to be pushed
       # node - The Nokogiri node of the element
-      def self.apply_each(record, node)
-        before_indexing_each(record, node)
+      def self.apply_each(record, node, context)
+        before_indexing_each(record, node, context)
       end
 
       # Public: Apply the before_indexing_all hook to all records.
@@ -21,8 +21,8 @@ module Jekyll
       # as they can be mocked in tests.
       #
       # records - The list of all records to be indexed
-      def self.apply_all(records)
-        before_indexing_all(records)
+      def self.apply_all(records, context)
+        before_indexing_all(records, context)
       end
 
       # Public: Check if the file should be indexed or not
@@ -47,7 +47,7 @@ module Jekyll
       # information from the HTML node.
       #
       # Users can return nil to signal that the record should not be indexed
-      def self.before_indexing_each(record, _node)
+      def self.before_indexing_each(record, _node, _context)
         record
       end
 
@@ -59,7 +59,7 @@ module Jekyll
       # Users can modify the full list from here. It might provide an easier
       # interface than `hook_before_indexing_each` when knowing the full context
       # is necessary
-      def self.before_indexing_all(records)
+      def self.before_indexing_all(records, _context)
         records
       end
     end

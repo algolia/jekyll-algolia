@@ -49,20 +49,19 @@ site.
 here][8]. Once signed in, you can get your
 credentials from [your dashboard][9].*
 
-Once you have your credentials, you should define your `application_id` and
-`index_name` inside your `_config.yml` file like this:
+Once you have your credentials, you should define your `application_id` inside
+your `_config.yml` file like this:
 
 ```yaml
 # _config.yml
 
 algolia:
   application_id: 'your_application_id'
-  index_name:     'your_index_name'
 ```
 
 ## Run it
 
-Once your credentials are setup, you can run the indexing by running the
+Once your application ID is setup, you can run the indexing by running the
 following command:
 
 ```shell

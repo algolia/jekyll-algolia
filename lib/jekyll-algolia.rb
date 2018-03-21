@@ -181,7 +181,7 @@ module Jekyll
         end
 
         # Applying the user hook on the whole list of records
-        records = Hooks.apply_all(records)
+        records = Hooks.apply_all(records, self)
 
         # Adding a unique objectID to each record
         records.map! do |record|

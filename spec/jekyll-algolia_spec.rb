@@ -418,7 +418,8 @@ describe(Jekyll::Algolia) do
                   { name: 'foo2' },
                   { name: 'bar1' },
                   { name: 'bar2' }
-                ])
+                ],
+                site)
       end
     end
 

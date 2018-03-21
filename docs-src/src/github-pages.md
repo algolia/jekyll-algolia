@@ -30,7 +30,7 @@ your GitHub Pages is done.
 Here are the steps to follow to setup your Travis account for your project:
 
 - Go to [travis-ci.org][5] and open an account
-- Click on your avatar and "Accounts"
+- Click on your avatar and "Profile"
 - Find your GitHub repository in the list and activate it
 
 _You should also uncheck the "Build pull request updates" in the options.

@@ -49,6 +49,18 @@ describe(Jekyll::Algolia::Hooks) do
           .with(record, node)
       end
     end
+
+    describe 'with a hook with one parameter' do
+      let(:arity) { 1 }
+
+      before { current.apply_each(record, node, context) }
+
+      it do
+        expect(current)
+          .to have_received(:before_indexing_each)
+          .with(record)
+      end
+    end
   end
 
   describe '.apply_all' do

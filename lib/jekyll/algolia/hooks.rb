@@ -13,6 +13,8 @@ module Jekyll
       # node - The Nokogiri node of the element
       def self.apply_each(record, node, context)
         case method(:before_indexing_each).arity
+        when 1
+          before_indexing_each(record)
         when 2
           before_indexing_each(record, node)
         else

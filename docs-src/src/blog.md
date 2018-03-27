@@ -111,7 +111,9 @@ search.start();
 
 The first lines will include the [InstantSearch.js][5] library as well as
 minimal styling, directly from the jsDeliver CDN. Those files are also available
-through [Yarn][6]/[NPM][7] if you need them locally.
+through [Yarn][6]/[NPM][7] if you need them locally. If you use the `jekyll-minifier`
+plugin, you'll need to set the option `compress_javascript: false` in Jekyll's `_config.yml`
+
 
 ### Instanciating the library
 

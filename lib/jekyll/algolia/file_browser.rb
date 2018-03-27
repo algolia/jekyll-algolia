@@ -244,7 +244,7 @@ module Jekyll
       # error.
       def self.excerpt_raw(file)
         Logger.silent do
-          return file.data['excerpt'].to_s
+          return file.data['excerpt'].to_s.strip
         end
       rescue StandardError
         nil
@@ -253,13 +253,20 @@ module Jekyll
       # Public: Returns the HTML version of the excerpt
       #
       # file - The Jekyll file
-      #
-      # Only collections (including posts) have an excerpt. Pages don't.
       def self.excerpt_html(file)
-        excerpt = excerpt_raw(file)
-        return nil if excerpt.nil?
-        return nil if excerpt.empty?
-        excerpt.to_s.tr("\n", ' ').strip
+        # If it's a post with a custom separator for the excerpt, we honor it
+        is_post = (type(file) == 'post')
+        if is_post
+          custom_separator = file.excerpt_separator.to_s.strip
+          return excerpt_raw(file) unless custom_separator.empty?
+        end
+
+        # Otherwise we take the first matching node
+        html = file.content
+        selector = Configurator.algolia('nodes_to_index')
+        first_node = Nokogiri::HTML(html).css(selector).first
+        return nil if first_node.nil?
+        first_node.to_s
       end
 
       # Public: Returns the text version of the excerpt

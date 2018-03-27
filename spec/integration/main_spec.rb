@@ -17,15 +17,15 @@ describe('pushed index') do
 
     context 'by default' do
       let(:distinct) { nil }
-      it { should eq 32 }
+      it { should eq 33 }
     end
     context 'with distinct:true' do
       let(:distinct) { true }
-      it { should eq 32 }
+      it { should eq 33 }
     end
     context 'with distinct:false' do
       let(:distinct) { false }
-      it { should eq 63 }
+      it { should eq 65 }
     end
   end
 

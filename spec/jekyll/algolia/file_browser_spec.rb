@@ -527,67 +527,126 @@ describe(Jekyll::Algolia::FileBrowser) do
   end
 
   describe '.excerpt_html' do
-    let(:expected) do
-      '<p>This is the first paragraph. It is especially long because we '\
-      'want it to wrap on two lines.</p>'
-    end
+    subject { current.excerpt_html(site.__find_file(filepath)) }
 
-    subject { current.excerpt_html(file) }
-
-    context 'with real files' do
-      context 'with a page' do
-        let(:file) { site.__find_file('excerpt.md') }
-        it { should eq nil }
-      end
-      context 'with a post' do
-        let(:file) { site.__find_file('-post-with-excerpt.md') }
+    context 'with a page' do
+      describe 'default settings' do
+        let(:filepath) { 'default-excerpt.md' }
+        let(:expected) { '<p>foo</p>' }
         it { should eq expected }
       end
-      context 'with a collection' do
-        let(:file) { site.__find_file('collection-item-with-excerpt.md') }
+
+      describe 'custom nodes_to_index' do
+        let(:filepath) { 'default-excerpt.md' }
+        let(:expected) { '<div>baz</div>' }
+        before do
+          allow(configurator)
+            .to receive(:algolia)
+            .and_call_original
+          allow(configurator)
+            .to receive(:algolia)
+            .with('nodes_to_index')
+            .and_return('div')
+        end
         it { should eq expected }
       end
     end
 
-    context 'with mock excerpt' do
-      let(:file) { double('File') }
-      before do
-        allow(current).to receive(:excerpt_raw).and_return(raw)
+    context 'with a post' do
+      describe 'default settings' do
+        let(:filepath) { 'post-with-default-excerpt.md' }
+        let(:expected) { '<p>foo</p>' }
+        it { should eq expected }
       end
 
-      describe 'should return the excerpt as returned by Jekyll' do
-        let(:raw) { 'raw' }
-        it { should eq 'raw' }
+      describe 'custom nodes_to_index' do
+        let(:filepath) { 'post-with-default-excerpt.md' }
+        let(:expected) { '<div>baz</div>' }
+        before do
+          allow(configurator)
+            .to receive(:algolia)
+            .and_call_original
+          allow(configurator)
+            .to receive(:algolia)
+            .with('nodes_to_index')
+            .and_return('div')
+        end
+        it { should eq expected }
       end
-      describe 'empty excerpt are treated as nil' do
-        let(:raw) { '' }
-        it { should eq nil }
-      end
-      describe do
-        let(:raw) { nil }
-        it { should eq nil }
+
+      describe 'custom excerpt_separator defined in config' do
+        let(:site) do
+          init_new_jekyll_site(
+            excerpt_separator: '<!-- excerpt_separator -->'
+          )
+        end
+        let(:filepath) { 'post-with-custom-excerpt.md' }
+        let(:expected) { "<p>foo</p>\n\n<p>bar</p>" }
+
+        it { should eq expected }
       end
     end
   end
 
-  describe '.excerpt_txt' do
-    let(:expected) do
-      'This is the first paragraph. It is especially long because we want '\
-      'it to wrap on two lines.'
-    end
-    subject { current.excerpt_text(file) }
+  describe '.excerpt_text' do
+    subject { current.excerpt_text(site.__find_file(filepath)) }
 
     context 'with a page' do
-      let(:file) { site.__find_file('excerpt.md') }
-      it { should eq nil }
+      describe 'default settings' do
+        let(:filepath) { 'default-excerpt.md' }
+        let(:expected) { 'foo' }
+        it { should eq expected }
+      end
+
+      describe 'custom nodes_to_index' do
+        let(:filepath) { 'default-excerpt.md' }
+        let(:expected) { 'baz' }
+        before do
+          allow(configurator)
+            .to receive(:algolia)
+            .and_call_original
+          allow(configurator)
+            .to receive(:algolia)
+            .with('nodes_to_index')
+            .and_return('div')
+        end
+        it { should eq expected }
+      end
     end
+
     context 'with a post' do
-      let(:file) { site.__find_file('-post-with-excerpt.md') }
-      it { should eq expected }
-    end
-    context 'with a collection' do
-      let(:file) { site.__find_file('collection-item-with-excerpt.md') }
-      it { should eq expected }
+      describe 'default settings' do
+        let(:filepath) { 'post-with-default-excerpt.md' }
+        let(:expected) { 'foo' }
+        it { should eq expected }
+      end
+
+      describe 'custom nodes_to_index' do
+        let(:filepath) { 'post-with-default-excerpt.md' }
+        let(:expected) { 'baz' }
+        before do
+          allow(configurator)
+            .to receive(:algolia)
+            .and_call_original
+          allow(configurator)
+            .to receive(:algolia)
+            .with('nodes_to_index')
+            .and_return('div')
+        end
+        it { should eq expected }
+      end
+
+      describe 'custom excerpt_separator defined in config' do
+        let(:site) do
+          init_new_jekyll_site(
+            excerpt_separator: '<!-- excerpt_separator -->'
+          )
+        end
+        let(:filepath) { 'post-with-custom-excerpt.md' }
+        let(:expected) { 'foo bar' }
+
+        it { should eq expected }
+      end
     end
   end
 

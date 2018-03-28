@@ -139,8 +139,17 @@ namespace 'release' do
 
     # Commit it in git
     sh "git commit -a -m 'release #{new_version}'"
+
     # Create the git tag
-    sh "git tag -am 'tag v#{new_version}' #{new_version}"
+    last_tag = `git describe --tags --abbrev=0`.strip
+    changelog = `git log #{last_tag}..HEAD --format=%B`.gsub("\n\n", "\n")
+    tag_name = new_version
+    sh 'git tag '\
+      "-a #{tag_name} "\
+      "-m \"#{changelog}\""\
+      ' 2>/dev/null'
+
+    sh "git tag #{tag_name} #{tag_name} -f -a"
   end
   # Build the gem
   task :build do

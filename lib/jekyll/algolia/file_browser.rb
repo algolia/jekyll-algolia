@@ -250,16 +250,32 @@ module Jekyll
         nil
       end
 
+      # Public: Return true if the Jekyll default excerpt should be used for
+      # this file
+      #
+      # file - The Jekyll file
+      #
+      # Most of the time, we'll use our own excerpt (the first matching
+      # element), but in some cases, we'll fallback to Jekyll's default excerpt
+      # if it seems to be what the user wants
+      def self.use_default_excerpt?(file)
+        # Only posts can have excerpt
+        return false unless type(file) == 'post'
+
+        # User defined their own separator in the config
+        custom_separator = file.excerpt_separator.to_s.strip
+        return false if custom_separator.empty?
+
+        # This specific post contains this separator
+        file.content.include?(custom_separator)
+      end
+
       # Public: Returns the HTML version of the excerpt
       #
       # file - The Jekyll file
       def self.excerpt_html(file)
         # If it's a post with a custom separator for the excerpt, we honor it
-        is_post = (type(file) == 'post')
-        if is_post
-          custom_separator = file.excerpt_separator.to_s.strip
-          return excerpt_raw(file) unless custom_separator.empty?
-        end
+        return excerpt_raw(file) if use_default_excerpt?(file)
 
         # Otherwise we take the first matching node
         html = file.content

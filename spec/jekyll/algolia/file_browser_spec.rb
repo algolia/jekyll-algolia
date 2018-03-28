@@ -526,8 +526,62 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 
+  describe '.use_default_excerpt?' do
+    subject { current.use_default_excerpt?(site.__find_file(filepath)) }
+
+    describe 'with a page' do
+      let(:filepath) { 'default-excerpt.md' }
+      it { should eq false }
+    end
+
+    describe 'with a collection item' do
+      let(:filepath) { 'sample-item.md' }
+      it { should eq false }
+    end
+
+    context 'with a post' do
+      describe 'no custom separator set' do
+        let(:filepath) { 'post-with-default-excerpt.md' }
+        it { should eq false }
+      end
+      describe 'custom separator set' do
+        let(:site) do
+          init_new_jekyll_site(
+            excerpt_separator: '<!-- excerpt_separator -->'
+          )
+        end
+        let(:filepath) { 'post-with-default-excerpt.md' }
+
+        it { should eq false }
+      end
+      describe 'custom separator set and present in the file' do
+        let(:site) do
+          init_new_jekyll_site(
+            excerpt_separator: '<!-- excerpt_separator -->'
+          )
+        end
+        let(:filepath) { 'post-with-custom-excerpt.md' }
+
+        it { should eq true }
+      end
+    end
+  end
+
   describe '.excerpt_html' do
     subject { current.excerpt_html(site.__find_file(filepath)) }
+
+    describe 'should use the default excerpt if needed' do
+      let(:filepath) { 'default-excerpt.md' }
+      before do
+        allow(current)
+          .to receive(:use_default_excerpt?)
+          .and_return(true)
+        allow(current)
+          .to receive(:excerpt_raw)
+          .and_return('custom excerpt')
+      end
+      it { should eq 'custom excerpt' }
+    end
 
     context 'with a page' do
       describe 'default settings' do
@@ -571,18 +625,6 @@ describe(Jekyll::Algolia::FileBrowser) do
             .with('nodes_to_index')
             .and_return('div')
         end
-        it { should eq expected }
-      end
-
-      describe 'custom excerpt_separator defined in config' do
-        let(:site) do
-          init_new_jekyll_site(
-            excerpt_separator: '<!-- excerpt_separator -->'
-          )
-        end
-        let(:filepath) { 'post-with-custom-excerpt.md' }
-        let(:expected) { "<p>foo</p>\n\n<p>bar</p>" }
-
         it { should eq expected }
       end
     end

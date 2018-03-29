@@ -11,15 +11,14 @@ module Jekyll
       include Jekyll::Algolia
 
       # Public: Init the module
-      #
-      # This call will instanciate the Algolia API client, set the custom
-      # User Agent and give an easy access to the main index
       def self.init
         ::Algolia.init(
           application_id: Configurator.application_id,
           api_key: Configurator.api_key
         )
-        @index = ::Algolia::Index.new(Configurator.index_name)
+        index_name = Configurator.index_name
+        @index = ::Algolia::Index.new(index_name)
+        @index_object_ids = ::Algolia::Index.new("#{index_name}_object_ids")
 
         set_user_agent
 
@@ -29,6 +28,26 @@ module Jekyll
       # Public: Returns the Algolia index object
       def self.index
         @index
+      end
+
+      # Public: Returns the Algolia index used to store object ids
+      # TOTEST
+      def self.index_object_ids
+        @index_object_ids
+      end
+
+      # Public: Check if an index exists
+      #
+      # index - Index to check
+      #
+      # Note: there is no API endpoint to do that, so we try to get the settings
+      # instead, which will fail if the index does not exist
+      # TOTEST
+      def self.index_exist?(index)
+        index.get_settings
+        true
+      rescue StandardError
+        false
       end
 
       # Public: Set the User-Agent to send to the API
@@ -50,22 +69,52 @@ module Jekyll
 
       # Public: Returns an array of all the objectIDs in the index
       #
-      # The returned array is sorted. It won't have any impact on the way it is
-      # processed, but makes debugging easier when comparing arrays is needed.
+      # Note: We use a dedicated index to store the objectIDs for faster
+      # browsing, but if the index does not exist we read the main index.
       def self.remote_object_ids
+        Logger.log('I:Getting list of existing records')
         list = []
-        Logger.verbose(
-          "I:Inspecting existing records in index #{index.name}..."
-        )
-        begin
-          index.browse(attributesToRetrieve: 'objectID') do |hit|
-            list << hit['objectID']
+        hits_per_page = 1000
+
+        has_dedicated_index = index_exist?(index_object_ids)
+        if has_dedicated_index
+          begin
+            index_object_ids.browse(
+              attributesToRetrieve: 'content',
+              hitsPerPage: hits_per_page
+            ) do |hit|
+              list += hit['content']
+            end
           end
-        rescue StandardError
-          # The index might not exist if it's the first time we use the plugin
-          # so we'll consider that it means there are no records there
-          return []
+        else
+          # Slow versio, browsing the full index
+          Logger.verbose(
+            "I:Inspecting existing records in index #{index.name}..."
+          )
+
+          # As it might take some time, we display a progress bar
+          max_hits = index.search(
+            '',
+            attributesToRetrieve: 'objectID',
+            distinct: false,
+            hitsPerPage: 1
+          )['nbHits']
+
+          progress_bar = ProgressBar.create(
+            total: max_hits,
+            format: 'Inspecting existing records (%j%%) |%B|'
+          )
+          begin
+            index.browse(
+              attributesToRetrieve: 'objectID',
+              hitsPerPage: hits_per_page
+            ) do |hit|
+              list << hit['objectID']
+              progress_bar.increment
+            end
+          end
         end
+
         list.sort
       end
 
@@ -78,13 +127,25 @@ module Jekyll
 
       # Public: Update records of the index
       #
-      # old_records_ids - Ids of records to delete from the index
-      # new_records - Records to add to the index
+      # records - All records extracted from Jekyll
       #
       # Note: All operations will be done in one batch, assuring an atomic
       # update
       # Does nothing in dry run mode
-      def self.update_records(old_records_ids, new_records)
+      def self.update_records(records)
+        # Getting list of objectID in remote and locally
+        remote_ids = remote_object_ids
+        local_ids = local_object_ids(records)
+
+        # We need the list of objectIDs for deletion
+        old_records_ids = remote_ids - local_ids
+
+        # For addition, we need the full records
+        # We build a first hash of all the records we have, with access by
+        new_records_ids = local_ids - remote_ids
+        cache = Hash[records.map { |record| [record[:objectID], record] }]
+        new_records = new_records_ids.map { |id| cache[id] }
+
         # Stop if nothing to change
         if old_records_ids.empty? && new_records.empty?
           Logger.log('I:Content is already up to date.')
@@ -110,6 +171,19 @@ module Jekyll
           { action: 'addObject', indexName: index.name, body: new_record }
         end
 
+        # We batch as well the update to the index holding the object ids
+        operations << { action: 'clear', indexName: index_object_ids.name }
+        local_ids.each_slice(100).each do |ids|
+          operations << {
+            action: 'addObject', indexName: index_object_ids.name,
+            body: { content: ids }
+          }
+        end
+
+        execute_operations(operations)
+      end
+
+      def self.execute_operations(operations)
         # Run the batches in slices if they are too large
         batch_size = Configurator.algolia('indexing_batch_size')
         slices = operations.each_slice(batch_size).to_a
@@ -118,7 +192,7 @@ module Jekyll
         if should_have_progress_bar
           progress_bar = ProgressBar.create(
             total: slices.length,
-            format: 'Pushing records (%j%%) |%B|'
+            format: 'Updating index (%j%%) |%B|'
           )
         end
 
@@ -253,20 +327,8 @@ module Jekyll
           exit 1
         end
 
-        # Update settings
         update_settings
-
-        # Getting list of objectID in remote and locally
-        remote_ids = remote_object_ids
-        local_ids = local_object_ids(records)
-
-        # Getting list of what to add and what to delete
-        old_records_ids = remote_ids - local_ids
-        new_records_ids = local_ids - remote_ids
-        new_records = records.select do |record|
-          new_records_ids.include?(record[:objectID])
-        end
-        update_records(old_records_ids, new_records)
+        update_records(records)
 
         Logger.log('I:✔ Indexing complete')
       end

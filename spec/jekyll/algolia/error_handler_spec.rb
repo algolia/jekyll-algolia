@@ -165,7 +165,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
     context 'with a record too big' do
       let(:message) do
         '400: Cannot POST to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/my_index/batch: '\
+        'https://MY_APP_ID.algolia.net/1/indexes/*/batch: '\
         '{"message":"Record at the position 3 '\
         'objectID=deadbeef is too big size=109196 bytes. '\
         'Contact us if you need an extended quota","position":3,'\
@@ -258,6 +258,17 @@ describe(Jekyll::Algolia::ErrorHandler) do
         details = subject[:details]
         expect(details).to include('index_name' => 'invalid_index_name')
       end
+    end
+
+    context 'with too many record' do
+      let(:message) do
+        '403: Cannot POST to '\
+        'https://MY_APP_ID.algolia.net/1/indexes/*/batch: '\
+        '{"message":"Record quota exceeded, change plan or delete records.",'\
+        '"status":403} (403)'
+      end
+
+      it { should include(name: 'too_many_records') }
     end
   end
 end

@@ -48,6 +48,7 @@ module Jekyll
           unknown_application_id
           invalid_credentials
           record_too_big
+          too_many_records
           unknown_settings
           invalid_index_name
         ]
@@ -265,6 +266,18 @@ module Jekyll
         {
           'index_name' => Configurator.index_name
         }
+      end
+
+      # Public: Check if the application has too many records
+      #
+      # We're trying to push too many records and it goes over quota
+      def self.too_many_records?(error, _context = {})
+        details = error_hash(error.message)
+
+        message = details['message']
+        return false if message !~ /^Record quota exceeded.*/
+
+        {}
       end
     end
   end

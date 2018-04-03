@@ -7,6 +7,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
   let(:current) { Jekyll::Algolia::ErrorHandler }
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:logger) { Jekyll::Algolia::Logger }
+  let(:utils) { Jekyll::Algolia::Utils }
 
   describe '.stop' do
     subject { -> { current.stop(error) } }
@@ -34,6 +35,64 @@ describe(Jekyll::Algolia::ErrorHandler) do
       end
 
       it { is_expected.to raise_error SystemExit }
+    end
+  end
+
+  describe '.identify' do
+    let(:error) { double('Error') }
+    let(:context) { 'context' }
+
+    subject { current.identify(error, context) }
+
+    before do
+      allow(current).to receive(:unknown_application_id?).and_return(false)
+      allow(current).to receive(:invalid_credentials?).and_return(false)
+      allow(current).to receive(:record_too_big?).and_return(false)
+      allow(current).to receive(:too_many_records?).and_return(false)
+      allow(current).to receive(:unknown_setting?).and_return(false)
+      allow(current).to receive(:invalid_index_name?).and_return(false)
+    end
+
+    it 'should return false if nothing matches' do
+      should eq false
+    end
+
+    describe 'should call all methods with error and context' do
+      before do
+        current.identify(error, context)
+      end
+      it do
+        expect(current)
+          .to have_received(:unknown_application_id?)
+          .with(error, context)
+        expect(current)
+          .to have_received(:invalid_credentials?)
+          .with(error, context)
+        expect(current)
+          .to have_received(:record_too_big?)
+          .with(error, context)
+        expect(current)
+          .to have_received(:too_many_records?)
+          .with(error, context)
+        expect(current)
+          .to have_received(:unknown_setting?)
+          .with(error, context)
+        expect(current)
+          .to have_received(:invalid_index_name?)
+          .with(error, context)
+      end
+    end
+
+    describe 'should return the result of one if matches' do
+      before do
+        allow(current)
+          .to receive(:too_many_records?)
+          .and_return('foo')
+      end
+
+      it do
+        should eq(name: 'too_many_records', details: 'foo')
+      end
     end
   end
 
@@ -105,28 +164,31 @@ describe(Jekyll::Algolia::ErrorHandler) do
     it { should eq 'baz (100.00 Kb), bar (10.00 Kb), foo (1.00 Kb)' }
   end
 
-  describe '.identify' do
-    subject { current.identify(error, context) }
-
+  describe '.unknown_application_id?' do
     let(:error) { double('Error', message: message) }
-    let(:context) { {} }
 
-    context 'with unknown application_id' do
+    subject { current.unknown_application_id?(error) }
+
+    describe 'not matching' do
+      let(:message) { 'foo bar' }
+      it { should eq false }
+    end
+
+    describe 'matching' do
       let(:message) do
         # rubocop:disable Metrics/LineLength
         'Cannot reach any host: '\
-        'getaddrinfo: Name or service not known (MY_APP_ID-dsn.algolia.net:443), '\
-        'getaddrinfo: No address associated with hostname (MY_APP_ID-3.algolianet.com:443), '\
-        'getaddrinfo: No address associated with hostname (MY_APP_ID-1.algolianet.com:443), '\
-        'getaddrinfo: No address associated with hostname (MY_APP_ID-2.algolianet.com:443)'
+          'getaddrinfo: Name or service not known (MY_APP_ID-dsn.algolia.net:443), '\
+          'getaddrinfo: No address associated with hostname (MY_APP_ID-3.algolianet.com:443), '\
+          'getaddrinfo: No address associated with hostname (MY_APP_ID-1.algolianet.com:443), '\
+          'getaddrinfo: No address associated with hostname (MY_APP_ID-2.algolianet.com:443)'
         # rubocop:enable Metrics/LineLength
       end
 
-      it { should include(name: 'unknown_application_id') }
-      it { should include(details: { 'application_id' => 'MY_APP_ID' }) }
+      it { should eq('application_id' => 'MY_APP_ID') }
     end
 
-    context 'with unknown application_id and no DSN' do
+    describe 'matching with a DSN' do
       let(:message) do
         # rubocop:disable Metrics/LineLength
         'Cannot reach any host: '\
@@ -137,138 +199,224 @@ describe(Jekyll::Algolia::ErrorHandler) do
         # rubocop:enable Metrics/LineLength
       end
 
-      it { should include(name: 'unknown_application_id') }
-      it { should include(details: { 'application_id' => 'MY_APP_ID' }) }
+      it { should eq('application_id' => 'MY_APP_ID') }
+    end
+  end
+
+  describe '.invalid_credentials?' do
+    let(:error) { double('Error').as_null_object }
+
+    subject { current.invalid_credentials?(error) }
+
+    before do
+      allow(current).to receive(:error_hash).and_return(error_hash)
+    end
+
+    describe 'not matching' do
+      let(:error_hash) { false }
+      it { should eq false }
     end
 
     context 'with wrong API key' do
-      before do
-        allow(configurator)
-          .to receive(:index_name)
-          .and_return('my_index')
+      let(:error_hash) do
+        {
+          'message' => 'Invalid Application-ID or API key',
+          'application_id' => 'MY_APP_ID'
+        }
       end
-      let(:message) do
-        'Cannot POST to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/my_index/batch: '\
-        '{"message":"Invalid Application-ID or API key","status":403}'\
-        "\n (403)"
+      it { should eq('application_id' => 'MY_APP_ID') }
+    end
+  end
+
+  describe '.record_too_big?' do
+    let(:error) { double('Error').as_null_object }
+    let(:error_hash) do
+      {
+        'message' => 'Record at the position 3 '\
+                     'objectID=deadbeef is too big size=109196 bytes. '\
+                     'Contact us if you need an extended quota',
+        'objectID' => 'object_id'
+      }
+    end
+    let(:context) do
+      {
+        operations: [
+          {
+            action: 'deleteObject',
+            body: { objectID: 'object_to_delete' }
+          },
+          {
+            action: 'addObject',
+            body: { objectID: 'object_id', title: 'foo', url: 'url' }
+          },
+          {
+            action: 'clear'
+          },
+          {
+            action: 'addObject',
+            body: { content: %w[object_id1 object_id2] }
+          }
+        ]
+      }
+    end
+
+    subject { current.record_too_big?(error, context) }
+
+    before do
+      allow(current).to receive(:error_hash).and_return(error_hash)
+      allow(utils).to receive(:find_by_key).and_return({})
+      allow(current).to receive(:readable_largest_record_keys)
+      allow(logger).to receive(:write_to_file)
+    end
+
+    describe 'wrongly formatted message' do
+      let(:error_hash) { false }
+
+      it { should eq false }
+    end
+
+    describe 'not matching' do
+      let(:error_hash) { { 'message' => 'foo bar' } }
+
+      it { should eq false }
+    end
+
+    it 'should get information from message' do
+      should include('object_id' => 'object_id')
+      should include('size' => '109.20 Kb')
+      should include('size_limit' => '10 Kb')
+    end
+
+    describe 'includes the nodes to index' do
+      before do
+        allow(configurator).to receive(:algolia).and_return('nodes')
       end
 
-      it { should include(name: 'invalid_credentials') }
       it do
-        should include(details: {
-                         'application_id' => 'MY_APP_ID'
-                       })
+        should include('nodes_to_index' => 'nodes')
       end
     end
 
-    context 'with a record too big' do
-      let(:message) do
-        '400: Cannot POST to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/*/batch: '\
-        '{"message":"Record at the position 3 '\
-        'objectID=deadbeef is too big size=109196 bytes. '\
-        'Contact us if you need an extended quota","position":3,'\
-        '"objectID":"deadbeef","status":400} (400)'
-      end
-      let(:context) do
-        { records: [
-          {
-            objectID: 'deadbeef',
-            title: 'Page title',
-            url: '/path/to/file.ext',
-            # rubocop:disable Metrics/LineLength
-            content: 'A very long text that is obviously too long to fit in one record, but that would be too long to actually display in the error message as well so we will cut it at 100 characters.'
-            # rubocop:enable Metrics/LineLength
-          },
-          { objectID: 'foo' }
-        ] }
-      end
-      let(:record_log_path) { '/source/output.log' }
-      let(:probable_wrong_keys) { 'foo, bar, baz' }
+    describe 'includes information about the bad record' do
       before do
-        allow(configurator)
-          .to receive(:algolia)
-          .with('nodes_to_index')
-          .and_return('p,li,foo')
+        allow(current)
+          .to receive(:readable_largest_record_keys)
+          .and_return('wrong_keys')
+      end
+
+      it do
+        should include('object_title' => 'foo')
+        should include('object_url' => 'url')
+        should include('probable_wrong_keys' => 'wrong_keys')
+      end
+    end
+
+    describe 'save log file' do
+      before do
+        expect(::JSON)
+          .to receive(:pretty_generate)
+          .with(objectID: 'object_id', title: 'foo', url: 'url')
+          .and_return('{json}')
         expect(logger)
           .to receive(:write_to_file)
-          .and_return(record_log_path)
-        expect(current)
-          .to receive(:readable_largest_record_keys)
-          .and_return(probable_wrong_keys)
+          .with(
+            'jekyll-algolia-record-too-big-object_id.log',
+            '{json}'
+          )
+          .and_return('/path/to/file.log')
       end
 
-      it { should include(name: 'record_too_big') }
-
-      it do
-        details = subject[:details]
-        expect(details).to include('object_id' => 'deadbeef')
-        expect(details).to include('object_title' => 'Page title')
-        expect(details).to include('object_url' => '/path/to/file.ext')
-        expect(details).to include('record_log_path' => record_log_path)
-        expect(details).to include('probable_wrong_keys' => probable_wrong_keys)
-        expect(details).to include('size' => '109.20 Kb')
-        expect(details).to include('size_limit' => '10 Kb')
-        expect(details).to include('nodes_to_index' => 'p,li,foo')
+      it 'should return the path of the log file in the output' do
+        should include('record_log_path' => '/path/to/file.log')
       end
     end
+  end
 
-    context 'with an unknown setting' do
-      let(:message) do
-        # rubocop:disable Metrics/LineLength
-        '400: Cannot PUT to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/my_index/settings: '\
-        '{"message":"Invalid object attributes: deadbeef near line:1 column:456",'\
-        '"status":400} (400)'
-        # rubocop:enable Metrics/LineLength
-      end
-      let(:context) do
-        { settings:
-          {
-            'searchableAttributes' => %w[foo bar],
-            'deadbeef' => 'foofoo'
-          } }
-      end
-
-      it { should include(name: 'unknown_settings') }
-      it do
-        details = subject[:details]
-        expect(details).to include('setting_name' => 'deadbeef')
-        expect(details).to include('setting_value' => 'foofoo')
-      end
+  describe '.unknown_setting?' do
+    let(:error) { double('Error').as_null_object }
+    let(:context) do
+      {
+        settings: {
+          'iDontExist' => 'foo'
+        }
+      }
     end
 
-    context 'with an invalid index name' do
-      before do
-        allow(configurator)
-          .to receive(:index_name)
-          .and_return('invalid_index_name')
-      end
-      let(:message) do
-        # rubocop:disable Metrics/LineLength
-        '400: Cannot GET to '\
-        'https://MY_APP_ID-dsn.algolia.net/1/indexes/invalid_index_name/settings?getVersion=2: '\
-        '{"message":"indexName is not valid","status":400} (400)'
-        # rubocop:enable Metrics/LineLength
-      end
+    subject { current.unknown_setting?(error, context) }
 
-      it { should include(name: 'invalid_index_name') }
-      it do
-        details = subject[:details]
-        expect(details).to include('index_name' => 'invalid_index_name')
-      end
+    before do
+      allow(current).to receive(:error_hash).and_return(error_hash)
     end
 
-    context 'with too many record' do
-      let(:message) do
-        '403: Cannot POST to '\
-        'https://MY_APP_ID.algolia.net/1/indexes/*/batch: '\
-        '{"message":"Record quota exceeded, change plan or delete records.",'\
-        '"status":403} (403)'
-      end
+    describe 'not matching' do
+      let(:error_hash) { false }
+      it { should eq false }
+    end
 
-      it { should include(name: 'too_many_records') }
+    context 'with non-existent setting' do
+      let(:error_hash) do
+        {
+          'message' => 'Invalid object attributes: iDontExist '\
+                       'near line:1 column:456'
+        }
+      end
+      it do
+        should include('setting_name' => 'iDontExist')
+        should include('setting_value' => 'foo')
+      end
+    end
+  end
+
+  describe '.invalid_index_name?' do
+    let(:error) { double('Error').as_null_object }
+
+    subject { current.invalid_index_name?(error) }
+
+    before do
+      allow(current).to receive(:error_hash).and_return(error_hash)
+      allow(configurator).to receive(:index_name).and_return('my_index')
+    end
+
+    describe 'not matching' do
+      let(:error_hash) { false }
+      it { should eq false }
+    end
+
+    context 'with invalid index name' do
+      let(:error_hash) do
+        {
+          'message' => 'indexName is not valid'
+        }
+      end
+      it do
+        should include('index_name' => 'my_index')
+      end
+    end
+  end
+
+  describe '.too_many_records?' do
+    let(:error) { double('Error').as_null_object }
+
+    subject { current.too_many_records?(error) }
+
+    before do
+      allow(current).to receive(:error_hash).and_return(error_hash)
+    end
+
+    describe 'not matching' do
+      let(:error_hash) { false }
+      it { should eq false }
+    end
+
+    context 'with quota exceeded' do
+      let(:error_hash) do
+        {
+          'message' => 'Record quota exceeded, change plan or delete records.'
+        }
+      end
+      it do
+        should eq({})
+      end
     end
   end
 end

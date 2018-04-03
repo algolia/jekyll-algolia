@@ -20,27 +20,67 @@ describe(Jekyll::Algolia::Indexer) do
       allow(configurator).to receive(:application_id).and_return('app_id')
       allow(configurator).to receive(:api_key).and_return('api_key')
       allow(::Algolia).to receive(:init)
-      allow(::Algolia::Index)
-        .to receive(:new)
-        .and_return(double('Algolia::Index', name: 'index_name'))
+      allow(::Algolia::Index).to receive(:new)
       allow(current).to receive(:set_user_agent)
     end
 
-    before { current.init }
+    describe 'should instanciate Algolia with application id and api_key' do
+      before { current.init }
 
-    it 'should instanciate Algolia search with application id and api_key' do
-      expect(::Algolia)
-        .to have_received(:init)
-        .with(hash_including(
-                application_id: 'app_id',
-                api_key: 'api_key'
-        ))
+      it do
+        expect(::Algolia)
+          .to have_received(:init)
+          .with(hash_including(
+                  application_id: 'app_id',
+                  api_key: 'api_key'
+          ))
+      end
     end
-    it 'should set the user agent' do
-      expect(current).to have_received(:set_user_agent)
+
+    describe 'should set the user agent' do
+      before { current.init }
+
+      it do
+        expect(current).to have_received(:set_user_agent)
+      end
     end
-    it 'should make the index accessible' do
-      expect(current.index.name).to eq 'index_name'
+
+    describe 'should make the index accessible' do
+      let(:index) { double('Algolia::Index') }
+
+      before do
+        allow(configurator)
+          .to receive(:index_name)
+          .and_return('index_name')
+        allow(::Algolia::Index)
+          .to receive(:new)
+          .with('index_name')
+          .and_return(index)
+
+        current.init
+      end
+      it do
+        expect(current.index).to eq index
+      end
+    end
+
+    describe 'should make the index for object ids accessible' do
+      let(:index_object_ids) { double('Algolia::Index') }
+
+      before do
+        allow(configurator)
+          .to receive(:index_name)
+          .and_return('index_name')
+        allow(::Algolia::Index)
+          .to receive(:new)
+          .with('index_name_object_ids')
+          .and_return(index_object_ids)
+
+        current.init
+      end
+      it do
+        expect(current.index_object_ids).to eq index_object_ids
+      end
     end
   end
 
@@ -70,24 +110,165 @@ describe(Jekyll::Algolia::Indexer) do
     end
   end
 
-  describe '.remote_object_ids' do
-    subject { current.remote_object_ids }
+  describe '.index_exist?' do
+    let(:index) { double('Algolia::Index') }
 
+    describe 'when getting settings correctly' do
+      subject { current.index_exist?(index) }
+
+      before do
+        allow(index).to receive(:get_settings).and_return({})
+      end
+
+      it { should eq true }
+    end
+
+    describe 'when throwing an error on settings' do
+      subject { current.index_exist?(index) }
+
+      before do
+        allow(index).to receive(:get_settings).and_raise
+      end
+
+      it { should eq false }
+    end
+  end
+
+  describe '.record_count' do
+    let(:index) { double('Algolia::Index') }
+    let(:nb_hits) { 12 }
+
+    subject { current.record_count(index) }
+
+    before do
+      expect(index)
+        .to receive(:search)
+        .with(
+          '',
+          hash_including(
+            distinct: false, # To get the correct number of records
+            hitsPerPage: 1, # To get a short response
+            attributesToRetrieve: 'objectID', # To get a short response
+          )
+        )
+        .and_return('nbHits' => nb_hits)
+    end
+
+    it { should eq 12 }
+  end
+
+  describe '.remote_object_ids_from_main_index' do
     let(:index) { double('Algolia::Index').as_null_object }
+    let(:progress_bar_instance) { double('ProgressBarInstance') }
+
+    subject { current.remote_object_ids_from_main_index }
 
     before do
       allow(current).to receive(:index).and_return(index)
-      expect(index)
+      allow(current).to receive(:record_count)
+      allow(progress_bar).to receive(:create).and_return(progress_bar_instance)
+      allow(progress_bar_instance).to receive(:increment)
+
+      allow(index)
         .to receive(:browse)
-        .with(attributesToRetrieve: 'objectID')
         .and_yield('objectID' => 'foo')
         .and_yield('objectID' => 'bar')
     end
 
-    it { should include('foo') }
-    it { should include('bar') }
-    # Should be ordered
-    it { should eq %w[bar foo] }
+    it 'should return all objectID sorted' do
+      should eq %w[bar foo]
+    end
+
+    describe 'should grab as many ids as possible' do
+      before do
+        current.remote_object_ids_from_main_index
+      end
+
+      it do
+        expect(index)
+          .to have_received(:browse)
+          .with(
+            attributesToRetrieve: 'objectID',
+            hitsPerPage: 1000
+          )
+      end
+    end
+
+    describe 'should display a progress bar' do
+      before do
+        allow(current).to receive(:record_count).and_return(12)
+        current.remote_object_ids_from_main_index
+      end
+
+      it do
+        expect(progress_bar)
+          .to have_received(:create)
+          .with(hash_including(
+                  total: 12
+          ))
+        expect(progress_bar_instance).to have_received(:increment).twice
+      end
+    end
+  end
+
+  describe '.remote_object_ids_from_dedicated_index' do
+    let(:index) { double('Algolia::Index') }
+
+    subject { current.remote_object_ids_from_dedicated_index }
+
+    before do
+      allow(current).to receive(:index_object_ids).and_return(index)
+
+      allow(index)
+        .to receive(:browse)
+        .and_yield('content' => %w[foo baz])
+        .and_yield('content' => ['bar'])
+    end
+
+    it 'should return all objectID sorted' do
+      should eq %w[bar baz foo]
+    end
+
+    describe 'should grab as many ids as possible' do
+      before do
+        current.remote_object_ids_from_dedicated_index
+      end
+      it do
+        expect(index)
+          .to have_received(:browse)
+          .with(
+            attributesToRetrieve: 'content',
+            hitsPerPage: 1000
+          )
+      end
+    end
+  end
+
+  describe '.remote_object_ids' do
+    subject { current.remote_object_ids }
+
+    before do
+      allow(current)
+        .to receive(:remote_object_ids_from_dedicated_index)
+        .and_return('dedicated')
+      allow(current)
+        .to receive(:remote_object_ids_from_main_index)
+        .and_return('main')
+      allow(current).to receive(:index_object_ids)
+      allow(current).to receive(:index_exist?).and_return(dedicated_index_exist)
+    end
+
+    describe 'from the main index' do
+      let(:dedicated_index_exist) { false }
+
+      it { should eq 'main' }
+    end
+
+    describe 'from the dedicated index' do
+      let(:dedicated_index_exist) { true }
+
+      it { should eq 'dedicated' }
+    end
   end
 
   describe '.local_object_ids' do
@@ -115,84 +296,168 @@ describe(Jekyll::Algolia::Indexer) do
 
   describe '.update_records' do
     let(:index) { double('Algolia::Index', name: 'my_index') }
-    let(:old_records_ids) { %w[abc] }
-    let(:new_records) { [{ 'objectID' => 'def' }] }
+    let(:index_object_ids) do
+      double('Algolia::Index', name: 'my_index_object_ids')
+    end
+    let(:remote_ids) { %w[bar baz] }
+    let(:records) do
+      [
+        { objectID: 'foo', name: 'foo' },
+        { objectID: 'bar', name: 'bar' }
+      ]
+    end
+
+    before do
+      allow(current).to receive(:index).and_return(index)
+      allow(current).to receive(:index_object_ids).and_return(index_object_ids)
+      allow(current).to receive(:remote_object_ids).and_return(remote_ids)
+      allow(current).to receive(:execute_operations)
+    end
+
+    context 'when nothing to update' do
+      let(:remote_ids) { [] }
+      before do
+        allow(current).to receive(:local_object_ids).and_return([])
+
+        current.update_records(records)
+      end
+
+      it do
+        expect(current)
+          .to_not have_received(:execute_operations)
+      end
+    end
+
+    context 'when running a dry run' do
+      let(:dry_run) { true }
+
+      before do
+        current.update_records(records)
+      end
+
+      it do
+        expect(current)
+          .to_not have_received(:execute_operations)
+      end
+    end
+
+    context 'batch operations' do
+      before do
+        current.update_records(records)
+      end
+
+      it 'should start with deleting old record' do
+        expected = {
+          action: 'deleteObject',
+          indexName: 'my_index',
+          body: { objectID: 'baz' }
+        }
+
+        expect(current)
+          .to have_received(:execute_operations) do |operations|
+            expect(operations[0]).to eq expected
+          end
+      end
+
+      it 'should add new items after deleting old ones' do
+        expected = {
+          action: 'addObject',
+          indexName: 'my_index',
+          body: { objectID: 'foo', name: 'foo' }
+        }
+
+        expect(current)
+          .to have_received(:execute_operations) do |operations|
+            expect(operations[1]).to eq expected
+          end
+      end
+
+      it 'should clear the object id index after updating the record' do
+        expected = {
+          action: 'clear',
+          indexName: 'my_index_object_ids'
+        }
+
+        expect(current)
+          .to have_received(:execute_operations) do |operations|
+            expect(operations[2]).to eq expected
+          end
+      end
+
+      it 'should add new objectIDs  to the dedicated index' do
+        expected = {
+          action: 'addObject',
+          indexName: 'my_index_object_ids',
+          body: { content: %w[bar foo] }
+        }
+
+        expect(current)
+          .to have_received(:execute_operations) do |operations|
+            expect(operations[3]).to eq expected
+          end
+      end
+    end
+
+    context 'storing ids by group of 100' do
+      let(:records) do
+        records = []
+        150.times { |i| records << { objectID: "foo-#{i}" } }
+        records
+      end
+
+      before do
+        current.update_records(records)
+      end
+
+      it 'should create two records for storing the object IDs' do
+        expect(current)
+          .to have_received(:execute_operations) do |operations|
+            dedicated_index_operations = operations.select do |operation|
+              operation[:indexName] == 'my_index_object_ids' &&
+              operation[:action] == 'addObject'
+            end
+            expect(dedicated_index_operations.length).to eq 2
+          end
+      end
+    end
+  end
+
+  describe '.execute_operations' do
     let(:indexing_batch_size) { 1000 }
+    let(:operations) { %w[foo bar] }
     let(:progress_bar_instance) { double('ProgressBarInstance') }
 
     before do
       allow(::Algolia).to receive(:batch!)
       allow(progress_bar).to receive(:create).and_return(progress_bar_instance)
       allow(progress_bar_instance).to receive(:increment)
-      allow(current).to receive(:index).and_return(index)
       allow(configurator)
         .to receive(:algolia)
         .with('indexing_batch_size')
         .and_return(indexing_batch_size)
     end
-    before { current.update_records(old_records_ids, new_records) }
-
-    context 'when running a dry run' do
-      let(:dry_run) { true }
-      it do
-        expect(::Algolia)
-          .to_not have_received(:batch!)
-      end
-    end
-
-    context 'when nothing to update' do
-      let(:old_records_ids) { [] }
-      let(:new_records) { [] }
-      it do
-        expect(::Algolia)
-          .to_not have_received(:batch!)
-      end
-    end
-
-    it 'should batch all operations (deletions first)' do
-      expect(::Algolia)
-        .to have_received(:batch!)
-        .with([
-                {
-                  action: 'deleteObject',
-                  indexName: 'my_index',
-                  body: { objectID: 'abc' }
-                },
-                {
-                  action: 'addObject',
-                  indexName: 'my_index',
-                  body: { 'objectID' => 'def' }
-                }
-              ])
-    end
 
     context 'split in smaller batches if too many operations' do
       let(:indexing_batch_size) { 1 }
+
+      before { current.execute_operations(operations) }
+
       it do
+        # expect(::Algolia).to have_received(:batch!).twice
         expect(::Algolia)
           .to have_received(:batch!)
           .ordered
-          .with([
-                  {
-                    action: 'deleteObject',
-                    indexName: 'my_index',
-                    body: { objectID: 'abc' }
-                  }
-                ])
+          .with(['foo'])
         expect(::Algolia)
           .to have_received(:batch!)
           .ordered
-          .with([
-                  {
-                    action: 'addObject',
-                    indexName: 'my_index',
-                    body: { 'objectID' => 'def' }
-                  }
-                ])
+          .with(['bar'])
       end
     end
 
     context 'progress bar' do
+      before { current.execute_operations(operations) }
+
       describe 'should not create it if only one batch' do
         it do
           expect(progress_bar).to_not have_received(:create)
@@ -207,62 +472,32 @@ describe(Jekyll::Algolia::Indexer) do
         end
       end
     end
-  end
 
-  describe '.run' do
-    let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
-    let(:remote_ids) { %w[foo baz] }
-    let(:index_name) { 'my_index' }
-    let(:index) { double('Algolia::Index', name: index_name) }
-    before do
-      allow(current).to receive(:init)
-      allow(current).to receive(:index).and_return(index)
-      allow(current).to receive(:update_settings)
-      allow(current).to receive(:remote_object_ids).and_return(remote_ids)
-      allow(current).to receive(:update_records)
-    end
-
-    context 'with records' do
-      before { current.run(records) }
-
-      it { expect(current).to have_received(:init) }
-      it do
-        expect(current)
-          .to have_received(:update_settings)
-      end
-      it do
-        expect(current)
-          .to have_received(:update_records)
-          .with(['baz'], [{ objectID: 'bar' }])
-      end
-    end
-
-    context 'with empty results' do
-      subject { -> { current.run(records) } }
-
-      let(:records) { [] }
-
+    context 'dispatch the error to the error handler' do
       before do
-        expect(configurator)
-          .to receive(:algolia)
-          .with('files_to_exclude')
-          .and_return(%w[foo.html bar.md])
-        expect(configurator)
-          .to receive(:algolia)
-          .with('nodes_to_index')
-          .and_return('p,li')
-        expect(logger)
-          .to receive(:known_message)
-          .with(
-            'no_records_found',
-            hash_including(
-              'files_to_exclude' => 'foo.html, bar.md',
-              'nodes_to_index' => 'p,li'
-            )
-          )
+        allow(::Algolia).to receive(:batch!).and_raise
+        allow(error_handler).to receive(:stop)
+
+        current.execute_operations(operations)
       end
 
-      it { is_expected.to raise_error SystemExit }
+      describe 'when only one slice' do
+        it do
+          expect(error_handler)
+            .to have_received(:stop)
+            .with(RuntimeError, operations: operations)
+        end
+      end
+
+      describe 'when split in several slices' do
+        let(:indexing_batch_size) { 1 }
+        let(:operations) { %w[foo bar] }
+        it do
+          expect(error_handler)
+            .to have_received(:stop)
+            .with(RuntimeError, operations: ['foo'])
+        end
+      end
     end
   end
 
@@ -498,6 +733,63 @@ describe(Jekyll::Algolia::Indexer) do
             "W:      - bar\n"\
             'W:      - baz'\
         )
+    end
+  end
+
+  describe '.run' do
+    let(:records) { [{ objectID: 'foo' }, { objectID: 'bar' }] }
+    let(:remote_ids) { %w[foo baz] }
+    let(:index_name) { 'my_index' }
+    let(:index) { double('Algolia::Index', name: index_name) }
+    before do
+      allow(current).to receive(:init)
+      allow(current).to receive(:index).and_return(index)
+      allow(current).to receive(:update_settings)
+      allow(current).to receive(:remote_object_ids).and_return(remote_ids)
+      allow(current).to receive(:update_records)
+    end
+
+    context 'with records' do
+      before { current.run(records) }
+
+      it { expect(current).to have_received(:init) }
+      it do
+        expect(current)
+          .to have_received(:update_settings)
+      end
+      it do
+        expect(current)
+          .to have_received(:update_records)
+          .with(records)
+      end
+    end
+
+    context 'with empty results' do
+      subject { -> { current.run(records) } }
+
+      let(:records) { [] }
+
+      before do
+        expect(configurator)
+          .to receive(:algolia)
+          .with('files_to_exclude')
+          .and_return(%w[foo.html bar.md])
+        expect(configurator)
+          .to receive(:algolia)
+          .with('nodes_to_index')
+          .and_return('p,li')
+        expect(logger)
+          .to receive(:known_message)
+          .with(
+            'no_records_found',
+            hash_including(
+              'files_to_exclude' => 'foo.html, bar.md',
+              'nodes_to_index' => 'p,li'
+            )
+          )
+      end
+
+      it { is_expected.to raise_error SystemExit }
     end
   end
 end

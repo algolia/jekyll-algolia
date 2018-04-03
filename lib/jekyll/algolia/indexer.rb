@@ -31,7 +31,6 @@ module Jekyll
       end
 
       # Public: Returns the Algolia index used to store object ids
-      # TOTEST
       def self.index_object_ids
         @index_object_ids
       end
@@ -42,12 +41,27 @@ module Jekyll
       #
       # Note: there is no API endpoint to do that, so we try to get the settings
       # instead, which will fail if the index does not exist
-      # TOTEST
       def self.index_exist?(index)
         index.get_settings
         true
       rescue StandardError
         false
+      end
+
+      # Public: Get the number of records in an index
+      #
+      # index - Index to check
+      #
+      # Note: We'll do an empty query search, to match everything, but we'll
+      # only return the objectID and one element, to get the shortest response
+      # possible. It will still contain the nbHits
+      def self.record_count(index)
+        index.search(
+          '',
+          attributesToRetrieve: 'objectID',
+          distinct: false,
+          hitsPerPage: 1
+        )['nbHits']
       end
 
       # Public: Set the User-Agent to send to the API
@@ -67,55 +81,65 @@ module Jekyll
         ::Algolia.set_extra_header('User-Agent', user_agent)
       end
 
+      # Public: Get an array of all object IDs stored in the main index
+      #
+      # Note: As this will be slow (grabbing them 1000 at a time), we display
+      # a progress bar.
+      def self.remote_object_ids_from_main_index
+        Logger.verbose("I:Inspecting existing records in index #{index.name}")
+
+        list = []
+
+        # As it might take some time, we display a progress bar
+        progress_bar = ProgressBar.create(
+          total: record_count(index),
+          format: 'Inspecting existing records (%j%%) |%B|'
+        )
+        begin
+          index.browse(
+            attributesToRetrieve: 'objectID',
+            hitsPerPage: 1000
+          ) do |hit|
+            list << hit['objectID']
+            progress_bar.increment
+          end
+        end
+
+        list.sort
+      end
+
+      # Public: Get an array of all the object ids, stored in the dedicated
+      # index
+      #
+      # Note: This will be very fast. Each record contain 100 object id, so it
+      # will fit in one call each time.
+      def self.remote_object_ids_from_dedicated_index
+        list = []
+        begin
+          index_object_ids.browse(
+            attributesToRetrieve: 'content',
+            hitsPerPage: 1000
+          ) do |hit|
+            list += hit['content']
+          end
+        end
+
+        list.sort
+      end
+
       # Public: Returns an array of all the objectIDs in the index
       #
       # Note: We use a dedicated index to store the objectIDs for faster
       # browsing, but if the index does not exist we read the main index.
       def self.remote_object_ids
         Logger.log('I:Getting list of existing records')
-        list = []
-        hits_per_page = 1000
 
+        # Fast version, using the dedicated index
         has_dedicated_index = index_exist?(index_object_ids)
-        if has_dedicated_index
-          begin
-            index_object_ids.browse(
-              attributesToRetrieve: 'content',
-              hitsPerPage: hits_per_page
-            ) do |hit|
-              list += hit['content']
-            end
-          end
-        else
-          # Slow versio, browsing the full index
-          Logger.verbose(
-            "I:Inspecting existing records in index #{index.name}..."
-          )
+        return remote_object_ids_from_dedicated_index if has_dedicated_index
 
-          # As it might take some time, we display a progress bar
-          max_hits = index.search(
-            '',
-            attributesToRetrieve: 'objectID',
-            distinct: false,
-            hitsPerPage: 1
-          )['nbHits']
-
-          progress_bar = ProgressBar.create(
-            total: max_hits,
-            format: 'Inspecting existing records (%j%%) |%B|'
-          )
-          begin
-            index.browse(
-              attributesToRetrieve: 'objectID',
-              hitsPerPage: hits_per_page
-            ) do |hit|
-              list << hit['objectID']
-              progress_bar.increment
-            end
-          end
-        end
-
-        list.sort
+        # Slow version, browsing the full index
+        remote_object_ids_from_main_index
       end
 
       # Public: Returns an array of the local objectIDs
@@ -137,41 +161,43 @@ module Jekyll
         remote_ids = remote_object_ids
         local_ids = local_object_ids(records)
 
-        # We need the list of objectIDs for deletion
-        old_records_ids = remote_ids - local_ids
-
-        # For addition, we need the full records
-        # We build a first hash of all the records we have, with access by
-        new_records_ids = local_ids - remote_ids
-        cache = Hash[records.map { |record| [record[:objectID], record] }]
-        new_records = new_records_ids.map { |id| cache[id] }
+        # Making a diff, to see what to add and what to delete
+        ids_to_delete = remote_ids - local_ids
+        ids_to_add = local_ids - remote_ids
 
         # Stop if nothing to change
-        if old_records_ids.empty? && new_records.empty?
+        if ids_to_delete.empty? && ids_to_add.empty?
           Logger.log('I:Content is already up to date.')
           return
         end
 
         Logger.log("I:Updating records in index #{index.name}...")
-        Logger.log("I:Records to delete: #{old_records_ids.length}")
-        Logger.log("I:Records to add:    #{new_records.length}")
+        Logger.log("I:Records to delete: #{ids_to_delete.length}")
+        Logger.log("I:Records to add:    #{ids_to_add.length}")
         return if Configurator.dry_run?
 
-        # We group delete and add operations into the same batch. Delete
-        # operations should still come first, to avoid hitting an overquota too
-        # soon
+        # Transforming ids into real records to add
+        records_by_id = Hash[records.map { |r| [r[:objectID], r] }]
+        records_to_add = ids_to_add.map { |id| records_by_id[id] }
+
+        # We group all operations into one batch
         operations = []
-        old_records_ids.each do |object_id|
+
+        # Deletion operations come first, to avoid hitting an overquota too soon
+        # if it can be avoided
+        ids_to_delete.each do |object_id|
           operations << {
             action: 'deleteObject', indexName: index.name,
             body: { objectID: object_id }
           }
         end
-        operations += new_records.map do |new_record|
+        # Then we add the new records
+        operations += records_to_add.map do |new_record|
           { action: 'addObject', indexName: index.name, body: new_record }
         end
 
-        # We batch as well the update to the index holding the object ids
+        # We also clear the dedicated index holding the object ids and push the
+        # new list of ids
         operations << { action: 'clear', indexName: index_object_ids.name }
         local_ids.each_slice(100).each do |ids|
           operations << {
@@ -183,6 +209,12 @@ module Jekyll
         execute_operations(operations)
       end
 
+      # Public: Execute a serie of operations in a batch
+      #
+      # operations - Operations to batch
+      #
+      # Note: Will split the batch in several calls if too big, and will display
+      # a progress bar if this happens
       def self.execute_operations(operations)
         # Run the batches in slices if they are too large
         batch_size = Configurator.algolia('indexing_batch_size')
@@ -202,10 +234,7 @@ module Jekyll
 
             progress_bar.increment if should_have_progress_bar
           rescue StandardError => error
-            records = slice.map do |record|
-              record[:body]
-            end
-            ErrorHandler.stop(error, records: records)
+            ErrorHandler.stop(error, operations: slice)
           end
         end
       end

@@ -49,7 +49,7 @@ module Jekyll
           invalid_credentials
           record_too_big
           too_many_records
-          unknown_settings
+          unknown_setting
           invalid_index_name
         ]
 
@@ -135,6 +135,24 @@ module Jekyll
         hash
       end
 
+      # Public: Returns a string explaining which attributes are the largest in
+      # the record
+      #
+      # record - The record hash to analyze
+      #
+      # This will be used on the `record_too_big` error, to guide users in
+      # finding which record is causing trouble
+      def self.readable_largest_record_keys(record)
+        keys = Hash[record.map { |key, value| [key, value.to_s.length] }]
+        largest_keys = keys.sort_by { |_, value| value }.reverse[0..2]
+        output = []
+        largest_keys.each do |key, size|
+          size = Filesize.from("#{size} B").to_s('Kb')
+          output << "#{key} (#{size})"
+        end
+        output.join(', ')
+      end
+
       # Public: Check if the application id is available
       #
       # _context - Not used
@@ -162,6 +180,7 @@ module Jekyll
       # Application ID and API key submitted don't match any credentials known
       def self.invalid_credentials?(error, _context = {})
         details = error_hash(error.message)
+        return false if details == false
 
         if details['message'] != 'Invalid Application-ID or API key'
           return false
@@ -170,24 +189,6 @@ module Jekyll
         {
           'application_id' => details['application_id']
         }
-      end
-
-      # Public: Returns a string explaining which attributes are the largest in
-      # the record
-      #
-      # record - The record hash to analyze
-      #
-      # This will be used on the `record_too_big` error, to guide users in
-      # finding which record is causing trouble
-      def self.readable_largest_record_keys(record)
-        keys = Hash[record.map { |key, value| [key, value.to_s.length] }]
-        largest_keys = keys.sort_by { |_, value| value }.reverse[0..2]
-        output = []
-        largest_keys.each do |key, size|
-          size = Filesize.from("#{size} B").to_s('Kb')
-          output << "#{key} (#{size})"
-        end
-        output.join(', ')
       end
 
       # Public: Check if the sent records are not too big
@@ -199,6 +200,7 @@ module Jekyll
       # informations about it so the user can debug it.
       def self.record_too_big?(error, context = {})
         details = error_hash(error.message)
+        return false if details == false
 
         message = details['message']
         return false if message !~ /^Record .* is too big .*/
@@ -208,8 +210,11 @@ module Jekyll
         size = Filesize.from("#{size} B").to_s('Kb')
         object_id = details['objectID']
 
-        # Getting record details
-        record = Utils.find_by_key(context[:records], :objectID, object_id)
+        # Finding the record in all the operations
+        operation = context[:operations].find do |o|
+          o[:action] == 'addObject' && o[:body][:objectID] == object_id
+        end
+        record = operation[:body]
         probable_wrong_keys = readable_largest_record_keys(record)
 
         # Writing the full record to disk for inspection
@@ -237,8 +242,9 @@ module Jekyll
       # The API will block any call that tries to update a setting value that is
       # not available. We'll tell the user which one so they can fix their
       # issue.
-      def self.unknown_settings?(error, context = {})
+      def self.unknown_setting?(error, context = {})
         details = error_hash(error.message)
+        return false if details == false
 
         message = details['message']
         return false if message !~ /^Invalid object attributes.*/
@@ -259,6 +265,7 @@ module Jekyll
       # Some characters are forbidden in index names
       def self.invalid_index_name?(error, _context = {})
         details = error_hash(error.message)
+        return false if details == false
 
         message = details['message']
         return false if message !~ /^indexName is not valid.*/
@@ -273,6 +280,7 @@ module Jekyll
       # We're trying to push too many records and it goes over quota
       def self.too_many_records?(error, _context = {})
         details = error_hash(error.message)
+        return false if details == false
 
         message = details['message']
         return false if message !~ /^Record quota exceeded.*/

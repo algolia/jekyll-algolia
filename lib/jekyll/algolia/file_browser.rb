@@ -50,6 +50,7 @@ module Jekyll
       def self.indexable?(file)
         return false if static_file?(file)
         return false if is_404?(file)
+        return false if redirect?(file)
         return false unless allowed_extension?(file)
         return false if excluded_from_config?(file)
         return false if excluded_from_hook?(file)
@@ -79,6 +80,17 @@ module Jekyll
         ['404.md', '404.html'].include?(File.basename(file.path))
       end
       # rubocop:enable Naming/PredicateName
+
+      # Public: Check if the file is redirect page
+      #
+      # file - The Jekyll file
+      #
+      # Plugins like jekyll-redirect-from add dynamic pages that only contain
+      # an HTML meta refresh. We need to exclude those files from indexing.
+      # https://github.com/jekyll/jekyll-redirect-from
+      def self.redirect?(file)
+        file.respond_to?(:name) && file.name == 'redirect.html'
+      end
 
       # Public: Check if the file has one of the allowed extensions
       #

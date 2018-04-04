@@ -94,6 +94,7 @@ describe(Jekyll::Algolia::FileBrowser) do
     let(:file) { double('File') }
     let(:static_file) { false }
     let(:is_404) { false }
+    let(:redirect) { false }
     let(:allowed_extension) { true }
     let(:excluded_from_config) { false }
     let(:excluded_from_hook) { false }
@@ -103,6 +104,7 @@ describe(Jekyll::Algolia::FileBrowser) do
     before do
       allow(current).to receive(:static_file?).and_return(static_file)
       allow(current).to receive(:is_404?).and_return(is_404)
+      allow(current).to receive(:redirect?).and_return(redirect)
       allow(current)
         .to receive(:allowed_extension?)
         .and_return(allowed_extension)
@@ -120,6 +122,10 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
     context 'with a 404 page' do
       let(:is_404) { true }
+      it { should eq false }
+    end
+    context 'with a redirect page' do
+      let(:redirect) { true }
       it { should eq false }
     end
     context 'with a disallowed extension' do
@@ -158,7 +164,7 @@ describe(Jekyll::Algolia::FileBrowser) do
     end
   end
 
-  describe 'is_404?' do
+  describe '.is_404?' do
     let(:file) { double('File', path: path) }
 
     subject { current.is_404?(file) }
@@ -171,9 +177,28 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:path) { './path/to/404.html' }
       it { should eq true }
     end
-    describe 'anything elese' do
+    describe 'anything else' do
       let(:path) { './path/to/foobar.md' }
       it { should eq false }
+    end
+  end
+
+  describe '.redirect?' do
+    subject { current.redirect?(file) }
+
+    describe 'file with no name' do
+      let(:file) { double('File') }
+      it { should eq false }
+    end
+
+    describe 'file with a name, but not a redirect' do
+      let(:file) { double('File', name: 'foo.html') }
+      it { should eq false }
+    end
+
+    describe 'redirect file' do
+      let(:file) { double('File', name: 'redirect.html') }
+      it { should eq true }
     end
   end
 

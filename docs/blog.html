@@ -235,6 +235,11 @@ previous code. You’ll have to create the <code>_includes</code> directory if i
 exist yet.</p>
 <p>In that file, we’ll add the following content. It’s a lot of code in one go, but
 don’t worry, we’ll explain it all right after.</p>
+<p><em>Note that for the sake of readability we will be using JavaScript features
+that might not be available in all browsers (namely <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">const</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">template
+literals</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">arrow functions</a>). If you need compatibility with browsers
+that do not ship those features, we recommend you use <a href="https://babeljs.io/">Babel</a> to
+automatically transpile your code.</em></p>
 <pre class="code-sample cm-s-mdn-like codeMirror htmlmixed" data-code-type="Code"><div class="code-wrap"><code><span class="cm-comment">&lt;!-- Including InstantSearch.js library and styling --&gt;</span>
 <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">script</span> <span class="cm-attribute">src</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js&quot;</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">script</span><span class="cm-tag cm-bracket">&gt;</span>
 <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">link</span> <span class="cm-attribute">rel</span>=<span class="cm-string">&quot;stylesheet&quot;</span> <span class="cm-attribute">type</span>=<span class="cm-string">&quot;text/css&quot;</span> <span class="cm-attribute">href</span>=<span class="cm-string">&quot;https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.css&quot;</span><span class="cm-tag cm-bracket">&gt;</span>

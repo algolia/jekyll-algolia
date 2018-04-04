@@ -266,7 +266,7 @@ the whole indexing process (check the following table for more details).</p>
 </tr>
 <tr>
 <td>Arguments</td>
-<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="http://www.nokogiri.org">Nokogiri</a> representation of the HTML node used to extract the content</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Any data defined in the <code>_data</code> folder</li><li><code>context.config</code>: Settings defined in  <code>_config.yml</code></li><li><code>data.collections</code>: Custom collections and posts</li></ul></li></ul></td>
+<td><ul><li><code>record</code>: A hash of the record that will be pushed</li><li><code>node</code>: A <a href="https://github.com/sparklemotion/nokogiri/wiki/Cheat-sheet">Nokogiri</a> representation of the HTML node used to extract the content</li><li><code>context</code>: More information about the whole website. <ul><li><code>context.data</code>: Any data defined in the <code>_data</code> folder</li><li><code>context.config</code>: Settings defined in  <code>_config.yml</code></li><li><code>data.collections</code>: Custom collections and posts</li></ul></li></ul></td>
 </tr>
 <tr>
 <td>Expected returns</td>
@@ -280,7 +280,7 @@ the whole indexing process (check the following table for more details).</p>
     <span class="cm-keyword">module</span> <span class="cm-tag">Hooks</span>
       <span class="cm-keyword">def</span> <span class="cm-keyword">self</span><span class="cm-operator">.</span><span class="cm-property">before_indexing_each</span>(<span class="cm-variable">record</span>, <span class="cm-variable">node</span>, <span class="cm-variable">context</span>)
         <span class="cm-comment"># Do not index deprecation warnings</span>
-        <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">attr</span>(<span class="cm-string">&#39;class&#39;</span>) <span class="cm-operator">=~</span> <span class="cm-string">&#39;deprecation-notice&#39;</span>
+        <span class="cm-keyword">return</span> <span class="cm-keyword">nil</span> <span class="cm-keyword">if</span> <span class="cm-variable">node</span><span class="cm-operator">.</span><span class="cm-property">matches?</span>(<span class="cm-string">&#39;.deprecation-notice&#39;</span>)
         <span class="cm-comment"># Add my name as an author to each record</span>
         <span class="cm-variable">record</span>[<span class="cm-atom">:author</span>] <span class="cm-operator">=</span> <span class="cm-string">&#39;Myself&#39;</span>
 

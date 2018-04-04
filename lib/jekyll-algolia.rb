@@ -34,6 +34,9 @@ module Jekyll
 
       Configurator.warn_of_deprecated_options
 
+      # Register our own tags to overwrite the default tags
+      Liquid::Template.register_tag('link', JekyllAlgoliaLink)
+
       if Configurator.dry_run?
         Logger.log('W:==== THIS IS A DRY RUN ====')
         Logger.log('W:  - No records will be pushed to your index')
@@ -70,6 +73,8 @@ module Jekyll
       # We expose a way to reset the collection, as it will be needed in the
       # tests
       attr_writer :collections
+
+      attr_reader :original_site_files
 
       # Public: Overwriting the parent method
       #
@@ -143,6 +148,12 @@ module Jekyll
       # Public: Removing non-indexable Pages, Posts and Documents from the
       # internals
       def keep_only_indexable_files
+        @original_site_files = {
+          pages: @pages,
+          collections: @collections,
+          static_files: @static_file
+        }
+
         @pages = indexable_list(@pages)
 
         # Applying to each collections
@@ -193,5 +204,35 @@ module Jekyll
         Indexer.run(records)
       end
     end
+  end
+end
+
+# The default `link` tag allow to link to a specific page, using its relative
+# path. Because we might not be indexing the destination of the link, we might
+# not have the representation of the page in our data. If that happens, the
+# `link` tag fails.
+#
+# To fix that we'll overwrite the default `link` tag to loop over a backup copy
+# of the original files (before we clean it for indexing)
+class JekyllAlgoliaLink < Jekyll::Tags::Link
+  def render(context)
+    original_files = context.registers[:site].original_site_files
+
+    original_files[:pages].each do |page|
+      return page.url if page.relative_path == @relative_path
+    end
+
+    original_files[:collections].each do |collection|
+      collection.each do |item|
+        return item.url if item.relative_path == @relative_path
+      end
+    end
+
+    original_files[:static_files].each do |asset|
+      return asset.url if asset.relative_path == @relative_path
+      return asset.url if asset.relative_path == "/#{@relative_path}"
+    end
+
+    '/'
   end
 end

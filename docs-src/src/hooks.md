@@ -92,7 +92,7 @@ module Jekyll
     module Hooks
       def self.before_indexing_each(record, node, context)
         # Do not index deprecation warnings
-        return nil if node.attr('class') =~ 'deprecation-notice'
+        return nil if node.matches?('.deprecation-notice')
         # Add my name as an author to each record
         record[:author] = 'Myself'
 
@@ -153,5 +153,5 @@ end
 [4]: ./options.html#files-to-exclude
 [5]: http://www.nokogiri.org
 [6]: ./options.html#nodes-to-index
-[7]: http://www.nokogiri.org
+[7]: https://github.com/sparklemotion/nokogiri/wiki/Cheat-sheet
 [8]: hooks.html#hook-before-indexing-each

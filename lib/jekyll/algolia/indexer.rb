@@ -4,6 +4,7 @@ require 'algoliasearch'
 require 'yaml'
 require 'algolia_html_extractor'
 
+# rubocop:disable Metrics/ModuleLength
 module Jekyll
   module Algolia
     # Module to push records to Algolia and configure the index
@@ -18,7 +19,8 @@ module Jekyll
         )
         index_name = Configurator.index_name
         @index = ::Algolia::Index.new(index_name)
-        @index_object_ids = ::Algolia::Index.new("#{index_name}_object_ids")
+        index_object_ids_name = Configurator.index_object_ids_name
+        @index_object_ids = ::Algolia::Index.new(index_object_ids_name)
 
         set_user_agent
 
@@ -62,6 +64,8 @@ module Jekyll
           distinct: false,
           hitsPerPage: 1
         )['nbHits']
+      rescue StandardError
+        0
       end
 
       # Public: Set the User-Agent to send to the API
@@ -103,6 +107,8 @@ module Jekyll
             list << hit['objectID']
             progress_bar.increment
           end
+        rescue StandardError
+          return []
         end
 
         list.sort
@@ -122,6 +128,8 @@ module Jekyll
           ) do |hit|
             list += hit['content']
           end
+        rescue StandardError
+          return []
         end
 
         list.sort
@@ -165,45 +173,55 @@ module Jekyll
         ids_to_delete = remote_ids - local_ids
         ids_to_add = local_ids - remote_ids
 
+        # What changes should we do to the indexes?
+        has_records_to_update = !ids_to_delete.empty? || !ids_to_add.empty?
+        has_dedicated_index = index_exist?(index_object_ids)
+
         # Stop if nothing to change
-        if ids_to_delete.empty? && ids_to_add.empty?
+        if !has_records_to_update && has_dedicated_index
           Logger.log('I:Content is already up to date.')
           return
         end
 
-        Logger.log("I:Updating records in index #{index.name}...")
-        Logger.log("I:Records to delete: #{ids_to_delete.length}")
-        Logger.log("I:Records to add:    #{ids_to_add.length}")
-        return if Configurator.dry_run?
-
-        # Transforming ids into real records to add
-        records_by_id = Hash[records.map { |r| [r[:objectID], r] }]
-        records_to_add = ids_to_add.map { |id| records_by_id[id] }
-
         # We group all operations into one batch
         operations = []
 
-        # Deletion operations come first, to avoid hitting an overquota too soon
-        # if it can be avoided
-        ids_to_delete.each do |object_id|
-          operations << {
-            action: 'deleteObject', indexName: index.name,
-            body: { objectID: object_id }
-          }
-        end
-        # Then we add the new records
-        operations += records_to_add.map do |new_record|
-          { action: 'addObject', indexName: index.name, body: new_record }
+        # We update records only if there are records to update
+        if has_records_to_update
+          Logger.log("I:Updating records in index #{index.name}...")
+          Logger.log("I:Records to delete: #{ids_to_delete.length}")
+          Logger.log("I:Records to add:    #{ids_to_add.length}")
+
+          # Transforming ids into real records to add
+          records_by_id = Hash[records.map { |r| [r[:objectID], r] }]
+          records_to_add = ids_to_add.map { |id| records_by_id[id] }
+
+          # Deletion operations come first, to avoid hitting an overquota too
+          # soon if it can be avoided
+          ids_to_delete.each do |object_id|
+            operations << {
+              action: 'deleteObject', indexName: index.name,
+              body: { objectID: object_id }
+            }
+          end
+          # Then we add the new records
+          operations += records_to_add.map do |new_record|
+            { action: 'addObject', indexName: index.name, body: new_record }
+          end
         end
 
-        # We also clear the dedicated index holding the object ids and push the
-        # new list of ids
-        operations << { action: 'clear', indexName: index_object_ids.name }
-        local_ids.each_slice(100).each do |ids|
-          operations << {
-            action: 'addObject', indexName: index_object_ids.name,
-            body: { content: ids }
-          }
+        # We update the dedicated index everytime we update records, but we also
+        # create it if it does not exist
+        should_update_dedicated_index = has_records_to_update ||
+                                        !has_dedicated_index
+        if should_update_dedicated_index
+          operations << { action: 'clear', indexName: index_object_ids.name }
+          local_ids.each_slice(100).each do |ids|
+            operations << {
+              action: 'addObject', indexName: index_object_ids.name,
+              body: { content: ids }
+            }
+          end
         end
 
         execute_operations(operations)
@@ -216,6 +234,9 @@ module Jekyll
       # Note: Will split the batch in several calls if too big, and will display
       # a progress bar if this happens
       def self.execute_operations(operations)
+        return if Configurator.dry_run?
+        return if operations.empty?
+
         # Run the batches in slices if they are too large
         batch_size = Configurator.algolia('indexing_batch_size')
         slices = operations.each_slice(batch_size).to_a
@@ -364,3 +385,4 @@ module Jekyll
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

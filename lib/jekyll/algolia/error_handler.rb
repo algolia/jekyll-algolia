@@ -187,7 +187,9 @@ module Jekyll
         end
 
         {
-          'application_id' => details['application_id']
+          'application_id' => details['application_id'],
+          'index_name' => Configurator.index_name,
+          'index_object_ids_name' => Configurator.index_object_ids_name
         }
       end
 

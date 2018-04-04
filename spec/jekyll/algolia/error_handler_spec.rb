@@ -224,7 +224,17 @@ describe(Jekyll::Algolia::ErrorHandler) do
           'application_id' => 'MY_APP_ID'
         }
       end
-      it { should eq('application_id' => 'MY_APP_ID') }
+      before do
+        allow(configurator)
+          .to receive(:index_name)
+          .and_return('foo')
+        allow(configurator)
+          .to receive(:index_object_ids_name)
+          .and_return('foo_object_ids')
+      end
+      it { should include('application_id' => 'MY_APP_ID') }
+      it { should include('index_name' => 'foo') }
+      it { should include('index_object_ids_name' => 'foo_object_ids') }
     end
   end
 

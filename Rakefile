@@ -86,8 +86,10 @@ namespace 'test' do
       task.pattern = [
         # Check that the default build has the expected results
         'spec/integration/main_spec.rb',
-        # Now check various config and its impact on the settings
-        'spec/integration/settings_spec.rb'
+        # Check various config and its impact on the settings
+        'spec/integration/settings_spec.rb',
+        # Check that object ids are stored in dedicated index
+        'spec/integration/object_ids_spec.rb'
       ]
     end
     # Live-reloading integration tests

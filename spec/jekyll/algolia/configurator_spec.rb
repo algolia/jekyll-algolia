@@ -159,6 +159,18 @@ describe(Jekyll::Algolia::Configurator) do
     end
   end
 
+  describe '.index_object_ids_name' do
+    subject { current.index_object_ids_name }
+
+    before do
+      allow(current).to receive(:index_name).and_return('my_index')
+    end
+
+    describe 'should get the name from the main index' do
+      it { should eq 'my_index_object_ids' }
+    end
+  end
+
   describe '.application_id' do
     subject { current.application_id }
 

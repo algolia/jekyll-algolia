@@ -69,11 +69,11 @@ describe(Jekyll::Algolia::Indexer) do
 
       before do
         allow(configurator)
-          .to receive(:index_name)
-          .and_return('index_name')
+          .to receive(:index_object_ids_name)
+          .and_return('foo')
         allow(::Algolia::Index)
           .to receive(:new)
-          .with('index_name_object_ids')
+          .with('foo')
           .and_return(index_object_ids)
 
         current.init
@@ -140,21 +140,31 @@ describe(Jekyll::Algolia::Indexer) do
 
     subject { current.record_count(index) }
 
-    before do
-      expect(index)
-        .to receive(:search)
-        .with(
-          '',
-          hash_including(
-            distinct: false, # To get the correct number of records
-            hitsPerPage: 1, # To get a short response
-            attributesToRetrieve: 'objectID', # To get a short response
+    describe 'when index exists' do
+      before do
+        expect(index)
+          .to receive(:search)
+          .with(
+            '',
+            hash_including(
+              distinct: false, # To get the correct number of records
+              hitsPerPage: 1, # To get a short response
+              attributesToRetrieve: 'objectID', # To get a short response
+            )
           )
-        )
-        .and_return('nbHits' => nb_hits)
+          .and_return('nbHits' => nb_hits)
+      end
+
+      it { should eq 12 }
     end
 
-    it { should eq 12 }
+    describe 'when index does not exist' do
+      before do
+        allow(index).to receive(:search).and_raise
+      end
+
+      it { should eq 0 }
+    end
   end
 
   describe '.remote_object_ids_from_main_index' do
@@ -209,6 +219,16 @@ describe(Jekyll::Algolia::Indexer) do
         expect(progress_bar_instance).to have_received(:increment).twice
       end
     end
+
+    context 'when no index' do
+      before do
+        allow(index)
+          .to receive(:browse)
+          .and_raise
+      end
+
+      it { should eq [] }
+    end
   end
 
   describe '.remote_object_ids_from_dedicated_index' do
@@ -241,6 +261,16 @@ describe(Jekyll::Algolia::Indexer) do
             hitsPerPage: 1000
           )
       end
+    end
+
+    context 'when no index' do
+      before do
+        allow(index)
+          .to receive(:browse)
+          .and_raise
+      end
+
+      it { should eq [] }
     end
   end
 
@@ -295,10 +325,9 @@ describe(Jekyll::Algolia::Indexer) do
   end
 
   describe '.update_records' do
-    let(:index) { double('Algolia::Index', name: 'my_index') }
-    let(:index_object_ids) do
-      double('Algolia::Index', name: 'my_index_object_ids')
-    end
+    let(:index) { double('Algolia::Index', name: 'main') }
+    let(:index_object_ids) { double('Algolia::Index', name: 'dedicated') }
+    let(:has_dedicated_index) { false }
     let(:remote_ids) { %w[bar baz] }
     let(:records) do
       [
@@ -312,32 +341,53 @@ describe(Jekyll::Algolia::Indexer) do
       allow(current).to receive(:index_object_ids).and_return(index_object_ids)
       allow(current).to receive(:remote_object_ids).and_return(remote_ids)
       allow(current).to receive(:execute_operations)
+      allow(current)
+        .to receive(:index_exist?)
+        .with(index_object_ids)
+        .and_return(has_dedicated_index)
     end
 
     context 'when nothing to update' do
-      let(:remote_ids) { [] }
       before do
-        allow(current).to receive(:local_object_ids).and_return([])
+        allow(current).to receive(:local_object_ids).and_return(local_ids)
 
         current.update_records(records)
       end
-
-      it do
-        expect(current)
-          .to_not have_received(:execute_operations)
+      context 'when records to update and no dedicated index' do
+        let(:local_ids) { ['foo'] }
+        let(:remote_ids) { [] }
+        let(:has_dedicated_index) { false }
+        it do
+          expect(current)
+            .to have_received(:execute_operations)
+        end
       end
-    end
-
-    context 'when running a dry run' do
-      let(:dry_run) { true }
-
-      before do
-        current.update_records(records)
+      context 'when records to update and a dedicated index exist' do
+        let(:local_ids) { ['foo'] }
+        let(:remote_ids) { [] }
+        let(:has_dedicated_index) { true }
+        it do
+          expect(current)
+            .to have_received(:execute_operations)
+        end
       end
-
-      it do
-        expect(current)
-          .to_not have_received(:execute_operations)
+      context 'when no records to update and no dedicated index' do
+        let(:local_ids) { [] }
+        let(:remote_ids) { [] }
+        let(:has_dedicated_index) { false }
+        it do
+          expect(current)
+            .to have_received(:execute_operations)
+        end
+      end
+      context 'when no records to update but a dedicated index exist' do
+        let(:local_ids) { [] }
+        let(:remote_ids) { [] }
+        let(:has_dedicated_index) { true }
+        it do
+          expect(current)
+            .to_not have_received(:execute_operations)
+        end
       end
     end
 
@@ -349,7 +399,7 @@ describe(Jekyll::Algolia::Indexer) do
       it 'should start with deleting old record' do
         expected = {
           action: 'deleteObject',
-          indexName: 'my_index',
+          indexName: 'main',
           body: { objectID: 'baz' }
         }
 
@@ -362,7 +412,7 @@ describe(Jekyll::Algolia::Indexer) do
       it 'should add new items after deleting old ones' do
         expected = {
           action: 'addObject',
-          indexName: 'my_index',
+          indexName: 'main',
           body: { objectID: 'foo', name: 'foo' }
         }
 
@@ -375,7 +425,7 @@ describe(Jekyll::Algolia::Indexer) do
       it 'should clear the object id index after updating the record' do
         expected = {
           action: 'clear',
-          indexName: 'my_index_object_ids'
+          indexName: 'dedicated'
         }
 
         expect(current)
@@ -387,7 +437,7 @@ describe(Jekyll::Algolia::Indexer) do
       it 'should add new objectIDs  to the dedicated index' do
         expected = {
           action: 'addObject',
-          indexName: 'my_index_object_ids',
+          indexName: 'dedicated',
           body: { content: %w[bar foo] }
         }
 
@@ -395,6 +445,36 @@ describe(Jekyll::Algolia::Indexer) do
           .to have_received(:execute_operations) do |operations|
             expect(operations[3]).to eq expected
           end
+      end
+    end
+
+    context 'when no update to the records' do
+      let(:local_ids) { %w[foo bar] }
+      let(:remote_ids) { %w[foo bar] }
+      before do
+        allow(current).to receive(:local_object_ids).and_return(local_ids)
+
+        current.update_records(records)
+      end
+
+      context 'do not update the dedicated index if already exist' do
+        let(:has_dedicated_index) { true }
+        it do
+          expect(current).to_not have_received(:execute_operations)
+        end
+      end
+
+      context 'create the dedicated index if does not yet exist' do
+        let(:has_dedicated_index) { false }
+        it do
+          expect(current)
+            .to have_received(:execute_operations) do |operations|
+              expect(operations[0]).to include(action: 'clear')
+              expect(operations[0]).to include(indexName: 'dedicated')
+              expect(operations[1]).to include(action: 'addObject')
+              expect(operations[1]).to include(body: { content: %w[foo bar] })
+            end
+        end
       end
     end
 
@@ -413,7 +493,7 @@ describe(Jekyll::Algolia::Indexer) do
         expect(current)
           .to have_received(:execute_operations) do |operations|
             dedicated_index_operations = operations.select do |operation|
-              operation[:indexName] == 'my_index_object_ids' &&
+              operation[:indexName] == 'dedicated' &&
               operation[:action] == 'addObject'
             end
             expect(dedicated_index_operations.length).to eq 2
@@ -437,13 +517,32 @@ describe(Jekyll::Algolia::Indexer) do
         .and_return(indexing_batch_size)
     end
 
+    context 'when running in dry run mode' do
+      let(:dry_run) { true }
+
+      before { current.execute_operations(operations) }
+
+      it do
+        expect(::Algolia).to_not have_received(:batch!)
+      end
+    end
+
+    context 'when running an empty set of operations' do
+      let(:operations) { [] }
+
+      before { current.execute_operations(operations) }
+
+      it do
+        expect(::Algolia).to_not have_received(:batch!)
+      end
+    end
+
     context 'split in smaller batches if too many operations' do
       let(:indexing_batch_size) { 1 }
 
       before { current.execute_operations(operations) }
 
       it do
-        # expect(::Algolia).to have_received(:batch!).twice
         expect(::Algolia)
           .to have_received(:batch!)
           .ordered

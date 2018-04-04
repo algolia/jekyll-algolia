@@ -148,6 +148,11 @@ module Jekyll
         ENV['ALGOLIA_INDEX_NAME'] || algolia('index_name')
       end
 
+      # Public: Return the name of the index used to store the object ids
+      def self.index_object_ids_name
+        "#{index_name}_object_ids"
+      end
+
       # Public: Get the index settings
       #
       # This will be a merge of default settings and the one defined in the

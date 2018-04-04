@@ -74,6 +74,12 @@ exist yet.
 In that file, we'll add the following content. It's a lot of code in one go, but
 don't worry, we'll explain it all right after.
 
+_Note that for the sake of readability we will be using JavaScript features
+that might not be available in all browsers (namely [const][5], [template
+literals][6] and [arrow functions][7]). If you need compatibility with browsers
+that do not ship those features, we recommend you use [Babel][8] to
+automatically transpile your code._
+
 ```html
 <!-- Including InstantSearch.js library and styling -->
 <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.6.0/dist/instantsearch.min.js"></script>
@@ -109,9 +115,9 @@ search.start();
 
 ### Including the InstantSearch.js library
 
-The first lines will include the [InstantSearch.js][5] library as well as
+The first lines will include the [InstantSearch.js][9] library as well as
 minimal styling, directly from the jsDeliver CDN. Those files are also available
-through [Yarn][6]/[NPM][7] if you need them locally.
+through [Yarn][10]/[NPM][11] if you need them locally.
 
 ### Instanciating the library
 
@@ -123,7 +129,7 @@ Both `application_id` and `index_name` should already be in your `_config.yml`
 file. The `search_only_api_key` should be new, though.
 
 Add a new entry in your `_config.yml` file, under the `algolia` namespace with
-the value of your Search API Key (you can find it in your [Dashboard][8]):
+the value of your Search API Key (you can find it in your [Dashboard][12]):
 
 ```yml
 # _config.yml
@@ -153,7 +159,7 @@ InstantSearch loads, it will replace the list with its own results.
 This is what it should look like at this stage. We have a search bar, but
 results are displayed in a raw JSON format. Let's work on styling this.
 
-![Minimal InstantSearch.js styling][9]
+![Minimal InstantSearch.js styling][13]
 
 ## Templating
 
@@ -183,7 +189,7 @@ search.addWidget(
 );
 ```
 
-![InstantSearch.js styling][10]
+![InstantSearch.js styling][14]
 
 This looks much better already. By using a template, we managed to make the
 result look close to what the initial display was. In the next section, we'll
@@ -198,7 +204,7 @@ default we display it exactly as it was saved in the Algolia index: as a UNIX
 timestamp.
 
 Because our template is a JavaScript function, we can reformat data before
-rendering it. Here we will use the [moment.js][11] library to format our date.
+rendering it. Here we will use the [moment.js][15] library to format our date.
 
 Using `moment.unix(hit.date).format('MMM D, YYYY');` we'll transform
 `1513764761` into `Dec 20, 2017`.
@@ -350,20 +356,24 @@ search.start();
 
 ## Final result
 
-You can check the [final result live here][12], and have a look at all the code
-from the [GitHub repository][13].
+You can check the [final result live here][16], and have a look at all the code
+from the [GitHub repository][17].
 
 
 [1]: https://github.com/jekyll/minima
 [2]: ./getting-started.html
 [3]: ./assets/images/minima-search.gif
 [4]: https://raw.githubusercontent.com/jekyll/minima/master/_layouts/home.html
-[5]: https://community.algolia.com/instantsearch.js/
-[6]: https://yarnpkg.com/en/package/instantsearch.js
-[7]: https://www.npmjs.com/package/instantsearch.js
-[8]: https://www.algolia.com/api-keys
-[9]: ./assets/images/instantsearch-nostyling.png
-[10]: ./assets/images/instantsearch-styling.png
-[11]: https://momentjs.com/docs/
-[12]: https://community.algolia.com/jekyll-algolia-example/
-[13]: https://github.com/algolia/jekyll-algolia-example
+[5]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const
+[6]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+[7]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+[8]: https://babeljs.io/
+[9]: https://community.algolia.com/instantsearch.js/
+[10]: https://yarnpkg.com/en/package/instantsearch.js
+[11]: https://www.npmjs.com/package/instantsearch.js
+[12]: https://www.algolia.com/api-keys
+[13]: ./assets/images/instantsearch-nostyling.png
+[14]: ./assets/images/instantsearch-styling.png
+[15]: https://momentjs.com/docs/
+[16]: https://community.algolia.com/jekyll-algolia-example/
+[17]: https://github.com/algolia/jekyll-algolia-example

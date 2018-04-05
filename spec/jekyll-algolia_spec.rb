@@ -39,6 +39,13 @@ describe(Jekyll::Algolia) do
 
         current.init(config)
       end
+      it 'should register the custom link tag' do
+        expect(Liquid::Template)
+          .to receive(:register_tag)
+          .with('link', JekyllAlgoliaLink)
+
+        current.init(config)
+      end
     end
 
     context 'with invalid Algolia credentials' do

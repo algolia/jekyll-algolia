@@ -71,13 +71,15 @@ namespace 'test' do
     task :watch do
       puts 'Please, run ./scripts/test_integration_watch manually'
     end
-    # Delete the test index
-    task :_delete_index do
+    # Delete the test indices
+    task :_delete_indices do
       Algolia.init(
         application_id: ENV['ALGOLIA_APPLICATION_ID'],
         api_key: ENV['ALGOLIA_API_KEY']
       )
       Algolia::Index.new(ENV['ALGOLIA_INDEX_NAME']).delete_index!
+      Algolia::Index
+        .new("#{ENV['ALGOLIA_INDEX_NAME']}_object_ids").delete_index!
     end
     # Run only the integration tests
     desc ''

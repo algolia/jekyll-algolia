@@ -9,7 +9,7 @@ describe 'overwrites' do
     allow(Jekyll.logger).to receive(:warn)
   end
 
-  describe(Jekyll::Document) do
+  describe('Jekyll::Document') do
     let(:current) { site.__find_file('collection-item.md') }
 
     subject { current.date }
@@ -29,7 +29,7 @@ describe 'overwrites' do
     end
   end
 
-  describe(JekyllAlgoliaLink) do
+  describe('JekyllAlgoliaLink') do
     let(:current) { site.__find_file('links.md') }
 
     subject { current.content }

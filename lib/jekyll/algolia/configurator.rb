@@ -242,6 +242,10 @@ module Jekyll
         # Disable archive pages from jekyll-archives
         config['jekyll-archives'] = nil
 
+        # Disable tags from jekyll-tagging
+        config['tag_page_dir'] = nil
+        config['tag_page_layout'] = nil
+
         config
       end
 

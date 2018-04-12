@@ -29,12 +29,12 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'progressbar', '~> 1.9'
   gem.add_runtime_dependency 'verbal_expressions', '~> 0.1.5'
 
+  gem.add_development_dependency 'awesome_print', '~> 1.8'
   gem.add_development_dependency 'coveralls', '~> 0.8'
   gem.add_development_dependency 'flay', '~> 2.6'
   gem.add_development_dependency 'flog', '~> 4.3'
   gem.add_development_dependency 'guard', '~> 2.14'
   gem.add_development_dependency 'guard-rspec', '~> 4.6'
-  gem.add_development_dependency 'jekyll-paginate', '~> 1.1'
   gem.add_development_dependency 'rake', '~> 12.3'
   gem.add_development_dependency 'rspec', '~> 3.0'
   gem.add_development_dependency 'rubocop', '~> 0.51'

@@ -418,6 +418,11 @@ describe(Jekyll::Algolia::Configurator) do
     context 'disable jekyll-archives' do
       it { should include('jekyll-archives' => nil) }
     end
+
+    context 'disable jekyll-tagging' do
+      it { should include('tag_page_dir' => nil) }
+      it { should include('tag_page_layout' => nil) }
+    end
   end
 end
 # rubocop:enable Metrics/BlockLength

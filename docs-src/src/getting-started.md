@@ -65,7 +65,7 @@ Once your credentials are setup, you can run the indexing by running the
 following command:
 
 ```shell
-ALGOLIA_API_KEY='{your_admin_api_key}' bundle exec jekyll algolia
+ALGOLIA_API_KEY='your_admin_api_key' bundle exec jekyll algolia
 ```
 
 Note that `ALGOLIA_API_KEY` should be set to your admin API key. This key has

@@ -12,5 +12,5 @@ I:
 I:Then, define it in your Jekyll _config.yml file like this:
 I:
 I:  algolia:
-I:    application_id: {your_application_id}
+I:    application_id: your_application_id
 I:

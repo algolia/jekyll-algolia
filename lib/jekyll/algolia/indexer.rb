@@ -114,7 +114,7 @@ module Jekyll
         list.sort
       end
 
-      # Public: Get an array of all the object ids, stored in the dedicated
+      # Public: Get an array of all the object ids, stored in a dedicated
       # index
       #
       # Note: This will be very fast. Each record contain 100 object id, so it
@@ -143,8 +143,8 @@ module Jekyll
         Logger.log('I:Getting list of existing records')
 
         # Fast version, using the dedicated index
-        has_dedicated_index = index_exist?(index_object_ids)
-        return remote_object_ids_from_dedicated_index if has_dedicated_index
+        has_object_id_index = index_exist?(index_object_ids)
+        return remote_object_ids_from_dedicated_index if has_object_id_index
 
         # Slow version, browsing the full index
         remote_object_ids_from_main_index
@@ -175,10 +175,10 @@ module Jekyll
 
         # What changes should we do to the indexes?
         has_records_to_update = !ids_to_delete.empty? || !ids_to_add.empty?
-        has_dedicated_index = index_exist?(index_object_ids)
+        has_object_id_index = index_exist?(index_object_ids)
 
         # Stop if nothing to change
-        if !has_records_to_update && has_dedicated_index
+        if !has_records_to_update && has_object_id_index
           Logger.log('I:Content is already up to date.')
           return
         end
@@ -212,9 +212,9 @@ module Jekyll
 
         # We update the dedicated index everytime we update records, but we also
         # create it if it does not exist
-        should_update_dedicated_index = has_records_to_update ||
-                                        !has_dedicated_index
-        if should_update_dedicated_index
+        should_update_object_id_index = has_records_to_update ||
+                                        !has_object_id_index
+        if should_update_object_id_index
           operations << { action: 'clear', indexName: index_object_ids.name }
           local_ids.each_slice(100).each do |ids|
             operations << {

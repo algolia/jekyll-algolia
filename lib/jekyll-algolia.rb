@@ -15,6 +15,7 @@ module Jekyll
     require 'jekyll/algolia/indexer'
     require 'jekyll/algolia/logger'
     require 'jekyll/algolia/progress_bar'
+    require 'jekyll/algolia/shrinker'
     require 'jekyll/algolia/utils'
     require 'jekyll/algolia/version'
 

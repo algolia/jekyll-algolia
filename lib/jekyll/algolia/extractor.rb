@@ -57,7 +57,8 @@ module Jekyll
         AlgoliaHTMLExtractor.run(
           content,
           options: {
-            css_selector: Configurator.algolia('nodes_to_index')
+            css_selector: Configurator.algolia('nodes_to_index'),
+            tags_to_exclude: 'script,style,iframe'
           }
         )
       end

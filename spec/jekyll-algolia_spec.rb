@@ -7,11 +7,12 @@ describe(Jekyll::Algolia) do
   let(:configurator) { Jekyll::Algolia::Configurator }
   let(:current) { Jekyll::Algolia }
   let(:extractor) { Jekyll::Algolia::Extractor }
-  let(:logger) { Jekyll::Algolia::Logger }
   let(:file_browser) { Jekyll::Algolia::FileBrowser }
-  let(:progress_bar) { Jekyll::Algolia::ProgressBar }
   let(:hooks) { Jekyll::Algolia::Hooks }
   let(:indexer) { Jekyll::Algolia::Indexer }
+  let(:logger) { Jekyll::Algolia::Logger }
+  let(:progress_bar) { Jekyll::Algolia::ProgressBar }
+  let(:shrinker) { Jekyll::Algolia::Shrinker }
 
   # Suppress Jekyll log about not having a config file
   before do
@@ -341,6 +342,7 @@ describe(Jekyll::Algolia) do
       allow(extractor).to receive(:run).with(file_foo).and_return(records_foo)
       allow(extractor).to receive(:run).with(file_bar).and_return(records_bar)
       allow(extractor).to receive(:add_unique_object_id) { |arg| arg }
+      allow(shrinker).to receive(:fit_to_size) { |arg| arg }
       allow(file_browser).to receive(:indexable?).and_return(true)
       allow(file_browser).to receive(:relative_path)
       allow(hooks).to receive(:apply_all) { |arg| arg }
@@ -409,6 +411,27 @@ describe(Jekyll::Algolia) do
       it do
         expect(logger).to have_received(:verbose).with(/foo-path/)
         expect(logger).to have_received(:verbose).with(/bar-path/)
+      end
+    end
+
+    describe 'shrink records to fit under 10Kb' do
+      before do
+        site.push
+      end
+
+      it do
+        expect(shrinker)
+          .to have_received(:fit_to_size)
+          .with({ name: 'foo1' }, 10_000)
+        expect(shrinker)
+          .to have_received(:fit_to_size)
+          .with({ name: 'foo2' }, 10_000)
+        expect(shrinker)
+          .to have_received(:fit_to_size)
+          .with({ name: 'bar1' }, 10_000)
+        expect(shrinker)
+          .to have_received(:fit_to_size)
+          .with({ name: 'bar2' }, 10_000)
       end
     end
 

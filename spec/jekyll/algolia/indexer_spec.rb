@@ -434,7 +434,7 @@ describe(Jekyll::Algolia::Indexer) do
           end
       end
 
-      it 'should add new objectIDs  to the dedicated index' do
+      it 'should add new objectIDs to the dedicated index' do
         expected = {
           action: 'addObject',
           indexName: 'dedicated',

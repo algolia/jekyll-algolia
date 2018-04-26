@@ -130,6 +130,15 @@ module Jekyll
         # Applying the user hook on the whole list of records
         records = Hooks.apply_all(records, self)
 
+        # Shrinking records to make them fit under 10Kb
+        # We take into account the objectID that will be added in the form of:
+        # "objectID": "i16cd998991cc40d92402b0b4e6c55e8a"
+        object_id_attribute_length = 47
+        max_file_size = 10_000 - object_id_attribute_length
+        records.map! do |record|
+          Shrinker.fit_to_size(record, max_file_size)
+        end
+
         # Adding a unique objectID to each record
         records.map! do |record|
           Extractor.add_unique_object_id(record)

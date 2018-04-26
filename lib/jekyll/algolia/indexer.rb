@@ -142,6 +142,11 @@ module Jekyll
       def self.remote_object_ids
         Logger.log('I:Getting list of existing records')
 
+        # No main index, the list is empty no matter what (we don't use the
+        # dedicated index in that case)
+        has_index = index_exist?(index)
+        return [] unless has_index
+
         # Fast version, using the dedicated index
         has_object_id_index = index_exist?(index_object_ids)
         return remote_object_ids_from_dedicated_index if has_object_id_index

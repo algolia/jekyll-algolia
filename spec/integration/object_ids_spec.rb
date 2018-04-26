@@ -83,5 +83,24 @@ describe('storing object ids') do
       expect(records[0]['content']).to include('baz')
     end
   end
+
+  describe 'deleting the main index should force its recreation' do
+    before do
+      indexer.update_records(records)
+      indexer.index.delete_index!
+      indexer.update_records(records)
+      @index = indexer.index
+    end
+
+    it 'should recreate the main index' do
+      has_index = indexer.index_exist?(@index)
+      expect(has_index).to eq true
+    end
+
+    it 'should contain all hits' do
+      records = @index.search('')['hits']
+      expect(records.length).to eq 3
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

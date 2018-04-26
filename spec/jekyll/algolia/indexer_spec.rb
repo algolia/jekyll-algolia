@@ -280,24 +280,52 @@ describe(Jekyll::Algolia::Indexer) do
     before do
       allow(current)
         .to receive(:remote_object_ids_from_dedicated_index)
-        .and_return('dedicated')
+        .and_return('dedicated_results')
       allow(current)
         .to receive(:remote_object_ids_from_main_index)
-        .and_return('main')
-      allow(current).to receive(:index_object_ids)
-      allow(current).to receive(:index_exist?).and_return(dedicated_index_exist)
+        .and_return('main_results')
+      allow(current).to receive(:index_object_ids).and_return('dedicated_index')
+      allow(current).to receive(:index).and_return('main_index')
+      allow(current)
+        .to receive(:index_exist?)
+        .with('main_index')
+        .and_return(main_index_exist)
+      allow(current)
+        .to receive(:index_exist?)
+        .with('dedicated_index')
+        .and_return(dedicated_index_exist)
     end
 
-    describe 'from the main index' do
+    describe 'no index exists' do
+      let(:main_index_exist) { false }
       let(:dedicated_index_exist) { false }
-
-      it { should eq 'main' }
+      it 'should return an empty list' do
+        should eq []
+      end
     end
 
-    describe 'from the dedicated index' do
-      let(:dedicated_index_exist) { true }
+    describe 'only main index exists' do
+      let(:main_index_exist) { true }
+      let(:dedicated_index_exist) { false }
+      it 'should get objectIds from it' do
+        should eq 'main_results'
+      end
+    end
 
-      it { should eq 'dedicated' }
+    describe 'only dedicated index exists' do
+      let(:main_index_exist) { false }
+      let(:dedicated_index_exist) { true }
+      it 'should not use objectIDs from it' do
+        should eq []
+      end
+    end
+
+    describe 'both index exist' do
+      let(:main_index_exist) { true }
+      let(:dedicated_index_exist) { true }
+      it 'should use objectIDs from the dedicated index' do
+        should eq 'dedicated_results'
+      end
     end
   end
 

@@ -845,6 +845,7 @@ describe(Jekyll::Algolia::Indexer) do
 
     before do
       allow(logger).to receive(:known_message)
+      allow(configurator).to receive(:index_name).and_return('my_index')
       current.warn_of_manual_dashboard_editing(changed_keys)
     end
 
@@ -858,7 +859,8 @@ describe(Jekyll::Algolia::Indexer) do
             "W:    customRanking:\n"\
             "W:      - foo\n"\
             "W:      - bar\n"\
-            'W:      - baz'\
+            'W:      - baz',
+          index_name: 'my_index'
         )
     end
   end

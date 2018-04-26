@@ -6,5 +6,5 @@ if ! git status --short | grep -q '\.rb$'; then
   exit 0
 fi
 
-# Match style guide
+rake test
 rake lint

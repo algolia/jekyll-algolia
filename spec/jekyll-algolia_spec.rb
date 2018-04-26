@@ -414,7 +414,7 @@ describe(Jekyll::Algolia) do
       end
     end
 
-    describe 'shrink records to fit under 10Kb' do
+    describe 'shrink records to fit under 10Kb, including room for objectID' do
       before do
         site.push
       end
@@ -422,16 +422,16 @@ describe(Jekyll::Algolia) do
       it do
         expect(shrinker)
           .to have_received(:fit_to_size)
-          .with({ name: 'foo1' }, 10_000)
+          .with({ name: 'foo1' }, 9954)
         expect(shrinker)
           .to have_received(:fit_to_size)
-          .with({ name: 'foo2' }, 10_000)
+          .with({ name: 'foo2' }, 9954)
         expect(shrinker)
           .to have_received(:fit_to_size)
-          .with({ name: 'bar1' }, 10_000)
+          .with({ name: 'bar1' }, 9954)
         expect(shrinker)
           .to have_received(:fit_to_size)
-          .with({ name: 'bar2' }, 10_000)
+          .with({ name: 'bar2' }, 9954)
       end
     end
 

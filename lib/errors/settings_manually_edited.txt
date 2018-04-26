@@ -13,5 +13,5 @@ W:algolia:
 W:  settings:
 {settings}
 I:
-I:If you'd like to revert to the default settings, the easiest way delete the indices and run `jekyll algolia` again.
+I:If you'd like to revert to the default settings, the easiest way is to delete the {index_name} index from your dashboard and run `jekyll algolia` again.
 I:

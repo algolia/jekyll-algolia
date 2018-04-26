@@ -360,7 +360,8 @@ module Jekyll
         end
         Logger.known_message(
           'settings_manually_edited',
-          settings: yaml_lines.join("\n")
+          settings: yaml_lines.join("\n"),
+          index_name: Configurator.index_name
         )
       end
 

@@ -7,10 +7,20 @@ module Jekyll
     module Shrinker
       include Jekyll::Algolia
 
+      # Public: Get the byte size of the object once converted to JSON
+      # - record: The record to estimate
       def self.size(record)
         record.to_json.length
       end
 
+      # Public: Attempt to reduce the size of the record by reducing the size of
+      # the less needed attributes
+      #
+      # - raw_record: The record to attempt to reduce
+      # - max_size: The max size to achieve in bytes
+      #
+      # The excerpts are the attributes most subject to being reduced. We'll go
+      # as far as removing them if there is no other choice.
       def self.fit_to_size(raw_record, max_size)
         return raw_record if size(raw_record) <= max_size
 
@@ -33,9 +43,6 @@ module Jekyll
         # We remove the excerpts completely
         record[:excerpt_text] = nil
         record[:excerpt_html] = nil
-
-        p size(record)
-        p record
 
         record
       end

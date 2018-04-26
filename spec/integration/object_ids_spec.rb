@@ -84,10 +84,10 @@ describe('storing object ids') do
     end
   end
 
-  describe 'deleting the main index should force its recreation' do
+  describe 'clearing the main index should force its recreation' do
     before do
       indexer.update_records(records)
-      indexer.index.delete_index!
+      indexer.index.clear_index!
       indexer.update_records(records)
       @index = indexer.index
     end

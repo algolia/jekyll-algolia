@@ -287,41 +287,41 @@ describe(Jekyll::Algolia::Indexer) do
       allow(current).to receive(:index_object_ids).and_return('dedicated_index')
       allow(current).to receive(:index).and_return('main_index')
       allow(current)
-        .to receive(:index_exist?)
+        .to receive(:record_count)
         .with('main_index')
-        .and_return(main_index_exist)
+        .and_return(main_record_count)
       allow(current)
         .to receive(:index_exist?)
         .with('dedicated_index')
         .and_return(dedicated_index_exist)
     end
 
-    describe 'no index exists' do
-      let(:main_index_exist) { false }
+    describe 'no index is available' do
+      let(:main_record_count) { 0 }
       let(:dedicated_index_exist) { false }
       it 'should return an empty list' do
         should eq []
       end
     end
 
-    describe 'only main index exists' do
-      let(:main_index_exist) { true }
+    describe 'only main index is available' do
+      let(:main_record_count) { 42 }
       let(:dedicated_index_exist) { false }
       it 'should get objectIds from it' do
         should eq 'main_results'
       end
     end
 
-    describe 'only dedicated index exists' do
-      let(:main_index_exist) { false }
+    describe 'main index is unavailable' do
+      let(:main_record_count) { 0 }
       let(:dedicated_index_exist) { true }
       it 'should not use objectIDs from it' do
         should eq []
       end
     end
 
-    describe 'both index exist' do
-      let(:main_index_exist) { true }
+    describe 'both index are available' do
+      let(:main_record_count) { 42 }
       let(:dedicated_index_exist) { true }
       it 'should use objectIDs from the dedicated index' do
         should eq 'dedicated_results'

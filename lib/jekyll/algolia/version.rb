@@ -2,6 +2,6 @@
 
 module Jekyll
   module Algolia
-    VERSION = '1.3.4'
+    VERSION = '1.4.0'
   end
 end

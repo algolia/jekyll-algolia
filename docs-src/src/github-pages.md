@@ -50,6 +50,8 @@ keeping track of the configuration easier.
 # This file should be at the root of your project
 language: ruby
 cache: bundler
+before_install:
+  - gem install bundler
 script:
   - bundle exec jekyll algolia
 branches:

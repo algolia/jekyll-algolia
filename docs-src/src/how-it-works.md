@@ -6,8 +6,8 @@ layout: content-with-menu.pug
 # How does this work?
 
 This page will give you a bit more insight about how the internals of the plugin
-are working. This should give you more context to better understand the various
-options you can configure.
+are working. This should give you more context to better understand the options
+you can configure.
 
 ## Extracting data
 
@@ -53,7 +53,7 @@ data. Shared data is the metadata of the page it was extracted from (`title`,
 front-matter). Specific data is the paragraph content and, if applicable, the
 list of parent headings (based on the `<h1>` and `<h6>` of the page).
 
-Using the [distinct setting][1] of the Algolia API, only the best matching
+Using the [distinct setting][1] of the Algolia API, the best matching
 paragraph of each page is returned for a specific query. This greatly improves
 the perceived relevance of the search results as you can highlight specifically
 the part that was matching.
@@ -61,18 +61,18 @@ the part that was matching.
 ## Pushing data
 
 The plugin tries to be smart by using as less operations as possible, to be
-mindful of your Algolia quota. Whenever you run `jekyll algolia`, only records
+mindful of your Algolia quota. Whenever you run `jekyll algolia`, records
 that changed since your last push will be updated.
 
 This is made possible because each record is attributed a unique `objectID`,
 computed as a hash of the actual content of the record. Whenever the content of
-the record changes, its `objectID` will change as well. This allows us to compare
-what is current available in your index and what is about to be pushed, to only
-update what actually changed.
+the record changes, its `objectID` will change as well. This allows us to
+compare what is available in your index and what is about to be
+pushed, to update what actually changed.
 
 Previous outdated records will be deleted, and new updated records will be added
 instead. All those operations are grouped into a batch call, making sure that
 the changes are done atomically: your index will never be in an inconsistent
-state where records are only partially updated.
+state where records are partially updated.
 
 [1]: https://www.algolia.com/doc/guides/ranking/distinct/?language=ruby#distinct-to-index-large-records

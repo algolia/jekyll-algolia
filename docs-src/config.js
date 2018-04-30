@@ -27,6 +27,7 @@ const sidebarMenu = [
     items: [
       { title: 'Getting Started', url: 'getting-started.html' },
       { title: 'How it works', url: 'how-it-works.html' },
+      { title: 'FAQ', url: 'faq.html' },
     ],
   },
   {

@@ -179,83 +179,82 @@
       </li></ul></div></div>
 
     </nav>
-    <!-- End community_header --> </div><div class="spacer56"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li><li class="sidebar-element"><a href="faq.html">FAQ</a></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a class="sidebar-element_active" href="options.html">Options</a><ul><li class="sidebar-element"><a href="options.html#extensions-to-index">extensions_to_index </a></li><li class="sidebar-element"><a href="options.html#files-to-exclude">files_to_exclude </a></li><li class="sidebar-element"><a href="options.html#nodes-to-index">nodes_to_index </a></li><li class="sidebar-element"><a href="options.html#settings">settings </a></li><li class="sidebar-element"><a href="options.html#indexing-batch-size">indexing_batch_size </a></li></ul></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a href="hooks.html">Hooks</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li><li class="sidebar-element"><a href="themes.html">Themes</a></li><li class="sidebar-element"><a href="migration-guide.html">Migration guide</a></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="options">Options <a class="anchor" href="options.html#options" aria-hidden="true"></a></h1>
-<p>The plugin should work out of the box for most websites, but there are options
-you can tweak if needed. All the options should be added under the <code>algolia</code>
-section of your <code>_config.yml</code> file.</p>
-<p>You should be familiar with <a href="./how-it-works.html">how this plugin works</a> under
-the hood to better understand what some options are doing.</p>
-<h2 id="extensions-to-index"><code>extensions_to_index</code> <a class="anchor" href="options.html#extensions-to-index" aria-hidden="true"></a></h2>
-<p>This options defines which source files should be indexed, based on their file
-extension. If an extension is not in the list, then the file will not be
-indexed.</p>
-<p>By default, all HTML and markdown source files will be indexed.</p>
-<p>If you are using another markup language (such as <a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> or <a href="https://github.com/textile">Textile</a>),
-you might want to update the value like this:</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-  <span class="cm-comment"># Also index AsciiDoc and Textile files</span>
-<span class="cm-atom">  extensions_to_index</span><span class="cm-meta">: </span><span class="cm-string">&#39;html,md,adoc,textile&#39;</span>
-</code></div></pre>
-<h2 id="files-to-exclude"><code>files_to_exclude</code> <a class="anchor" href="options.html#files-to-exclude" aria-hidden="true"></a></h2>
-<p>This option lets you define a blacklist of source files you don’t want to index.</p>
-<p>By default it will exclude all the <code>index.html</code> and <code>index.md</code> files. Those
-files are usually not containing much text (landing pages) or containing
-redundant text (latest blog articles) so they are not included by default.</p>
-<p>If you want to index those files, you should set the value to an empty array.</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-  <span class="cm-comment"># Actually index the index.html/index.md pages</span>
-<span class="cm-atom">  files_to_exclude</span><span class="cm-meta">: </span><span class="cm-meta">[</span><span class="cm-meta">]</span>
-</code></div></pre>
-<p>If you want to exclude more files, you should add them to the array. Note that
-you can use glob patterns to exclude several files at once.</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-  <span class="cm-comment"># Exclude more files from indexing</span>
-<span class="cm-atom">  files_to_exclude</span><span class="cm-meta">:</span>
-<span class="cm-meta">    - </span>index.html
-<span class="cm-meta">    - </span>index.md
-<span class="cm-meta">    - </span>excluded-file.html
-<span class="cm-meta">    - </span>_posts/2017-01-20-date-to-forget.md
-<span class="cm-meta">    - </span>subdirectory/*.html
-</code></div></pre>
-<p><em>Note that some files (pagination pages, static assets, etc) will <strong>always</strong> be
-excluded and you don’t have to specify them.</em></p>
-<h2 id="nodes-to-index"><code>nodes_to_index</code> <a class="anchor" href="options.html#nodes-to-index" aria-hidden="true"></a></h2>
-<p>This options defines how each page is split into chunks. It expects
-a CSS selector that will be applied on the HTML content generated by Jekyll.
-Each matching node will be indexed as a different record.</p>
-<p>The default value is <code>p</code>, meaning that one record will be created for each <code>&lt;p&gt;</code>
-paragraph of content.</p>
-<p>If you would like to index other elements, like <code>&lt;blockquote&gt;</code>, <code>&lt;li&gt;</code> or
-a custom <code>&lt;div class=&quot;paragraph&quot;&gt;</code>, you should edit the value like this:</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-  <span class="cm-comment"># Also index quotes, list items and custom paragraphs</span>
-<span class="cm-atom">  nodes_to_index</span><span class="cm-meta">: </span><span class="cm-string">&#39;p,blockquote,li,div.paragraph&#39;</span>
-</code></div></pre>
-<h2 id="settings"><code>settings</code> <a class="anchor" href="options.html#settings" aria-hidden="true"></a></h2>
-<p>This option let you pass specific settings to your Algolia index.</p>
-<p>By default the plugin will configure your Algolia index with settings tailored
-to the format of the extracted records. You are of course free to overwrite
-them or configure them as best suits your needs. Every option passed to the
-<code>settings</code> entry will be set as <a href="https://www.algolia.com/doc/api-reference/api-methods/set-settings/?language=ruby#set-settings">setting to your index</a>.</p>
-<p>For example if you want to change the HTML tag used for the highlighting, you
-can overwrite it like this:</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-<span class="cm-atom">  settings</span><span class="cm-meta">:</span>
-<span class="cm-atom">    highlightPreTag</span><span class="cm-meta">: </span><span class="cm-string">&#39;&lt;em class=&quot;custom_highlight&quot;&gt;&#39;</span>
-<span class="cm-atom">    highlightPostTag</span><span class="cm-meta">: </span><span class="cm-string">&#39;&lt;/em&gt;&#39;</span>
-</code></div></pre>
-<p>Settings defined here will take precedence over any setting you manually defined
-through the <a href="https://www.algolia.com/dashboard">Algolia dashboard</a> UI, though.</p>
-<h2 id="indexing-batch-size"><code>indexing_batch_size</code> <a class="anchor" href="options.html#indexing-batch-size" aria-hidden="true"></a></h2>
-<p>This option defines the number of operations that will be grouped as part of one
-updating batch. All operations of one batch are applied atomically. The default
-value is <code>1000</code>.</p>
-<p>You might want to increase this value if you are doing a lot of updates on each
-run and still want to have your changes done atomically.</p>
-<p>You might want to decrease this value if you’re using an unstable internet
-connection. Smaller batches are easier to send that large ones.</p>
-<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
-  <span class="cm-comment"># Send fewer records per batch</span>
-<span class="cm-atom">  indexing_batch_size</span><span class="cm-meta">: </span><span class="cm-number">500</span>
-</code></div></pre>
+    <!-- End community_header --> </div><div class="spacer56"></div><section class="documentation-section"><div class="container relative"><nav class="sidebar z-100 sidebar_fixed"><div class="sidebar-container"><h2 class="sidebar-header text-bold">Essentials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="getting-started.html">Getting Started</a></li><li class="sidebar-element"><a href="how-it-works.html">How it works</a></li><li class="sidebar-element"><a class="sidebar-element_active" href="faq.html">FAQ</a><ul><li class="sidebar-element"><a href="faq.html#how-many-records-will-the-plugin-need">How many records will the plugin need? </a></li><li class="sidebar-element"><a href="faq.html#one-of-my-records-is-too-big-what-can-i-do">One of my records is too big. What can I do? </a></li></ul></li></ul><h2 class="sidebar-header text-bold">Configuration</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="options.html">Options</a></li><li class="sidebar-element"><a href="commandline.html">Commandline</a></li><li class="sidebar-element"><a href="hooks.html">Hooks</a></li></ul><h2 class="sidebar-header text-bold">Advanced</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="netlify.html">Deploying on Netlify</a></li><li class="sidebar-element"><a href="github-pages.html">Deploying on Github Pages</a></li><li class="sidebar-element"><a href="themes.html">Themes</a></li><li class="sidebar-element"><a href="migration-guide.html">Migration guide</a></li></ul><h2 class="sidebar-header text-bold">Tutorials</h2><ul class="sidebar-elements"><li class="sidebar-element"><a href="blog.html">Blog</a></li></ul></div></nav><a class="sidebar-opener"></a><div class="documentation-container"><h1 id="frequently-asked-questions">Frequently Asked Questions <a class="anchor" href="faq.html#frequently-asked-questions" aria-hidden="true"></a></h1>
+<h2 id="how-many-records-will-the-plugin-need">How many records will the plugin need? <a class="anchor" href="faq.html#how-many-records-will-the-plugin-need" aria-hidden="true"></a></h2>
+<p>The plugin will not create an exact mapping of <code>1 page = 1 record</code>. Instead, it
+will split all pages into smaller chunks, and each chunk will be saved as
+a record. Splitting in small chunks is key to offer the best relevance of
+results.</p>
+<p>The default chunking mechanism is to create one chunk per paragraphof content.
+So, for a blog post that is made of 10 paragraphs of text, it will create 10
+records.</p>
+<p>Estimating the number of records you will need can be tricky as it depends both
+on the number of pages you have, but also on the average length of them.  Some
+configuration options (such as <a href="options.html#nodes-to-index">nodes_to_index</a>) can also influence the final
+result.</p>
+<p>The following table should give you a ballpark estimate of what to expect. All
+calculations were done with an average of <strong>15 paragraphs per page</strong>, on
+a timeline of <strong>one year</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>update frequency</th>
+<th># of new pages</th>
+<th># of records</th>
+<th>Algolia plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~1 new page per week</td>
+<td>~50</td>
+<td>~750</td>
+<td><a href="https://www.algolia.com/pricing">Community</a></td>
+</tr>
+<tr>
+<td>~1 new page per day</td>
+<td>~400</td>
+<td>~6.000</td>
+<td><a href="https://www.algolia.com/pricing">Community</a></td>
+</tr>
+<tr>
+<td>~2 new pages per day</td>
+<td>~700</td>
+<td>~10.500</td>
+<td><a href="https://www.algolia.com/pricing">Essential</a></td>
+</tr>
+<tr>
+<td>~1 new page per hour</td>
+<td>~8800</td>
+<td>~132.000</td>
+<td><a href="https://www.algolia.com/pricing">Essential</a></td>
+</tr>
+<tr>
+<td>~1 new page every 5 minutes</td>
+<td>~105.000</td>
+<td>~1.575.000</td>
+<td><a href="https://www.algolia.com/pricing">Plus</a></td>
+</tr>
+<tr>
+<td>More?</td>
+<td>More?</td>
+<td>More?</td>
+<td><a href="https://www.algolia.com/pricing">Business</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="one-of-my-records-is-too-big-what-can-i-do">One of my records is too big. What can I do? <a class="anchor" href="faq.html#one-of-my-records-is-too-big-what-can-i-do" aria-hidden="true"></a></h2>
+<p>If you get an error about one of your record being too big, be sure to update
+the plugin to the latest version. We keep improving the plugin with ways of
+making the records smaller.</p>
+<p>If you’re still having an error, you should check the <code>.json</code> log file that has
+been created in your source directory. This will contain the content of the
+record that has been rejected. It might give you hints about what went wrong.</p>
+<p>A common cause for this issue often liens in the page HTML. Maybe the HTML is
+malformed (a tag is not closed for example), or instead of several small
+paragraphs there is only one large paragraph. This can cause the parser to take
+the whole page content (instead of small chunks of it) to create the
+records.</p>
+<p>If you don’t find where the issue is coming from, feel free to open a <a href="https://github.com/algolia/jekyll-algolia/issues">GitHub
+issue</a> with a copy of the log file and we’ll be happy to help you.</p>
 </div></div></section></body><section class="footer-new-cta footer-new h300 pos-rel"><div class="container color-white stellar-container vh-center"><div class="col-md-5"><div class="spacer120 hidden-sm"></div><div class="spacer32 visible-xs"></div><header><h2 class="text-normal m-t-none">Start creating stellar search,<span class="cf hidden-xs"></span>no strings attached.</h2><p>Dive into Algolia with our forever-free Community plan. No credit card required and up to 10k records to give us a spin.</p></header></div><div class="col-md-7 pos-rel z-10"><div class="spacer120 inline hidden-sm"></div><div class="spacer32 inline hidden-sm"></div><div class="spacer16 visible-sm"></div><div class="button-holder h200 p-r-large"><div class="spacer16 hidden-md hidden-sm"></div><span class="inline pos-rel"><a class="btn btn-static-primary btn-static-shadow-dark" href="https://www.algolia.com/users/sign_up/hacker">Get Started<i class="icon icon-arrow-right color-bunting m-l-small"></i></a><svg class="search-icon" width="22"><use xlink:href="#search-icon"></use></svg></span></div></div></div></section><div id="footer"><div class="credits"><div class="container pos-rel"><div class="row"><div class="col-md-12 text-center"><a data-no-turbolink="true" href="/"><img width="40" src="https://www.algolia.com/static_assets/images/flat2/algolia/algolia-logo_badge-598a1fe6.svg"></a></div></div><div class="spacer40"></div></div></div></div><svg style="display: none;"><symbol width="40" height="40" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" id="search-icon"><path d="M26.806 29.012a16.312 16.312 0 0 1-10.427 3.746C7.33 32.758 0 25.425 0 16.378 0 7.334 7.333 0 16.38 0c9.045 0 16.378 7.333 16.378 16.38 0 3.96-1.406 7.593-3.746 10.426L39.547 37.34c.607.608.61 1.59-.004 2.203a1.56 1.56 0 0 1-2.202.004L26.808 29.012zm-10.427.627c7.32 0 13.26-5.94 13.26-13.26 0-7.325-5.94-13.26-13.26-13.26-7.325 0-13.26 5.935-13.26 13.26 0 7.32 5.935 13.26 13.26 13.26z" fill-rule="evenodd"></path></symbol><symbol width="46" height="38" viewbox="0 0 46 38" xmlns="http://www.w3.org/2000/svg" id="arrow-right"><path d="M34.852 15.725l-8.624-9.908L24.385 3.7 28.62.014l1.84 2.116 13.1 15.05 1.606 1.846-1.61 1.844-13.1 15.002-1.845 2.114-4.23-3.692 1.85-2.114 9.465-10.84h-24.66v-5.615h23.817zm-26.774 0h-.002 2.96v5.614H0v-5.615h8.078z" fill-rule="evenodd"></path></symbol><symbol xmlns="http://www.w3.org/2000/svg" viewbox="0 0 708.8 717" id="icon-copy"><path d="M658.8 158H490.2c-13.3 0-26 5.3-35.4 14.6l-4.6 4.6V25c0-13.8-11.2-25-25-25H235.6c-6.6 0-13 2.6-17.7 7.3L7.3 218C2.6 222.6 0 229 0 235.6V541c0 13.8 11.2 25 25 25h227.8v101c0 27.6 22.4 50 50 50h356c27.6 0 50-22.4 50-50V208c0-27.6-22.4-50-50-50zm-204 85.4V360H338.2l116.6-116.6zm-253-149.2V209H87L201.8 94.2zM50 516V259h176.8c13.8 0 25-11.2 25-25V50h148.4v177.3L267.5 360c-9.4 9.4-14.6 22.1-14.6 35.4V516H50zm608.8 151h-356V410h177c13.8 0 25-11.2 25-25V208h154v459z"></path></symbol><symbol id="check-icon" viewbox="0 0 33 26"><path d="M32.57872 2.63298L30.2617.31596c-.38617-.38617-1.01808-.38617-1.40425 0l-18.1851 18.20266-6.4947-6.49468c-.38616-.38617-1.01808-.38617-1.40425 0L.45638 14.34096c-.38617.38617-.38617 1.01808 0 1.40425l7.17926 7.17928 2.31702 2.31702c.38617.38616 1.01808.38616 1.40425 0l2.3346-2.29948 18.8872-18.9048c.38617-.38616.38617-1.01807 0-1.40424z" fill-rule="evenodd"></path></symbol></svg><!--Google Tag Manager--><noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N8JP8G" height="0" width="0" style="display:none;visibility:hidden;"></iframe></noscript><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-N8JP8G');</script><script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script><script src="/jekyll-algolia/js/common-build-d9bb17198ab9c9f1b71123862c7d1397.js"></script><script src="/jekyll-algolia/js/main-build-d929d5514a7e7fd99dd32ec151c05e95.js"></script><script></script></html>

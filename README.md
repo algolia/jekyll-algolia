@@ -45,12 +45,12 @@ Once this is done, download all dependencies with `bundle install`.
 You need to provide certain Algolia credentials for this plugin to *index* your
 site.
 
-*If you don't yet have an Algolia account, you can open a free [Community plan
-here][8]. Once signed in, you can get your
-credentials from [your dashboard][9].*
+*If you don't yet have an Algolia account, we suggest that you open a free
+[Community plan here][8]. You can find more information about the Algolia plans
+[in our FAQ][10].*
 
-Once you have your credentials, you should define your `application_id` inside
-your `_config.yml` file like this:
+Once signed in, you should get your application ID from [your dashboard][9] and
+define it inside your `_config.yml` file like this:
 
 ```yaml
 # _config.yml
@@ -72,18 +72,21 @@ Note that `ALGOLIA_API_KEY` should be set to your admin API key.
 
 ## More about the Community plan
 
-The Algolia [Community plan][10] lets you host up to 10k records and perform up to
-100k add/edit/delete operations per month (search operations are free). The plan
-is entirely free, with no time limit.
+The Algolia [Community plan][11] lets you host up to 10k records and perform up
+to 100k add/edit/delete operations per month (search operations are free). The
+plan is entirely free, with no time limit.
 
 What we ask in exchange is that you display a "Search by Algolia" logo next to
-your search results. Our [InstantSearch libraries][11] have a simple boolean
+your search results. Our [InstantSearch libraries][12] have a simple boolean
 option to toggle that on an off. If you want more flexibility, you can find
-all versions of our logo [here][12].
+all versions of our logo [here][13].
+
+If you need more information about the other Algolia plans, you can [check our
+FAQ][10].
 
 # Thanks
 
-Thanks to [Anatoliy Yastreb][13] for a [great tutorial][14] on creating Jekyll
+Thanks to [Anatoliy Yastreb][14] for a [great tutorial][15] on creating Jekyll
 plugins.
 
 
@@ -96,8 +99,9 @@ plugins.
 [7]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Adevelop&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
 [8]: #more-about-the-community-plan
 [9]: https://www.algolia.com/api-keys
-[10]: https://www.algolia.com/users/sign_up/hacker
-[11]: https://community.algolia.com/instantsearch.js/
-[12]: https://www.algolia.com/press#resources
-[13]: https://github.com/ayastreb/
-[14]: https://ayastreb.me/writing-a-jekyll-plugin/
+[10]: https://community.algolia.com/jekyll-algolia/faq.html#how-many-records-will-the-plugin-need
+[11]: https://www.algolia.com/users/sign_up/hacker
+[12]: https://community.algolia.com/instantsearch.js/
+[13]: https://www.algolia.com/press#resources
+[14]: https://github.com/ayastreb/
+[15]: https://ayastreb.me/writing-a-jekyll-plugin/

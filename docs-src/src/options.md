@@ -31,11 +31,12 @@ algolia:
 
 ## `files_to_exclude`
 
-This option lets you define a blacklist of source files you don't want to index.
+This option lets you define a list of source files you don't want to index.
 
-By default it will exclude all the `index.html` and `index.md` files. Those
-files are usually not containing much text (landing pages) or containing
-redundant text (latest blog articles) so they are not included by default.
+By default it will exclude the `index.html` and `index.md` files found at the
+root. Those files are usually not containing much text (landing pages) or
+containing redundant text (latest blog articles) so they are not included by
+default.
 
 If you want to index those files, you should set the value to an empty array.
 
@@ -46,7 +47,7 @@ algolia:
 ```
 
 If you want to exclude more files, you should add them to the array. Note that
-you can use glob patterns to exclude several files at once.
+you can use glob patterns (`*` and `**`) to exclude several files at once.
 
 ```yml
 algolia:
@@ -57,6 +58,7 @@ algolia:
     - excluded-file.html
     - _posts/2017-01-20-date-to-forget.md
     - subdirectory/*.html
+    - **/*.tmp.html
 ```
 
 _Note that some files (pagination pages, static assets, etc) will **always** be

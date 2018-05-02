@@ -197,17 +197,18 @@ you might want to update the value like this:</p>
 <span class="cm-atom">  extensions_to_index</span><span class="cm-meta">: </span><span class="cm-string">&#39;html,md,adoc,textile&#39;</span>
 </code></div></pre>
 <h2 id="files-to-exclude"><code>files_to_exclude</code> <a class="anchor" href="options.html#files-to-exclude" aria-hidden="true"></a></h2>
-<p>This option lets you define a blacklist of source files you don’t want to index.</p>
-<p>By default it will exclude all the <code>index.html</code> and <code>index.md</code> files. Those
-files are usually not containing much text (landing pages) or containing
-redundant text (latest blog articles) so they are not included by default.</p>
+<p>This option lets you define a list of source files you don’t want to index.</p>
+<p>By default it will exclude the <code>index.html</code> and <code>index.md</code> files found at the
+root. Those files are usually not containing much text (landing pages) or
+containing redundant text (latest blog articles) so they are not included by
+default.</p>
 <p>If you want to index those files, you should set the value to an empty array.</p>
 <pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
   <span class="cm-comment"># Actually index the index.html/index.md pages</span>
 <span class="cm-atom">  files_to_exclude</span><span class="cm-meta">: </span><span class="cm-meta">[</span><span class="cm-meta">]</span>
 </code></div></pre>
 <p>If you want to exclude more files, you should add them to the array. Note that
-you can use glob patterns to exclude several files at once.</p>
+you can use glob patterns (<code>*</code> and <code>**</code>) to exclude several files at once.</p>
 <pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
   <span class="cm-comment"># Exclude more files from indexing</span>
 <span class="cm-atom">  files_to_exclude</span><span class="cm-meta">:</span>
@@ -216,6 +217,7 @@ you can use glob patterns to exclude several files at once.</p>
 <span class="cm-meta">    - </span>excluded-file.html
 <span class="cm-meta">    - </span>_posts/2017-01-20-date-to-forget.md
 <span class="cm-meta">    - </span>subdirectory/*.html
+<span class="cm-meta">    - </span>**/*.tmp.html
 </code></div></pre>
 <p><em>Note that some files (pagination pages, static assets, etc) will <strong>always</strong> be
 excluded and you don’t have to specify them.</em></p>

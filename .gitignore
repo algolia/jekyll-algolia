@@ -5,6 +5,7 @@ coverage/
 docs-dev/
 gemfiles/*.lock
 spec/site/_site
+spec/integration/site/_site
 
 
 .DS_Store

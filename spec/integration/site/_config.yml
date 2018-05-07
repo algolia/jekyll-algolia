@@ -1,0 +1,24 @@
+collections:
+  my-collection:
+    output: true
+timezone: Europe/Paris
+remote_theme: "mmistakes/minimal-mistakes"
+
+algolia:
+  application_id: APPID
+  index_name:     INDEXNAME
+  files_to_exclude:
+    - index.html
+    - excluded.html
+    - excluded_dir/*.html
+  settings:
+    attributesToSnippet: ['content:10']
+    separatorsToIndex: '∀λ→'
+
+# jekyll-paginate lets you define the path to the pagination pages
+paginate: 5
+paginate_path: "/blog/pages/:num"
+
+# jekyll-tagging lets you define where to save the tag files
+tag_page_layout: tag
+tag_page_dir: tags

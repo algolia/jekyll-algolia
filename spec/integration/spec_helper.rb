@@ -15,7 +15,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 end
 
-SITE_PATH = File.expand_path('./spec/site/_site')
+SITE_PATH = File.expand_path('./spec/integration/site/_site')
 RSpec::Matchers.define :have_file do |expected|
   match do
     File.exist?(File.join(SITE_PATH, expected))

@@ -47,7 +47,7 @@ module Jekyll
         known_errors = %w[
           unknown_application_id
           invalid_credentials
-          record_too_big
+          record_too_big_api
           too_many_records
           unknown_setting
           invalid_index_name
@@ -135,24 +135,6 @@ module Jekyll
         hash
       end
 
-      # Public: Returns a string explaining which attributes are the largest in
-      # the record
-      #
-      # record - The record hash to analyze
-      #
-      # This will be used on the `record_too_big` error, to guide users in
-      # finding which record is causing trouble
-      def self.readable_largest_record_keys(record)
-        keys = Hash[record.map { |key, value| [key, value.to_s.length] }]
-        largest_keys = keys.sort_by { |_, value| value }.reverse[0..2]
-        output = []
-        largest_keys.each do |key, size|
-          size = Filesize.from("#{size} B").to_s('Kb')
-          output << "#{key} (#{size})"
-        end
-        output.join(', ')
-      end
-
       # Public: Check if the application id is available
       #
       # _context - Not used
@@ -197,43 +179,24 @@ module Jekyll
       #
       # context[:records] - list of records sent in the batch
       #
-      # Records cannot weight more that 10Kb. If we're getting this error it
-      # means that one of the records is too big, so we'll try to give
-      # informations about it so the user can debug it.
-      def self.record_too_big?(error, context = {})
+      # One of the sent record is too big and has been rejected by the API. This
+      # should not happen as we proactively check for record size before pushing
+      # them. If it still happens it means that the value set in max_record_size
+      # is not matching the value in the plan.
+      def self.record_too_big_api?(error, _contex = {})
         details = error_hash(error.message)
         return false if details == false
 
         message = details['message']
         return false if message !~ /^Record .* is too big .*/
 
-        # Getting the record size
-        size, = /.*size=(.*) bytes.*/.match(message).captures
-        size = Filesize.from("#{size} B").to_s('Kb')
-        object_id = details['objectID']
-
-        # Finding the record in all the operations
-        operation = context[:operations].find do |o|
-          o[:action] == 'addObject' && o[:body][:objectID] == object_id
-        end
-        record = operation[:body]
-        probable_wrong_keys = readable_largest_record_keys(record)
-
-        # Writing the full record to disk for inspection
-        record_log_path = Logger.write_to_file(
-          "jekyll-algolia-record-too-big-#{object_id}.log",
-          JSON.pretty_generate(record)
-        )
+        record_size, = /.*size=(.*) bytes.*/.match(message).captures
+        record_size_readable = Filesize.from("#{record_size}B").to_s('Kb')
+        max_record_size = Configurator.algolia('max_record_size')
 
         {
-          'object_id' => object_id,
-          'object_title' => record[:title],
-          'object_url' => record[:url],
-          'probable_wrong_keys' => probable_wrong_keys,
-          'record_log_path' => record_log_path,
-          'nodes_to_index' => Configurator.algolia('nodes_to_index'),
-          'size' => size,
-          'size_limit' => '10 Kb'
+          'record_size' => record_size_readable,
+          'max_record_size' => max_record_size
         }
       end
 

@@ -14,6 +14,7 @@ module Jekyll
         'files_to_exclude' => nil,
         'nodes_to_index' => 'p',
         'indexing_batch_size' => 1000,
+        'max_record_size' => 10_000,
         'settings' => {
           # Searchable attributes
           'searchableAttributes' => %w[

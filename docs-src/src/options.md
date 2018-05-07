@@ -122,6 +122,24 @@ algolia:
   indexing_batch_size: 500
 ```
 
+## `max_record_size`
+
+**This is an advanced option. It has no effect on Community plans.**
+
+If you're using a paid Algolia plan, you can push records that weight up to 20Kb
+(as opposed to 10Kb with the free Community plan). This option allows you to
+adjust the maximum size of one record (in bytes).
+
+```yml
+algolia:
+  # Recommended setting for paid plans
+  max_record_size: 20000
+```
+
+_Note that if you push a record that is larger than your allowed limit,
+the push will be rejected by the API. This might result in incomplete data being
+uploaded._
+
 
 [1]: ./how-it-works.html
 [2]: http://www.methods.co.nz/asciidoc/

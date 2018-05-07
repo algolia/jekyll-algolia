@@ -21,4 +21,3 @@ paginate_path: "/blog/pages/:num"
 # jekyll-tagging lets you define where to save the tag files
 tag_page_layout: tag
 tag_page_dir: tags
-

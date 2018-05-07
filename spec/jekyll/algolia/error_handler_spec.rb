@@ -47,7 +47,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
     before do
       allow(current).to receive(:unknown_application_id?).and_return(false)
       allow(current).to receive(:invalid_credentials?).and_return(false)
-      allow(current).to receive(:record_too_big?).and_return(false)
+      allow(current).to receive(:record_too_big_api?).and_return(false)
       allow(current).to receive(:too_many_records?).and_return(false)
       allow(current).to receive(:unknown_setting?).and_return(false)
       allow(current).to receive(:invalid_index_name?).and_return(false)
@@ -69,7 +69,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
           .to have_received(:invalid_credentials?)
           .with(error, context)
         expect(current)
-          .to have_received(:record_too_big?)
+          .to have_received(:record_too_big_api?)
           .with(error, context)
         expect(current)
           .to have_received(:too_many_records?)
@@ -153,17 +153,6 @@ describe(Jekyll::Algolia::ErrorHandler) do
     end
   end
 
-  describe '.readable_largest_record_keys' do
-    let(:record) { { foo: foo, bar: bar, baz: baz, small: 'xxx' } }
-    let(:foo) { 'x' * 1000 }
-    let(:bar) { 'x' * 10_000 }
-    let(:baz) { 'x' * 100_000 }
-
-    subject { current.readable_largest_record_keys(record) }
-
-    it { should eq 'baz (100.00 Kb), bar (10.00 Kb), foo (1.00 Kb)' }
-  end
-
   describe '.unknown_application_id?' do
     let(:error) { double('Error', message: message) }
 
@@ -238,7 +227,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
     end
   end
 
-  describe '.record_too_big?' do
+  describe '.record_too_big_api?' do
     let(:error) { double('Error').as_null_object }
     let(:error_hash) do
       {
@@ -270,7 +259,7 @@ describe(Jekyll::Algolia::ErrorHandler) do
       }
     end
 
-    subject { current.record_too_big?(error, context) }
+    subject { current.record_too_big_api?(error, context) }
 
     before do
       allow(current).to receive(:error_hash).and_return(error_hash)
@@ -291,53 +280,16 @@ describe(Jekyll::Algolia::ErrorHandler) do
       it { should eq false }
     end
 
-    it 'should get information from message' do
-      should include('object_id' => 'object_id')
-      should include('size' => '109.20 Kb')
-      should include('size_limit' => '10 Kb')
-    end
-
-    describe 'includes the nodes to index' do
+    describe 'should get information from message' do
       before do
-        allow(configurator).to receive(:algolia).and_return('nodes')
+        allow(configurator)
+          .to receive(:algolia)
+          .with('max_record_size')
+          .and_return('max_size')
       end
-
       it do
-        should include('nodes_to_index' => 'nodes')
-      end
-    end
-
-    describe 'includes information about the bad record' do
-      before do
-        allow(current)
-          .to receive(:readable_largest_record_keys)
-          .and_return('wrong_keys')
-      end
-
-      it do
-        should include('object_title' => 'foo')
-        should include('object_url' => 'url')
-        should include('probable_wrong_keys' => 'wrong_keys')
-      end
-    end
-
-    describe 'save log file' do
-      before do
-        expect(::JSON)
-          .to receive(:pretty_generate)
-          .with(objectID: 'object_id', title: 'foo', url: 'url')
-          .and_return('{json}')
-        expect(logger)
-          .to receive(:write_to_file)
-          .with(
-            'jekyll-algolia-record-too-big-object_id.log',
-            '{json}'
-          )
-          .and_return('/path/to/file.log')
-      end
-
-      it 'should return the path of the log file in the output' do
-        should include('record_log_path' => '/path/to/file.log')
+        should include('max_record_size' => 'max_size')
+        should include('record_size' => '109.20 Kb')
       end
     end
   end

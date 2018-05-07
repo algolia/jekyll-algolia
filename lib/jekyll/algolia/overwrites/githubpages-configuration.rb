@@ -10,15 +10,23 @@ module GitHubPages
   # github-pages gem installed at the same time, those hooks will never be
   # executed.
   #
-  # Here, we overwrite the call to GitHubPages::Configuration.set that init the
-  # whole plugin to actually do nothing, hence disabling the plugin completely.
-  # https://github.com/github/pages-gem/blob/master/lib/github-pages.rb#L19
+  # The GitHub Pages gem prevent access to custom plugins by doing two things:
+  # - forcing safe mode
+  # - loading custom plugins from a random dir
+  #
+  # We cancel those by disabling safe mode and forcing back plugins to be read
+  # from ./_plugins.
   #
   # This file will only be loaded when running `jekyll algolia`, so it won't
   # interfere with the regular usage of `jekyll build`
   class Configuration
     class << self
-      def set(site); end
+      def set!(site)
+        config = effective_config(site.config)
+        config['safe'] = false
+        config['plugins_dir'] = '_plugins'
+        site.config = config
+      end
     end
   end
 end

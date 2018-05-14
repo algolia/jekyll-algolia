@@ -4,7 +4,9 @@ source 'https://rubygems.org'
 
 gem 'jekyll', '~> 3.7.3'
 
-gem 'minima', '~> 2.0'
+gem 'jekyll-remote-theme',
+    git: 'https://github.com/pixelastic/jekyll-remote-theme',
+    branch: 'cache'
 
 group :jekyll_plugins do
   gem 'github-pages', '~> 183'

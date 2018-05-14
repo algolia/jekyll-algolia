@@ -3,6 +3,7 @@ collections:
     output: true
 timezone: Europe/Paris
 remote_theme: "mmistakes/minimal-mistakes"
+remote_theme_cache: 3600
 
 algolia:
   application_id: APPID

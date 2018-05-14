@@ -8,9 +8,11 @@ This default index page is usually used to display the list of posts, or briefly
 I feel that it should not be indexed.
 
 {% for post in paginator.posts %}
-  <a href="{{ site.baseurl }}{{ post.url }}">
-    {{ post.title }}
-  </a>
-  {{ post.content }}
+  <h2>
+    <a href="{{ site.baseurl }}{{ post.url }}">
+      {{ post.title }}
+    </a>
+  </h2>
+  <p>{{ post.content }}</p>
 {% endfor %}
 

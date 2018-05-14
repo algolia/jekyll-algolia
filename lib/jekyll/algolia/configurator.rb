@@ -234,12 +234,6 @@ module Jekyll
       # Public: Disable features from other Jekyll plugins that might interfere
       # with the indexing
       def self.disable_other_plugins(config)
-        # Disable pagination from jekyll-paginate
-        # It creates a lot of /page2/index.html files that are not relevant to
-        # indexing
-        # https://github.com/jekyll/jekyll-paginate/blob/master/lib/jekyll-paginate/pager.rb#L23
-        config['paginate'] = nil
-
         # Disable archive pages from jekyll-archives
         config['jekyll-archives'] = nil
 

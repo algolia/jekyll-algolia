@@ -17,7 +17,7 @@ algolia:
     separatorsToIndex: '∀λ→'
 
 # jekyll-paginate lets you define the path to the pagination pages
-paginate: 5
+paginate: 2
 paginate_path: "/blog/pages/:num"
 
 # jekyll-tagging lets you define where to save the tag files

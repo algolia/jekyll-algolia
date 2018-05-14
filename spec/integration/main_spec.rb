@@ -12,6 +12,7 @@ describe('pushed index') do
     # Files excluded from indexing should still be written on disk
     it { should have_file('404.html') }
     it { should have_file('index.html') }
+    it { should have_file('blog/pages/2/index.html') }
   end
 
   # Custom hooks are executed, even if github-pages is added as a gem
@@ -58,15 +59,15 @@ describe('pushed index') do
 
     context 'by default' do
       let(:distinct) { nil }
-      it { should eq 5 }
+      it { should eq 7 }
     end
     context 'with distinct:true' do
       let(:distinct) { true }
-      it { should eq 5 }
+      it { should eq 7 }
     end
     context 'with distinct:false' do
       let(:distinct) { false }
-      it { should eq 9 }
+      it { should eq 11 }
     end
   end
 end

@@ -55,6 +55,7 @@ module Jekyll
       require 'jekyll/algolia/overwrites/githubpages-configuration'
       require 'jekyll/algolia/overwrites/jekyll-algolia-site'
       require 'jekyll/algolia/overwrites/jekyll-document'
+      require 'jekyll/algolia/overwrites/jekyll-paginate-pager'
       require 'jekyll/algolia/overwrites/jekyll-tags-link'
 
       # Register our own tags to overwrite the default tags

@@ -82,5 +82,5 @@ state where records are partially updated.
 
 
 [1]: https://www.algolia.com/doc/guides/ranking/distinct/?language=ruby#distinct-to-index-large-records
-[2]: https://www.algolia.com/doc/api-reference/api-methods/search/?language=ruby#method-response->highlightresult
+[2]: https://www.algolia.com/doc/api-reference/api-methods/search/?language=ruby#method-response-_highlightresult
 [3]: https://www.algolia.com/doc/api-reference/api-methods/search/?language=ruby#method-response-_snippetresult

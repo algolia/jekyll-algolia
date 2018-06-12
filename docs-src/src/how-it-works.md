@@ -58,6 +58,11 @@ paragraph of each page is returned for a specific query. This greatly improves
 the perceived relevance of the search results as you can highlight specifically
 the part that was matching.
 
+Also note that the response you'll get from the API might be enriched with
+[\_highlightResult][2] and [\_snippetResult][3] keys. Those keys are
+automatically added when performing a search and are not part of the saved
+record.
+
 ## Pushing data
 
 The plugin tries to be smart by using as less operations as possible, to be
@@ -75,4 +80,7 @@ instead. All those operations are grouped into a batch call, making sure that
 the changes are done atomically: your index will never be in an inconsistent
 state where records are partially updated.
 
+
 [1]: https://www.algolia.com/doc/guides/ranking/distinct/?language=ruby#distinct-to-index-large-records
+[2]: https://www.algolia.com/doc/api-reference/api-methods/search/?language=ruby#method-response->highlightresult
+[3]: https://www.algolia.com/doc/api-reference/api-methods/search/?language=ruby#method-response-_snippetresult

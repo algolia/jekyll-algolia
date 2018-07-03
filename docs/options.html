@@ -194,7 +194,11 @@ indexed.</p>
 you might want to update the value like this:</p>
 <pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">algolia</span><span class="cm-meta">:</span>
   <span class="cm-comment"># Also index AsciiDoc and Textile files</span>
-<span class="cm-atom">  extensions_to_index</span><span class="cm-meta">: </span><span class="cm-string">&#39;html,md,adoc,textile&#39;</span>
+<span class="cm-atom">  extensions_to_index</span><span class="cm-meta">:</span>
+<span class="cm-meta">    - </span>html
+<span class="cm-meta">    - </span>md
+<span class="cm-meta">    - </span>adoc
+<span class="cm-meta">    - </span>textile
 </code></div></pre>
 <h2 id="files-to-exclude"><code>files_to_exclude</code> <a class="anchor" href="options.html#files-to-exclude" aria-hidden="true"></a></h2>
 <p>This option lets you define a list of source files you don’t want to index.</p>

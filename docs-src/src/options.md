@@ -26,7 +26,11 @@ you might want to update the value like this:
 ```yml
 algolia:
   # Also index AsciiDoc and Textile files
-  extensions_to_index: 'html,md,adoc,textile'
+  extensions_to_index:
+    - html
+    - md
+    - adoc
+    - textile
 ```
 
 ## `files_to_exclude`

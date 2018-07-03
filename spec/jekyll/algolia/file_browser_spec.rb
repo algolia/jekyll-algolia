@@ -209,8 +209,7 @@ describe(Jekyll::Algolia::FileBrowser) do
 
     before do
       allow(configurator)
-        .to receive(:algolia)
-        .with('extensions_to_index')
+        .to receive(:extensions_to_index)
         .and_return(extensions)
     end
 

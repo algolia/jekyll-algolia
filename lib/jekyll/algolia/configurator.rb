@@ -198,7 +198,7 @@ module Jekyll
       # User can still add it by manually specifying a `files_to_exclude` to an
       # empty array
       def self.default_files_to_exclude
-        algolia('extensions_to_index').map do |extension|
+        extensions_to_index.map do |extension|
           "index.#{extension}"
         end
       end
@@ -229,6 +229,17 @@ module Jekyll
         value = get('force_settings')
         return true if value == true
         false
+      end
+
+      # Public: Returns a list of extensions to index
+      #
+      # Will use default values or read the algolia.extensions_to_index key.
+      # Accepts both an array or a comma-separated list
+      def self.extensions_to_index
+        extensions = algolia('extensions_to_index')
+        return [] if extensions.nil?
+        extensions = extensions.split(',') if extensions.is_a? String
+        extensions
       end
 
       # Public: Disable features from other Jekyll plugins that might interfere

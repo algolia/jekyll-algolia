@@ -121,8 +121,7 @@ describe(Jekyll::Algolia::Configurator) do
 
     before do
       allow(current)
-        .to receive(:algolia)
-        .with('extensions_to_index')
+        .to receive(:extensions_to_index)
         .and_return(%w[foo bar])
     end
 
@@ -377,6 +376,30 @@ describe(Jekyll::Algolia::Configurator) do
     context 'when passed invalid value' do
       let(:value) { 'chunky bacon' }
       it { should eq false }
+    end
+  end
+
+  describe 'extensions_to_index' do
+    subject { current.extensions_to_index }
+
+    before do
+      allow(current)
+        .to receive(:algolia)
+        .with('extensions_to_index')
+        .and_return(value)
+    end
+
+    context 'when no extensions' do
+      let(:value) { nil }
+      it { should eq [] }
+    end
+    context 'when extensions as an array' do
+      let(:value) { %w[foo bar] }
+      it { should eq %w[foo bar] }
+    end
+    context 'when extensions as a string' do
+      let(:value) { 'foo,bar' }
+      it { should eq %w[foo bar] }
     end
   end
 

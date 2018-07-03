@@ -101,7 +101,7 @@ module Jekyll
       # and raw HTML files but this list can be extended using the
       # `extensions_to_index` config option.
       def self.allowed_extension?(file)
-        extensions = Configurator.algolia('extensions_to_index')
+        extensions = Configurator.extensions_to_index
         extname = File.extname(file.path)[1..-1]
         extensions.include?(extname)
       end

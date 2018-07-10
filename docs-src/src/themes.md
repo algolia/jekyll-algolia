@@ -11,17 +11,19 @@ to add search into your own design.
 
 Some themes already have `jekyll-algolia` embedded by default:
 
-- [Minimal Mistakes][3], by
-  [@mmistakes][4]
+- [Minimal Mistakes][3], by [@mmistakes][4]
+- [GaeBlogx][5], by [@SeraphRoy][6]
 
 ## Add your own
 
 If you're maintaining a theme using `jekyll-algolia`, feel free to [edit this
-page][5] to add your theme to the list.
+page][7] to add your theme to the list.
 
 
 [1]: ./blog.html
 [2]: https://github.com/jekyll/minima
 [3]: https://mmistakes.github.io/minimal-mistakes/
 [4]: https://github.com/mmistakes
-[5]: https://github.com/algolia/jekyll-algolia/edit/develop/docs-src/src/themes.md
+[5]: https://github.com/SeraphRoy/GaeBlogx
+[6]: https://www.gaeblogx.com/
+[7]: https://github.com/algolia/jekyll-algolia/edit/develop/docs-src/src/themes.md

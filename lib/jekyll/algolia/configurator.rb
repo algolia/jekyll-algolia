@@ -253,8 +253,12 @@ module Jekyll
         # Disable archive pages from jekyll-archives
         config['jekyll-archives'] = nil
 
-        # Disable paginatio from jekyll-paginate
+        # Disable pagination from jekyll-paginate
         config['paginate'] = nil
+
+        # Disable pagination for jekyll-paginate-v2
+        config['pagination'] = {} unless config['pagination'].is_a?(Hash)
+        config['pagination']['enabled'] = false
 
         # Disable tags from jekyll-tagging
         config['tag_page_dir'] = nil

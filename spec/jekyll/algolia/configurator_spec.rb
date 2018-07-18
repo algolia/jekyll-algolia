@@ -442,6 +442,20 @@ describe(Jekyll::Algolia::Configurator) do
       it { should include('paginate' => nil) }
     end
 
+    context 'disable jekyll-paginate-v2' do
+      context 'with no pagination key' do
+        it { should include('pagination' => { 'enabled' => false }); }
+      end
+      context 'with a pagination key' do
+        let(:config) { { 'pagination' => { 'foo' => 'bar' } } }
+        it {
+          should include(
+            'pagination' => { 'foo' => 'bar', 'enabled' => false }
+          )
+        }
+      end
+    end
+
     context 'disable jekyll-tagging' do
       it { should include('tag_page_dir' => nil) }
       it { should include('tag_page_layout' => nil) }

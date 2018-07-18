@@ -244,9 +244,17 @@ module Jekyll
 
       # Public: Disable features from other Jekyll plugins that might interfere
       # with the indexing
+      # Note that if other jekyll plugins are defined as part of the
+      # :jekyll_plugins group in the Gemfile, we might be able to override them
+      # using .load_overwrites in  .load_overwrites in jekyll-algolia.rb.
+      # If they are simply required in Gemfile, then we might need to revert
+      # their values to nil values from here
       def self.disable_other_plugins(config)
         # Disable archive pages from jekyll-archives
         config['jekyll-archives'] = nil
+
+        # Disable paginatio from jekyll-paginate
+        config['paginate'] = nil
 
         # Disable tags from jekyll-tagging
         config['tag_page_dir'] = nil

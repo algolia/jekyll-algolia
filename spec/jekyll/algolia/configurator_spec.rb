@@ -438,6 +438,10 @@ describe(Jekyll::Algolia::Configurator) do
       it { should include('jekyll-archives' => nil) }
     end
 
+    context 'disable jekyll-paginate' do
+      it { should include('paginate' => nil) }
+    end
+
     context 'disable jekyll-tagging' do
       it { should include('tag_page_dir' => nil) }
       it { should include('tag_page_layout' => nil) }

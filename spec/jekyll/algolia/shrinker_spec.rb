@@ -16,9 +16,14 @@ describe(Jekyll::Algolia::Shrinker) do
       it { should eq 2 }
     end
 
-    describe 'should return a size in bytes' do
+    describe 'should return the size if no special chars' do
       let(:input) { { foo: 'bar' } }
       it { should eq 13 }
+    end
+
+    describe 'should return a size in bytes, even with UTF-8 chars' do
+      let(:input) { { foo: '“æé' } }
+      it { should eq 17 }
     end
   end
 

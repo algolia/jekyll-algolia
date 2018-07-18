@@ -10,7 +10,7 @@ module Jekyll
       # Public: Get the byte size of the object once converted to JSON
       # - record: The record to estimate
       def self.size(record)
-        record.to_json.length
+        record.to_json.bytesize
       end
 
       # Public: Attempt to reduce the size of the record by reducing the size of
@@ -33,7 +33,7 @@ module Jekyll
         record[:excerpt_html] = record[:excerpt_text]
         return record if size(record) <= max_size
 
-        # We halve the excerpts
+        # We half the excerpts
         excerpt_words = record[:excerpt_text].split(/\s+/)
         shortened_excerpt = excerpt_words[0...excerpt_words.size / 2].join(' ')
         record[:excerpt_text] = shortened_excerpt

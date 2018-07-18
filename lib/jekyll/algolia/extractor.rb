@@ -54,13 +54,20 @@ module Jekyll
       #
       # content - The HTML content to parse
       def self.extract_raw_records(content)
-        AlgoliaHTMLExtractor.run(
+        records = AlgoliaHTMLExtractor.run(
           content,
           options: {
             css_selector: Configurator.algolia('nodes_to_index'),
             tags_to_exclude: 'script,style,iframe'
           }
         )
+        # We remove objectIDs, as the will be added at the very end, after all
+        # the hooks and shrinkage
+        records.each do |record|
+          record.delete(:objectID)
+        end
+
+        records
       end
     end
   end

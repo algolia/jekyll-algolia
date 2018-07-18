@@ -346,7 +346,7 @@ module Jekyll
       # their dashboard
       #
       # When users change some settings in their dashboard, those settings might
-      # get overwritten by the pluging. We can't prevent that, but we can warn
+      # get overwritten by the plugin. We can't prevent that, but we can warn
       # them when we detect they changed something.
       def self.warn_of_manual_dashboard_editing(changed_keys)
         # Transform the hash into readable YAML

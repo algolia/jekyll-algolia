@@ -183,7 +183,7 @@ module Jekyll
       # should not happen as we proactively check for record size before pushing
       # them. If it still happens it means that the value set in max_record_size
       # is not matching the value in the plan.
-      def self.record_too_big_api?(error, _contex = {})
+      def self.record_too_big_api?(error, _context = {})
         details = error_hash(error.message)
         return false if details == false
 

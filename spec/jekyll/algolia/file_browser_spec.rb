@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 require 'spec_helper'
 
-# rubocop:disable Metrics/BlockLength
 describe(Jekyll::Algolia::FileBrowser) do
   let(:current) { Jekyll::Algolia::FileBrowser }
   let(:configurator) { Jekyll::Algolia::Configurator }
@@ -520,9 +520,31 @@ describe(Jekyll::Algolia::FileBrowser) do
         let(:filepath) { 'sample-item.md' }
         it { should eq nil }
       end
-      describe 'date in frontmatter' do
+      describe 'date in frontmatter as DD-MM-YYYY' do
         let(:filepath) { 'collection-item.md' }
         it { should eq 452_469_600 }
+      end
+    end
+
+    # Sometimes a conjunction of plugins on the user side can change the format
+    # of the date (it should be passed as a date object) and keep it as
+    # a string. In order to test those cases, we will manually pass strings to
+    # the call
+    context 'direct call' do
+      subject { current.date(file) }
+
+      let(:file) { double('File') }
+      before do
+        allow(file).to receive(:data).and_return(mock_data)
+      end
+
+      describe 'date as a valid string' do
+        let(:mock_data) { { 'date' => '1984-05-04' } }
+        it { should eq 452_469_600 }
+      end
+      describe 'date as a invalid string' do
+        let(:mock_data) { { 'date' => 'azertyuiop' } }
+        it { should eq nil }
       end
     end
   end

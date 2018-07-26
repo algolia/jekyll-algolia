@@ -2,6 +2,7 @@
 
 require 'algolia_html_extractor'
 require 'pathname'
+require 'time'
 
 module Jekyll
   module Algolia
@@ -234,7 +235,7 @@ module Jekyll
       def self.date(file)
         # Collections get their date from .date, while pages read it from .data.
         # Jekyll by default will set the date of collection to the current date,
-        # but we overwrote this.
+        # but we monkey-patched that so it returns nil for collection items
         date = if file.respond_to?(:date)
                  file.date
                else
@@ -242,6 +243,16 @@ module Jekyll
                end
 
         return nil if date.nil?
+
+        # If date is a string, we try to parse it
+        if date.is_a? String
+          begin
+            date = Time.parse(date)
+          rescue StandardError
+            return nil
+          end
+        end
+
         date.to_time.to_i
       end
 

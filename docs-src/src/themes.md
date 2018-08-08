@@ -13,7 +13,7 @@ Some themes already have `jekyll-algolia` embedded by default:
 
 - [Minimal Mistakes][3], by [@mmistakes][4]
 - [GaeBlogx][5], by [@SeraphRoy][6]
-- [Sakura][7] ([demo][8]), by [@kimfucious][9]
+- [Sakura][7] ([live demo][8]), by [@kimfucious][9]
 
 ## Add your own
 

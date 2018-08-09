@@ -1,6 +1,6 @@
 E:[✗ Error] No records found
 E:
-E:The jekyll-algolia plugin could find any records to index
+E:The jekyll-algolia plugin could not find any records to index.
 W:
 W:The plugin tried to extract records from the pages, posts and collections of your site but could not find anything to index.
 I:

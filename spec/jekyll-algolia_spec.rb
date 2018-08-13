@@ -322,10 +322,7 @@ describe(Jekyll::Algolia) do
           )
         expect(Jekyll::Hooks)
           .to have_received(:register)
-          .with(:pages, :post_render)
-        expect(Jekyll::Hooks)
-          .to have_received(:register)
-          .with(:documents, :post_render)
+          .with([:pages, :documents], :post_render)
       end
     end
 

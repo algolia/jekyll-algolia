@@ -54,11 +54,7 @@ module Jekyll
           total: indexable_item_count,
           format: 'Rendering to HTML (%j%%) |%B|'
         )
-        Jekyll::Hooks.register :pages, :post_render do |_|
-          progress_bar.increment
-        end
-
-        Jekyll::Hooks.register :documents, :post_render do |_|
+        Jekyll::Hooks.register [:pages, :documents], :post_render do
           progress_bar.increment
         end
       end

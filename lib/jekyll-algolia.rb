@@ -19,6 +19,8 @@ module Jekyll
     require 'jekyll/algolia/utils'
     require 'jekyll/algolia/version'
 
+    MissingCredentialsError = Class.new(StandardError)
+
     # Public: Init the Algolia module
     #
     # config - A hash of Jekyll config option (merge of _config.yml options and
@@ -33,7 +35,12 @@ module Jekyll
       config = Configurator.init(config).config
       @site = Jekyll::Algolia::Site.new(config)
 
-      exit 1 unless Configurator.assert_valid_credentials
+      unless Configurator.assert_valid_credentials
+        raise(
+          MissingCredentialsError,
+          "One or more credentials were not found for site at: #{@site.source}"
+        )
+      end
 
       Configurator.warn_of_deprecated_options
 

@@ -14,7 +14,7 @@ require 'ostruct'
 
 RSpec.configure do |config|
   config.filter_run(focus: true)
-  config.fail_fast = true
+  config.fail_fast = false
   config.run_all_when_everything_filtered = true
   config.before do
     Jekyll::Algolia::Configurator.init

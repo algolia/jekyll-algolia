@@ -57,7 +57,7 @@ describe(Jekyll::Algolia) do
           .and_return(false)
       end
 
-      it { is_expected.to raise_error SystemExit }
+      it { is_expected.to raise_error Jekyll::Algolia::MissingCredentialsError }
     end
   end
 

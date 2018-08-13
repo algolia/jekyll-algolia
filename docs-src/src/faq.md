@@ -9,15 +9,15 @@ layout: content-with-menu.pug
 
 The plugin will not create an exact mapping of `1 page = 1 record`. Instead, it
 will split all pages into smaller chunks, and each chunk will be saved as
-a record. Splitting in small chunks is key to offer the best relevance of
+a record. Splitting into small chunks is key to offer the best relevance of
 results.
 
-The default chunking mechanism is to create one chunk per paragraphof content.
-So, for a blog post that is made of 10 paragraphs of text, it will create 10
+The default chunking mechanism is to create one chunk per paragraph of content.
+So, for a blog post that is made up of 10 paragraphs of text, it will create 10
 records.
 
-Estimating the number of records you will need can be tricky as it depends both
-on the number of pages you have, but also on the average length of them.  Some
+Estimating the number of records you will need can be tricky as it depends on
+both the number of pages you have, and on the average length of them. Some
 configuration options (such as [nodes_to_index][1]) can also influence the final
 result.
 
@@ -36,7 +36,7 @@ a timeline of **one year**.
 
 ## One of my records is too big. What can I do?
 
-If you get an error about one of your record being too big, be sure to update
+If you get an error about one of your records being too big, be sure to update
 the plugin to the latest version. We keep improving the plugin with ways of
 making the records smaller.
 
@@ -44,7 +44,7 @@ If you're still having an error, you should check the `.json` log file that has
 been created in your source directory. This will contain the content of the
 record that has been rejected. It might give you hints about what went wrong.
 
-A common cause for this issue often liens in the page HTML. Maybe the HTML is
+A common cause for this issue often lies in the page HTML. Maybe the HTML is
 malformed (a tag is not closed for example), or instead of several small
 paragraphs there is only one large paragraph. This can cause the parser to take
 the whole page content (instead of small chunks of it) to create the

@@ -57,12 +57,12 @@ you can use glob patterns (`*` and `**`) to exclude several files at once.
 algolia:
   # Exclude more files from indexing
   files_to_exclude:
-    - index.html
-    - index.md
-    - excluded-file.html
-    - _posts/2017-01-20-date-to-forget.md
-    - subdirectory/*.html
-    - **/*.tmp.html
+    - 'index.html'
+    - 'index.md'
+    - 'excluded-file.html'
+    - '_posts/2017-01-20-date-to-forget.md'
+    - 'subdirectory/*.html'
+    - '**/*.tmp.html'
 ```
 
 _Note that some files (pagination pages, static assets, etc) will **always** be

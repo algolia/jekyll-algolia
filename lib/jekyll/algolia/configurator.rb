@@ -261,7 +261,7 @@ module Jekyll
         config['pagination']['enabled'] = false
 
         # Disable autopages for jekyll-paginate-v2
-        config['autopages'] = {} unless config['pagination'].is_a?(Hash)
+        config['autopages'] = {} unless config['autopages'].is_a?(Hash)
         config['autopages']['enabled'] = false
 
         # Disable tags from jekyll-tagging

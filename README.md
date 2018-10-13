@@ -1,3 +1,4 @@
+
 # Jekyll Algolia Plugin
 
 [![gem version][1]](https://rubygems.org/gems/jekyll-algolia)

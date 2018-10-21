@@ -70,6 +70,16 @@ You might have to edit the `branches.only` value to either `master` or
 `gh-pages`, depending on which branch is configured to be deployed in your
 GitHub Pages configuration.
 
+### Ignoring vendors
+
+Travis bundles all gems in the `vendor` directory on its servers, which Jekyll
+will mistakenly read. This will likely make the process fail. To avoid this,
+add `vendor` to the `exclude` list in your `_config.yml` file.
+
+```yml
+exclude: [vendor]
+```
+
 ## Adding the API Key
 
 The plugin will need your Admin API key to push data. Because you don't want to

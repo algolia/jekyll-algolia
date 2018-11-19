@@ -18,6 +18,9 @@ describe(Jekyll::Algolia) do
   before do
     allow(Jekyll.logger).to receive(:warn)
     allow(logger).to receive(:log)
+    allow(configurator)
+      .to receive(:assert_valid_credentials)
+      .and_return(true)
   end
 
   describe '.init' do
@@ -25,12 +28,6 @@ describe(Jekyll::Algolia) do
 
     context 'with valid Algolia credentials' do
       subject { current.init(config) }
-
-      before do
-        allow(configurator)
-          .to receive(:assert_valid_credentials)
-          .and_return(true)
-      end
 
       it 'should make the site accessible from the outside' do
         expect(subject.site.config).to include(config)

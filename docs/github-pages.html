@@ -230,6 +230,12 @@ defined in the <code>Gemfile</code> through Bundler. It will then run <code>bund
 <p>You might have to edit the <code>branches.only</code> value to either <code>master</code> or
 <code>gh-pages</code>, depending on which branch is configured to be deployed in your
 GitHub Pages configuration.</p>
+<h3 id="ignoring-vendors">Ignoring vendors <a class="anchor" href="github-pages.html#ignoring-vendors" aria-hidden="true"></a></h3>
+<p>Travis bundles all gems in the <code>vendor</code> directory on its servers, which Jekyll
+will mistakenly read. This will likely make the process fail. To avoid this,
+add <code>vendor</code> to the <code>exclude</code> list in your <code>_config.yml</code> file.</p>
+<pre class="code-sample cm-s-mdn-like codeMirror yaml" data-code-type="Code"><div class="code-wrap"><code><span class="cm-atom">exclude</span><span class="cm-meta">: </span><span class="cm-meta">[</span>vendor<span class="cm-meta">]</span>
+</code></div></pre>
 <h2 id="adding-the-api-key">Adding the API Key <a class="anchor" href="github-pages.html#adding-the-api-key" aria-hidden="true"></a></h2>
 <p>The plugin will need your Admin API key to push data. Because you don’t want to
 expose this key in your repository, you’ll have to add <code>ALGOLIA_API_KEY</code> as an

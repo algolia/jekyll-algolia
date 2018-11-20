@@ -1,12 +1,11 @@
 # Jekyll Algolia Plugin
 
-[![gem version][1]](https://rubygems.org/gems/jekyll-algolia)
+[![gem version][1]][16]
 ![ruby][2]
 ![jekyll][3]
-[![build master][4]](https://travis-ci.org/algolia/jekyll-algolia)
-[![coverage master][5]](https://coveralls.io/github/algolia/jekyll-algolia?branch=master)
-[![build develop][6]](https://travis-ci.org/algolia/jekyll-algolia)
-[![coverage develop][7]](https://coveralls.io/github/algolia/jekyll-algolia?branch=develop)
+[![build master][4]][17]
+[![build develop][6]][17]
+[![coverage master][5]][18]
 
 Add fast and relevant search to your Jekyll site.
 
@@ -21,7 +20,7 @@ This will push the content of your Jekyll website to your Algolia index.
 ## Documentation
 
 Full documentation can be found on
-[https://community.algolia.com/jekyll-algolia/](https://community.algolia.com/jekyll-algolia/getting-started.html)
+[https://community.algolia.com/jekyll-algolia/][20]
 
 ## Installation
 
@@ -42,12 +41,12 @@ Once this is done, download all dependencies with `bundle install`.
 
 ## Basic configuration
 
-You need to provide certain Algolia credentials for this plugin to *index* your
+You need to provide certain Algolia credentials for this plugin to _index_ your
 site.
 
-*If you don't yet have an Algolia account, we suggest that you open a free
+_If you don't yet have an Algolia account, we suggest that you open a free
 [Community plan here][8]. You can find more information about the Algolia plans
-[in our FAQ][10].*
+[in our FAQ][10]._
 
 Once signed in, you should get your application ID from [your dashboard][9] and
 define it inside your `_config.yml` file like this:
@@ -89,19 +88,42 @@ FAQ][10].
 Thanks to [Anatoliy Yastreb][14] for a [great tutorial][15] on creating Jekyll
 plugins.
 
-
 [1]: https://badge.fury.io/rb/jekyll-algolia.svg
+
 [2]: https://img.shields.io/badge/ruby-%3E%3D%202.3.0-green.svg
+
 [3]: https://img.shields.io/badge/jekyll-%3E%3D%203.6.0-green.svg
+
 [4]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Amaster&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Dmaster
-[5]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Amaster&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Dmaster
+
+[5]: https://coveralls.io/repos/github/algolia/jekyll-algolia/badge.svg?branch=master
+
 [6]: https://img.shields.io/badge/dynamic/json.svg?label=build%3Adevelop&query=value&uri=https%3A%2F%2Fimg.shields.io%2Ftravis%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
-[7]: https://img.shields.io/badge/dynamic/json.svg?label=coverage%3Adevelop&colorB=&prefix=&suffix=%25&query=$.coverage_change&uri=https%3A%2F%2Fcoveralls.io%2Fgithub%2Falgolia%2Fjekyll-algolia.json%3Fbranch%3Ddevelop
+
+[7]: https://coveralls.io/repos/github/algolia/jekyll-algolia/badge.svg?branch=develop
+
 [8]: #more-about-the-community-plan
+
 [9]: https://www.algolia.com/api-keys
+
 [10]: https://community.algolia.com/jekyll-algolia/faq.html#how-many-records-will-the-plugin-need
+
 [11]: https://www.algolia.com/users/sign_up/hacker
+
 [12]: https://community.algolia.com/instantsearch.js/
+
 [13]: https://www.algolia.com/press#resources
+
 [14]: https://github.com/ayastreb/
+
 [15]: https://ayastreb.me/writing-a-jekyll-plugin/
+
+[16]: https://rubygems.org/gems/jekyll-algolia
+
+[17]: https://travis-ci.org/algolia/jekyll-algolia
+
+[18]: https://coveralls.io/github/algolia/jekyll-algolia?branch=master
+
+[19]: https://coveralls.io/github/algolia/jekyll-algolia?branch=develop
+
+[20]: https://community.algolia.com/jekyll-algolia/getting-started.html

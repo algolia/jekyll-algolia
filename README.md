@@ -1,4 +1,3 @@
-
 # Jekyll Algolia Plugin
 
 [![gem version][1]][16]

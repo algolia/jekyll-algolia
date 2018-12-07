@@ -456,6 +456,20 @@ describe(Jekyll::Algolia::Configurator) do
       end
     end
 
+    context 'disable autopes for jekyll-paginate-v2' do
+      context 'with no pagination key' do
+        it { should include('autopages' => { 'enabled' => false }); }
+      end
+      context 'with a pagination key' do
+        let(:config) { { 'autopages' => { 'foo' => 'bar' } } }
+        it {
+          should include(
+            'autopages' => { 'foo' => 'bar', 'enabled' => false }
+          )
+        }
+      end
+    end
+
     context 'disable jekyll-tagging' do
       it { should include('tag_page_dir' => nil) }
       it { should include('tag_page_layout' => nil) }

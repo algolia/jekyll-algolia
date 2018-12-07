@@ -33,7 +33,7 @@ describe(Jekyll::Algolia::Indexer) do
           .with(hash_including(
                   application_id: 'app_id',
                   api_key: 'api_key'
-          ))
+                ))
       end
     end
 
@@ -215,7 +215,7 @@ describe(Jekyll::Algolia::Indexer) do
           .to have_received(:create)
           .with(hash_including(
                   total: 12
-          ))
+                ))
         expect(progress_bar_instance).to have_received(:increment).twice
       end
     end

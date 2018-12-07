@@ -57,6 +57,7 @@ module Jekyll
         known_errors.each do |potential_error|
           error_check = send("#{potential_error}?", error, context)
           next if error_check == false
+
           return {
             name: potential_error,
             details: error_check

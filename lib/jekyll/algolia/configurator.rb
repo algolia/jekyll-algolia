@@ -209,6 +209,7 @@ module Jekyll
       def self.verbose?
         value = get('verbose')
         return true if value == true
+
         false
       end
 
@@ -218,6 +219,7 @@ module Jekyll
       def self.dry_run?
         value = get('dry_run')
         return true if value == true
+
         false
       end
 
@@ -228,6 +230,7 @@ module Jekyll
       def self.force_settings?
         value = get('force_settings')
         return true if value == true
+
         false
       end
 
@@ -238,6 +241,7 @@ module Jekyll
       def self.extensions_to_index
         extensions = algolia('extensions_to_index')
         return [] if extensions.nil?
+
         extensions = extensions.split(',') if extensions.is_a? String
         extensions
       end

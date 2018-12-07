@@ -49,6 +49,7 @@ module Jekyll
       # line - The line to display, following the same format as .log
       def self.verbose(line)
         return unless Configurator.verbose?
+
         log(line)
       end
 

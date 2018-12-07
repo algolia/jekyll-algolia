@@ -328,6 +328,7 @@ module Jekyll
 
         Logger.log("I:Updating settings of index #{index.name}")
         return if Configurator.dry_run?
+
         set_settings(settings)
       end
 

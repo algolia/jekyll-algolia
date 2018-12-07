@@ -42,6 +42,7 @@ module Jekyll
       # html - String representation of the HTML node
       def self.html_to_text(html)
         return nil if html.nil?
+
         text = Nokogiri::HTML(html).text
         text.tr("\n", ' ').squeeze(' ').strip
       end
@@ -54,6 +55,7 @@ module Jekyll
         hash.each do |key, value|
           next if value.nil?
           next if value.is_a?(String) && value.empty?
+
           new_hash[key] = value
         end
         new_hash
@@ -84,6 +86,7 @@ module Jekyll
       # It is basically a wrapper around [].find, handling more edge-cases
       def self.find_by_key(items, key, value)
         return nil if items.nil?
+
         items.find do |item|
           item[key] == value
         end
@@ -140,6 +143,7 @@ module Jekyll
         end
 
         return nil if diff.empty?
+
         diff
       end
 

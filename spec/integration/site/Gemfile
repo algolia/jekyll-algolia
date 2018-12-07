@@ -4,6 +4,11 @@ source 'https://rubygems.org'
 
 gem 'jekyll', '~> 3.7.3'
 
+# Note: jekyll-remote-theme download themes on each run, which makes tests
+# really slow. To workaround the issue, I submitted a PR to add a cache duration
+# to the download. It hasn't been merged yet, so we're using the PR fork for now
+# Once https://github.com/benbalter/jekyll-remote-theme/pull/36 is merged, we'll
+# be able to use the official gem
 gem 'jekyll-remote-theme',
     git: 'https://github.com/pixelastic/jekyll-remote-theme',
     branch: 'cache'

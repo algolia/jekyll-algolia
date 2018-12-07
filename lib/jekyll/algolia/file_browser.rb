@@ -90,7 +90,15 @@ module Jekyll
       # an HTML meta refresh. We need to exclude those files from indexing.
       # https://github.com/jekyll/jekyll-redirect-from
       def self.redirect?(file)
-        file.respond_to?(:name) && file.name == 'redirect.html'
+        # When using redirect_from, jekyll-redirect-from creates a page named
+        # `redirect.html`
+        return true if file.respond_to?(:name) && file.name == 'redirect.html'
+        # When using redirect_to, it sets the layout to `redirect`
+        if file.respond_to?(:data) && file.data['layout'] == 'redirect'
+          return true
+        end
+
+        false
       end
 
       # Public: Check if the file has one of the allowed extensions
@@ -305,6 +313,7 @@ module Jekyll
         selector = Configurator.algolia('nodes_to_index')
         first_node = Nokogiri::HTML(html).css(selector).first
         return nil if first_node.nil?
+
         first_node.to_s
       end
 

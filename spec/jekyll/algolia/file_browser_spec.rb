@@ -200,6 +200,11 @@ describe(Jekyll::Algolia::FileBrowser) do
       let(:file) { double('File', name: 'redirect.html') }
       it { should eq true }
     end
+
+    describe 'file with a redirect layout' do
+      let(:file) { double('File', data: { 'layout' => 'redirect' }) }
+      it { should eq true }
+    end
   end
 
   describe '.allowed_extension?' do

@@ -1,5 +1,7 @@
 # Jekyll Algolia Plugin
 
+Ignore me
+
 [![gem version][1]][16]
 ![ruby][2]
 ![jekyll][3]

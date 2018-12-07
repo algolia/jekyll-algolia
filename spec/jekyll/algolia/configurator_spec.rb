@@ -443,30 +443,31 @@ describe(Jekyll::Algolia::Configurator) do
     end
 
     context 'disable jekyll-paginate-v2' do
-      context 'with no pagination key' do
-        it { should include('pagination' => { 'enabled' => false }); }
+      context 'pagination' do
+        context 'with no pagination key' do
+          it { should include('pagination' => { 'enabled' => false }); }
+        end
+        context 'with a pagination key' do
+          let(:config) { { 'pagination' => { 'foo' => 'bar' } } }
+          it {
+            should include(
+              'pagination' => { 'foo' => 'bar', 'enabled' => false }
+            )
+          }
+        end
       end
-      context 'with a pagination key' do
-        let(:config) { { 'pagination' => { 'foo' => 'bar' } } }
-        it {
-          should include(
-            'pagination' => { 'foo' => 'bar', 'enabled' => false }
-          )
-        }
-      end
-    end
-
-    context 'disable autopes for jekyll-paginate-v2' do
-      context 'with no pagination key' do
-        it { should include('autopages' => { 'enabled' => false }); }
-      end
-      context 'with a pagination key' do
-        let(:config) { { 'autopages' => { 'foo' => 'bar' } } }
-        it {
-          should include(
-            'autopages' => { 'foo' => 'bar', 'enabled' => false }
-          )
-        }
+      context 'autopages' do
+        context 'with no autopages key' do
+          it { should include('autopages' => { 'enabled' => false }); }
+        end
+        context 'with an autopages key' do
+          let(:config) { { 'autopages' => { 'foo' => 'bar' } } }
+          it {
+            should include(
+              'autopages' => { 'foo' => 'bar', 'enabled' => false }
+            )
+          }
+        end
       end
     end
 

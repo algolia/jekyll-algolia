@@ -38,6 +38,16 @@ group :jekyll_plugins do
 end
 ```
 
+## Running integration tests
+
+Integration tests will do a full jekyll run, and push data to an Algolia index,
+checking that records and settings are correctly saved. It is the slowest
+possible kind of tests, but also the one closest to a real implementation.
+
+Running those tests requires a real Algolia plan. You need to define
+`ALGOLIA_APPLICATION_ID`, `ALGOLIA_API_KEY` and `ALGOLIA_INDEX_NAME` (we suggest
+using `direnv` for that), and then run `./scripts/test_integration`.
+
 ## Linting
 
 Run `rake lint` to check the style of all ruby files. Run `rake

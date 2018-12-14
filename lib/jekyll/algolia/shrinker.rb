@@ -25,7 +25,9 @@ module Jekyll
         return raw_record if size(raw_record) <= max_size
 
         # No excerpt, we can't shrink it
-        return stop_with_error(raw_record) unless raw_record.key?(:excerpt_html)
+        if !raw_record.key?(:excerpt_html) || !raw_record.key?(:excerpt_text)
+          return stop_with_error(raw_record)
+        end
 
         record = raw_record.clone
 

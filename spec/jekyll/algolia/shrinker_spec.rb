@@ -81,6 +81,29 @@ describe(Jekyll::Algolia::Shrinker) do
       end
     end
 
+    describe 'should stop if no textual excerpt' do
+      let(:max_file_size) { 20 }
+      let(:input) do
+        {
+          title: 'title',
+          html: '<div>This is a long HTML content</div>',
+          text: 'This is also a long text content',
+          excerpt_html: '<p></p>'
+        }
+      end
+
+      before do
+        allow(current).to receive(:stop_with_error)
+        current.fit_to_size(input, max_file_size)
+      end
+
+      it do
+        expect(current)
+          .to have_received(:stop_with_error)
+          .with(input)
+      end
+    end
+
     describe 'should halve the excerpt content if too big' do
       let(:max_file_size) { 200 }
       let(:input) do

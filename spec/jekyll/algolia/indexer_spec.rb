@@ -632,7 +632,7 @@ describe(Jekyll::Algolia::Indexer) do
     let(:pluginVersion) { nil }
     let(:diff_keys) { nil }
     let(:force_settings) { nil }
-    let(:settings) { Jekyll::Algolia::Configurator::ALGOLIA_DEFAULTS }
+    let(:settings) { Jekyll::Algolia::Configurator::ALGOLIA_DEFAULTS['settings'].merge({}) }
 
     before do
       stub_const('Jekyll::Algolia::VERSION', pluginVersion)

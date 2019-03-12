@@ -103,7 +103,7 @@ module Jekyll
       # Returns the value of this option, or the default value
       def self.algolia(key)
         config = get('algolia') || {}
-        value = config[key] || ALGOLIA_DEFAULTS[key]
+        value = config[key].nil? ? ALGOLIA_DEFAULTS[key] : config[key]
 
         # No value found but we have a method to define the default value
         if value.nil? && respond_to?("default_#{key}")

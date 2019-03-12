@@ -306,6 +306,15 @@ describe(Jekyll::Algolia::Configurator) do
       it { should include('attributeForDistinct' => 'title') }
       it { should include('customRanking' => ['asc(foo)', 'desc(bar)']) }
     end
+    context 'with settings false' do
+      before do
+        allow(current)
+          .to receive(:algolia)
+          .with('settings')
+          .and_return(false)
+      end
+      it { should equal(false) }
+    end
   end
 
   describe 'dry_run?' do

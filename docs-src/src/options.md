@@ -106,7 +106,14 @@ algolia:
 ```
 
 Settings defined here will take precedence over any setting you manually defined
-through the [Algolia dashboard][5] UI, though.
+through the [Algolia dashboard][5] UI, though. If you'd like this not to happen
+at all, and only take the dashboard settings in account, pass `false` to the
+settings configuration.
+
+```yml
+algolia:
+  settings: false
+```
 
 ## `indexing_batch_size`
 

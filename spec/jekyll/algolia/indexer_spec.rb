@@ -632,6 +632,7 @@ describe(Jekyll::Algolia::Indexer) do
     let(:pluginVersion) { nil }
     let(:diff_keys) { nil }
     let(:force_settings) { nil }
+    let(:settings) { nil }
 
     before do
       stub_const('Jekyll::Algolia::VERSION', pluginVersion)

@@ -255,10 +255,10 @@ module Jekyll
       # their values to nil values from here
       def self.disable_other_plugins(config)
         # Disable archive pages from jekyll-archives
-        config['jekyll-archives'] = nil
+        config.delete('jekyll-archives')
 
         # Disable pagination from jekyll-paginate
-        config['paginate'] = nil
+        config.delete('paginate')
 
         # Disable pagination for jekyll-paginate-v2
         config['pagination'] = {} unless config['pagination'].is_a?(Hash)
@@ -269,8 +269,8 @@ module Jekyll
         config['autopages']['enabled'] = false
 
         # Disable tags from jekyll-tagging
-        config['tag_page_dir'] = nil
-        config['tag_page_layout'] = nil
+        config.delete('tag_page_dir')
+        config.delete('tag_page_layout')
 
         config
       end

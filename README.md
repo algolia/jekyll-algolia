@@ -112,7 +112,7 @@ plugins.
 
 [12]: https://community.algolia.com/instantsearch.js/
 
-[13]: https://www.algolia.com/press#resources
+[13]: https://www.algolia.com/press/?section=brand-guidelines
 
 [14]: https://github.com/ayastreb/
 

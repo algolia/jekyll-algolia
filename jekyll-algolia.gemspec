@@ -23,7 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'algolia_html_extractor', '~> 2.6'
   gem.add_runtime_dependency 'algoliasearch', '1.24'
   gem.add_runtime_dependency 'filesize', '~> 0.1'
-  gem.add_runtime_dependency 'jekyll', '~> 3.0'
+  gem.add_runtime_dependency 'jekyll', '>= 3.6', '< 5.0'
   gem.add_runtime_dependency 'json', '~> 2.0'
   gem.add_runtime_dependency 'nokogiri', '~> 1.6'
   gem.add_runtime_dependency 'progressbar', '~> 1.9'

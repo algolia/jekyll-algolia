@@ -258,8 +258,8 @@ module Jekyll
             ::Algolia.batch!(slice)
 
             progress_bar.increment if should_have_progress_bar
-          rescue StandardError => error
-            ErrorHandler.stop(error, operations: slice)
+          rescue StandardError => e
+            ErrorHandler.stop(e, operations: slice)
           end
         end
       end
@@ -338,8 +338,8 @@ module Jekyll
       # rubocop:disable Naming/AccessorMethodName
       def self.set_settings(settings)
         index.set_settings!(settings)
-      rescue StandardError => error
-        ErrorHandler.stop(error, settings: settings)
+      rescue StandardError => e
+        ErrorHandler.stop(e, settings: settings)
       end
       # rubocop:enable Naming/AccessorMethodName
 

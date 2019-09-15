@@ -149,7 +149,7 @@ describe(Jekyll::Algolia::Indexer) do
             hash_including(
               distinct: false, # To get the correct number of records
               hitsPerPage: 1, # To get a short response
-              attributesToRetrieve: 'objectID', # To get a short response
+              attributesToRetrieve: 'objectID' # To get a short response
             )
           )
           .and_return('nbHits' => nb_hits)

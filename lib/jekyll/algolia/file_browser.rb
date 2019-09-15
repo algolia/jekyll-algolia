@@ -76,11 +76,9 @@ module Jekyll
       # pages. We don't want to index those.
       # Source: https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
       #
-      # rubocop:disable Naming/PredicateName
       def self.is_404?(file)
         ['404.md', '404.html'].include?(File.basename(file.path))
       end
-      # rubocop:enable Naming/PredicateName
 
       # Public: Check if the file is redirect page
       #

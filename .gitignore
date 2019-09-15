@@ -7,6 +7,8 @@ gemfiles/*.lock
 spec/site/_site
 spec/integration/site/_site
 
+spec/site/.jekyll-cache/
+.jekyll-cache/
 
 .DS_Store
 .*.sw[a-z]

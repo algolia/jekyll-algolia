@@ -754,7 +754,7 @@ describe(Jekyll::Algolia::Indexer) do
 
     describe 'should not update settings if user configured false' do
       let(:local_setting_id) { 'foo' }
-      let(:settings) { false }
+      let(:settings) { {} }
       let(:remote_settings) { {} }
       it do
         expect(current).to_not have_received(:set_settings)

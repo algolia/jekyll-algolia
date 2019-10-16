@@ -313,7 +313,7 @@ describe(Jekyll::Algolia::Configurator) do
           .with('settings')
           .and_return(false)
       end
-      it { should equal(false) }
+      it { should eql {} }
     end
   end
 

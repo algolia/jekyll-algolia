@@ -115,6 +115,9 @@ algolia:
   settings: false
 ```
 
+We suggest users to at least run with the default settings once, so that the default
+relevance settings are set, which you can override via the dashboard after.
+
 ## `indexing_batch_size`
 
 This option defines the number of operations that will be grouped as part of one

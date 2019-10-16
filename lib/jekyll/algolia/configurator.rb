@@ -159,9 +159,8 @@ module Jekyll
       # This will be a merge of default settings and the one defined in the
       # _config.yml file
       def self.settings
-        if algolia('settings') == false
-          return false
-        end
+        return {} if algolia('settings') == false
+
         user_settings = algolia('settings') || {}
         ALGOLIA_DEFAULTS['settings'].merge(user_settings)
       end

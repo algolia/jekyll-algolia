@@ -106,7 +106,17 @@ algolia:
 ```
 
 Settings defined here will take precedence over any setting you manually defined
-through the [Algolia dashboard][5] UI, though.
+through the [Algolia dashboard][5] UI, though. If you'd like this not to happen
+at all, and only take the dashboard settings in account, pass `false` to the
+settings configuration.
+
+```yml
+algolia:
+  settings: false
+```
+
+We suggest users to at least run with the default settings once, so that the default
+relevance settings are set, which you can override via the dashboard after.
 
 ## `indexing_batch_size`
 

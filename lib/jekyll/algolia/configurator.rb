@@ -103,7 +103,7 @@ module Jekyll
       # Returns the value of this option, or the default value
       def self.algolia(key)
         config = get('algolia') || {}
-        value = config[key] || ALGOLIA_DEFAULTS[key]
+        value = config[key].nil? ? ALGOLIA_DEFAULTS[key] : config[key]
 
         # No value found but we have a method to define the default value
         if value.nil? && respond_to?("default_#{key}")
@@ -159,6 +159,8 @@ module Jekyll
       # This will be a merge of default settings and the one defined in the
       # _config.yml file
       def self.settings
+        return {} if algolia('settings') == false
+
         user_settings = algolia('settings') || {}
         ALGOLIA_DEFAULTS['settings'].merge(user_settings)
       end

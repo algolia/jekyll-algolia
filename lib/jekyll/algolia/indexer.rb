@@ -296,6 +296,8 @@ module Jekyll
       # If the settingID are not matching, it means our config is different, so
       # we push it, overriding the settingID for next push.
       def self.update_settings
+        return if Configurator.settings.empty?
+
         current_remote_settings = remote_settings || {}
         remote_setting_id = current_remote_settings.dig('userData', 'settingID')
 

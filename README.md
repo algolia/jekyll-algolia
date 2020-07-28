@@ -9,7 +9,7 @@
 
 Add fast and relevant search to your Jekyll site.
 
-> While this plugin was created by an Algolia employee, it is not an "officially supported API client". It is possible that future majors versions of Jekyll break compatibility, or require changes.
+> While this plugin was created by Algolia, it is not an officially supported API client. It is possible that future major versions of Jekyll break compatibility, or require changes.
 
 ## Usage
 

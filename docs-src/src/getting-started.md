@@ -10,6 +10,8 @@ layout: content-with-menu.pug
 `jekyll-algolia` is a Jekyll plugin that lets you push all your content in an
 Algolia index.
 
+> While this plugin was created by Algolia, it is not an officially supported API client. It is possible that future major versions of Jekyll break compatibility, or require changes.
+
 ## Requirements
 
 You'll need:

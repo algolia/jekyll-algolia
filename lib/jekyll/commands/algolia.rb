@@ -24,6 +24,13 @@ module Jekyll
             command.option 'force_settings',
                            '--force-settings',
                            'Force updating of the index settings'
+            command.option 'future',
+                           '--future',
+                           'Index posts with a future date'
+            command.option 'show_drafts',
+                           '--drafts',
+                           '-D',
+                           'Index posts in the _drafts folder'
 
             command.action do |_, options|
               configuration = configuration_from_options(options)

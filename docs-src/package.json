@@ -12,7 +12,7 @@
     "@babel/preset-react": "7.0.0-beta.34",
     "algolia-aerial": "1.2.6",
     "algolia-frontend-components": "0.0.34",
-    "async": "2.6.0",
+    "async": "2.6.4",
     "autoprefixer": "7.2.1",
     "babel-eslint": "8.0.3",
     "babel-loader": "8.0.0-beta.0",

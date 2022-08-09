@@ -14,11 +14,12 @@ Some themes already have `jekyll-algolia` embedded by default:
 - [Minimal Mistakes][3], by [@mmistakes][4]
 - [GaeBlogx][5], by [@SeraphRoy][6]
 - [Sakura][7] ([live demo][8]), by [@kimfucious][9]
+- [tactile-advanced-template][10]
 
 ## Add your own
 
 If you're maintaining a theme using `jekyll-algolia`, feel free to [edit this
-page][10] to add your theme to the list.
+page][11] to add your theme to the list.
 
 
 [1]: ./blog.html
@@ -30,4 +31,5 @@ page][10] to add your theme to the list.
 [7]: https://github.com/kimfucious/sakura
 [8]: https://sakura.abts.io/
 [9]: https://github.com/kimfucious
-[10]: https://github.com/algolia/jekyll-algolia/edit/develop/docs-src/src/themes.md
+[10]: https://github.com/Pathsis/tactile-advanced-template
+[11]: https://github.com/algolia/jekyll-algolia/edit/develop/docs-src/src/themes.md

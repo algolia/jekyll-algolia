@@ -31,5 +31,5 @@ page][11] to add your theme to the list.
 [7]: https://github.com/kimfucious/sakura
 [8]: https://sakura.abts.io/
 [9]: https://github.com/kimfucious
-[10]: https://github.com/Pathsis/tactile-advanced-template
+[10]: https://github.com/Pathsis/tactile-advanced-template-with-algolia
 [11]: https://github.com/algolia/jekyll-algolia/edit/develop/docs-src/src/themes.md

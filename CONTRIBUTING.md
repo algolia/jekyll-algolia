@@ -1,10 +1,21 @@
+# DEPRECATED
+
+This repository is no longer maintained and will not accept any new Pull
+Requests.
+
+If you're interested in taking over the ownership, contact @Algolia or feel free
+to fork the repository and continue on your own.
+
+Below are the old contribution guidelines:
+
+---
+
 Hi collaborator!
 
 If you have a fix or a new feature, please start by checking in the [issues][1]
 if it is already referenced. If not, feel free to open one.
 
-We use [pull requests][2]
-for collaboration. The workflow is as follow:
+We use [pull requests][2] for collaboration. The workflow is as follow:
 
 - Create a local branch, starting from `develop`
 - Submit the PR on `develop`
@@ -13,24 +24,24 @@ for collaboration. The workflow is as follow:
 - We may ask you to rebase the branch to latest `develop` if it gets out of sync
 - Receive the thanks of the Algolia team :)
 
-# Development workflow
+## Development workflow
 
 Start by running `bundle install` to get all the dependencies up to date.
 
-## Testing
+### Testing
 
 Run `rake test` to launch the test suite. Run `./scripts/test_all_ruby_versions`
 to run the test on all the supported ruby versions (requires `rvm`).
 
-## TDD
+### TDD
 
 Run `rake watch` to start a watcher on the code and test files. Whenever you
 update the code, the relevant tests will be run. Incredibly useful for TDD.
 
-## Testing local changes on an existing Jekyll website
+### Testing local changes on an existing Jekyll website
 
-If you want to test the plugin on an existing Jekyll website while developping,
-we suggest updating the website `Gemfile` to point to the correct local directory
+To test the plugin on an existing Jekyll website while developping, we suggest
+updating the website `Gemfile` to point to the correct local directory
 
 ```ruby
 group :jekyll_plugins do
@@ -38,7 +49,7 @@ group :jekyll_plugins do
 end
 ```
 
-## Running integration tests
+### Running integration tests
 
 Integration tests will do a full jekyll run, and push data to an Algolia index,
 checking that records and settings are correctly saved. It is the slowest
@@ -48,14 +59,14 @@ Running those tests requires a real Algolia plan. You need to define
 `ALGOLIA_APPLICATION_ID`, `ALGOLIA_API_KEY` and `ALGOLIA_INDEX_NAME` (we suggest
 using `direnv` for that), and then run `./scripts/test_integration`.
 
-## Linting
+### Linting
 
-Run `rake lint` to check the style of all ruby files. Run `rake
-lint:auto_correct` to try to automatically correct the potential violations.
-It's always a good practice to double check the modification after an
-auto-correct.
+Run `rake lint` to check the style of all ruby files. Run
+`rake lint:auto_correct` to try to automatically correct the potential
+violations. It's always a good practice to double check the modification after
+an auto-correct.
 
-# Git Hooks
+## Git Hooks
 
 If you plan on submitting a PR, we suggest you install the git hooks located in
 `./scripts/git_hook`. Those hooks will run the linter on each commit, and the
@@ -65,33 +76,32 @@ build on Travis.
 The easiest way is to create a symlink from your `.git/hooks` folder:
 
 ```sh
-$ git root
-$ rm ./.git/hooks
-$ ln -s ./scripts/git_hooks/ ./.git/hooks
+git root
+rm ./.git/hooks
+ln -s ./scripts/git_hooks/ ./.git/hooks
 ```
 
-# Tagging and releasing
+## Tagging and releasing
 
-If you need to release a new version of the gem, run `rake release` from the
-`develop` branch. It will ask you for the new version and automatically create
-the git tags, create the gem and push it to Rubygems.
+To release a new version of the gem, run `rake release` from the `develop`
+branch. It will ask you for the new version and automatically create the git
+tags, create the gem and push it to Rubygems.
 
-# Documentation
+## Documentation
 
-## Requirements
+### Requirements
 
 The documentation website uses Metalsmith (and not Jekyll), so you'll need:
 
 - Node.js >= v9.2.0, use nvm - [install instructions][3]
 - Yarn >= v1.3.2 - [install instructions][4]
 
-## Development
+### Development
 
 All the documentation source files live in the `./docs-src` folder.
 
-To serve a local version of the documentation (including livereload), run `rake
-docs:serve`. The documentation will be available on
-[localhost:3000](http://localhost:3000/).
+To serve a local version of the documentation (including livereload), run
+`rake docs:serve`. The documentation will be available on [localhost:3000][6].
 
 This will create a `./docs-dev` folder and serve files from there. This folder
 is ignored by git.
@@ -103,13 +113,13 @@ To update the documentation website, you should run `rake docs:deploy` from the
 into `docs` and push it. The content of the `./docs` folder will then be server
 by GitHub pages.
 
-# Project owner
+## Project owner
 
 [@pixelastic][5]
-
 
 [1]: https://github.com/algolia/jekyll-algolia/issues
 [2]: https://github.com/algolia/jekyll-algolia/pulls
 [3]: https://github.com/creationix/nvm#install-script
 [4]: https://yarnpkg.com/en/docs/install#alternatives-tab
 [5]: https://github.com/pixelastic
+[6]: http://localhost:3000/

@@ -15,8 +15,9 @@ Below is the old README, for archiving purposes:
 
 ## Jekyll Algolia Plugin
 
-[![gem version][1]][16] ![ruby][2] ![jekyll][3] [![build master][4]][17]
-[![build develop][6]][17] [![coverage master][5]][18]
+[![No Maintenance Intended][19]][7] [![gem version][1]][16] ![ruby][2]
+![jekyll][3] [![build master][4]][17] [![build develop][6]][17]
+[![coverage master][5]][18]
 
 Add fast and relevant search to your Jekyll site.
 
@@ -121,3 +122,5 @@ plugins.
 [17]: https://travis-ci.org/algolia/jekyll-algolia
 [18]: https://coveralls.io/github/algolia/jekyll-algolia?branch=master
 [20]: https://community.algolia.com/jekyll-algolia/getting-started.html
+[7]: http://unmaintained.tech/
+[19]: http://unmaintained.tech/badge.svg

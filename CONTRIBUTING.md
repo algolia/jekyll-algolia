@@ -94,6 +94,8 @@ tags, create the gem and push it to Rubygems.
 The documentation website uses Metalsmith (and not Jekyll), so you'll need:
 
 - Node.js >= v9.2.0, use nvm - [install instructions][3]
+  Make sure you have python 2 (not 3) available in your `$PATH` when doing `nvm
+  install v.9.2.0`.
 - Yarn >= v1.3.2 - [install instructions][4]
 
 ### Development

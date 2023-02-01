@@ -22,6 +22,9 @@
 @import 'pages/index';
 @import 'pages/examples';
 
+// Custom styles added to mark the project as deprecated
+@import 'modules/deprecating';
+
 
 * {
   box-sizing: border-box;

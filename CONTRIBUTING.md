@@ -97,23 +97,26 @@ The documentation website uses Metalsmith (and not Jekyll), so you'll need:
   Make sure you have python 2 (not 3) available in your `$PATH` when doing `nvm
   install v.9.2.0`.
 - Yarn >= v1.3.2 - [install instructions][4]
+- Run `yarn` in `./docs-src` to install all dependencies
 
 ### Development
 
 All the documentation source files live in the `./docs-src` folder.
 
-To serve a local version of the documentation (including livereload), run
-`rake docs:serve`. The documentation will be available on [localhost:3000][6].
+To serve a local version of the documentation (including livereload), go to
+`./docs-src` and run `yarn run serve`. The documentation will be available on
+[localhost:3000][6].
 
 This will create a `./docs-dev` folder and serve files from there. This folder
 is ignored by git.
 
-## Deploying docs
+### Building the docs
 
-To update the documentation website, you should run `rake docs:deploy` from the
-`develop` branch. This will merge `develop` into master, build the documentation
-into `docs` and push it. The content of the `./docs` folder will then be server
-by GitHub pages.
+Running `yarn build` from inside the `./docs-src` folder will update the
+`./docs` folder with the generated static files. 
+
+Those files will then be served by GitHub Pages whenever the `master` branch is
+pushed to GitHub.
 
 ## Project owner
 

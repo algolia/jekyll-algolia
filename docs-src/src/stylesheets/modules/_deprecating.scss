@@ -1,0 +1,9 @@
+// Hide the header Community dropdown
+.algc-navigation__dropdown-holder {
+  position: absolute;
+  top:-100%;
+  left:-100%;
+  opacity:0;
+  display: none;
+  pointer-events: none;
+}

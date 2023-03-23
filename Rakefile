@@ -177,40 +177,4 @@ namespace 'release' do
   end
 end
 
-# DOCUMENTATION
-namespace 'docs' do
-  desc 'Rebuild documentation website'
-  task :build do
-    Dir.chdir('./docs-src') do
-      sh 'yarn'
-      sh 'yarn run build'
-    end
-  end
-  desc 'Rebuild and deploy documentation'
-  task :deploy do
-    # Make sure develop is up to date with master
-    sh 'git checkout master --quiet'
-    sh 'git pull --rebase origin master --quiet'
-    sh 'git checkout develop --quiet'
-    sh 'git rebase master --quiet'
-
-    Rake::Task['docs:build'].invoke
-    sh 'git add ./docs'
-    sh "git commit -m 'Updating documentation website' || true"
-
-    sh 'git checkout master --quiet'
-    sh 'git rebase develop --quiet'
-    sh 'git push origin master'
-
-    sh 'git checkout develop --quiet'
-  end
-  desc 'Serve the documentation locally'
-  task :serve do
-    Dir.chdir('./docs-src') do
-      sh 'yarn'
-      sh 'yarn run serve'
-    end
-  end
-end
-
 task default: :test
